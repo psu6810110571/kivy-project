@@ -18,4 +18,17 @@ KV = '''
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
+
+<MenuScreen>:
+    name: 'menu'
+    canvas.before:
+        Color:
+            rgba: 0.1, 0.1, 0.15, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 30
 '''
