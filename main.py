@@ -10,3 +10,12 @@ from kivy.uix.image import Image
 from kivy.core.audio import SoundLoader
 import os
 import random
+
+# ==========================================
+# 🎨 ส่วนที่ 1: Kivy Design (UI & Layouts)
+# ==========================================
+KV = '''
+ScreenManager:
+    transition: app.fade_transition()
+    MenuScreen:
+'''
