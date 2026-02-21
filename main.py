@@ -31,4 +31,11 @@ ScreenManager:
         orientation: 'vertical'
         padding: 50
         spacing: 30
+        Label:
+            text: '[b]TIME-ATTACK QUIZ[/b]\\nSurvive the Bomb!'
+            markup: True
+            halign: 'center'
+            font_size: 45
+            color: 1, 0.4, 0.1, 1
+            size_hint_y: 0.4
 '''
