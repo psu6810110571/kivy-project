@@ -48,4 +48,14 @@ ScreenManager:
             height: 60
             multiline: False
             halign: 'center'
+            
+        Button:
+            text: 'START MISSION'
+            font_size: 30
+            size_hint_y: None
+            height: 80
+            background_color: 0.8, 0.2, 0.2, 1
+            background_normal: ''
+            bold: True
+            on_release: app.go_to_category(player_name.text)
 '''
