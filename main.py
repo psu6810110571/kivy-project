@@ -59,3 +59,26 @@ ScreenManager:
             bold: True
             on_release: app.go_to_category(player_name.text)
 '''
+
+# ==========================================
+# 🧠 ส่วนที่ 2: Python Game Logic
+# ==========================================
+class MenuScreen(Screen):
+    pass
+
+class QuizApp(App):
+    player_name = StringProperty('Unknown Agent')
+    
+    def fade_transition(self):
+        return FadeTransition(duration=0.3)
+
+    def build(self):
+        return Builder.load_string(KV)
+
+    def go_to_category(self, name):
+        if name.strip() != '':
+            self.player_name = name
+        print(f"Agent {self.player_name} is ready!") 
+
+if __name__ == '__main__':
+    QuizApp().run()
