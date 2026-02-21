@@ -41,29 +41,34 @@ ScreenManager:
             color: 1, 0.8, 0.2, 1
             size_hint_y: 0.4
             
-        # --- [ส่วนที่อัปเดตใน Commit 9] ---
         TextInput:
             id: player_name
             hint_text: 'กรอกชื่อสายลับของคุณ...'
-            font_name: 'Sarabun-Regular.ttf'  # เรียกใช้ฟอนต์ภาษาไทย
+            font_name: 'Sarabun-Regular.ttf'
             font_size: 28
             size_hint_y: None
             height: 70
             multiline: False
             halign: 'center'
-            padding: [20, 15]  # เพิ่มระยะขอบด้านในให้ดูไม่อึดอัด
+            padding: [20, 15]
             background_color: 0.9, 0.9, 0.95, 1
-        # ---------------------------------
             
+        # --- [ส่วนที่อัปเดตใน Commit 10] ---
         Button:
-            text: 'START MISSION'
-            font_size: 30
+            text: 'เริ่มภารกิจ!'
+            font_name: 'Sarabun-Bold.ttf'
+            font_size: 35
             size_hint_y: None
             height: 80
-            background_color: 0.8, 0.2, 0.2, 1
-            background_normal: ''
-            bold: True
+            background_color: 0, 0, 0, 0  # ทำให้พื้นหลังสี่เหลี่ยมเดิมโปร่งใส
             on_release: app.go_to_category(player_name.text)
+            canvas.before:
+                Color:
+                    rgba: 0.85, 0.2, 0.2, 1  # สีแดงของปุ่ม
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20]  # ความโค้งมนของขอบปุ่ม
 '''
 
 # ==========================================
@@ -73,7 +78,7 @@ class MenuScreen(Screen):
     pass
 
 class QuizApp(App):
-    player_name = StringProperty('Unknown Agent')
+    player_name = StringProperty('สายลับนิรนาม')  # เปลี่ยนค่าเริ่มต้นเป็นภาษาไทย
     
     def fade_transition(self):
         return FadeTransition(duration=0.3)
@@ -84,7 +89,7 @@ class QuizApp(App):
     def go_to_category(self, name):
         if name.strip() != '':
             self.player_name = name
-        print(f"Agent {self.player_name} is ready!") 
+        print(f"สายลับ {self.player_name} พร้อมลุย!")  # เปลี่ยนข้อความใน Terminal
 
 if __name__ == '__main__':
     QuizApp().run()
