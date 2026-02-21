@@ -32,25 +32,28 @@ ScreenManager:
         padding: 50
         spacing: 30
         
-        # --- [ส่วนที่อัปเดตใน Commit 8] ---
         Label:
             text: 'เกมควิซทะลุเวลา\\n[size=30][color=#ff6666]ตอบให้ไว... ก่อนระเบิดจะทำงาน![/color][/size]'
             markup: True
-            font_name: 'Sarabun-Bold.ttf'  # เรียกใช้ฟอนต์ภาษาไทย
+            font_name: 'Sarabun-Bold.ttf'
             halign: 'center'
             font_size: 60
             color: 1, 0.8, 0.2, 1
             size_hint_y: 0.4
-        # ---------------------------------
             
+        # --- [ส่วนที่อัปเดตใน Commit 9] ---
         TextInput:
             id: player_name
-            hint_text: 'Enter Player Name'
-            font_size: 24
+            hint_text: 'กรอกชื่อสายลับของคุณ...'
+            font_name: 'Sarabun-Regular.ttf'  # เรียกใช้ฟอนต์ภาษาไทย
+            font_size: 28
             size_hint_y: None
-            height: 60
+            height: 70
             multiline: False
             halign: 'center'
+            padding: [20, 15]  # เพิ่มระยะขอบด้านในให้ดูไม่อึดอัด
+            background_color: 0.9, 0.9, 0.95, 1
+        # ---------------------------------
             
         Button:
             text: 'START MISSION'
