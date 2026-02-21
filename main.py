@@ -32,13 +32,16 @@ ScreenManager:
         padding: 50
         spacing: 30
         
+        # --- [ส่วนที่อัปเดตใน Commit 8] ---
         Label:
-            text: '[b]TIME-ATTACK QUIZ[/b]\\nSurvive the Bomb!'
+            text: 'เกมควิซทะลุเวลา\\n[size=30][color=#ff6666]ตอบให้ไว... ก่อนระเบิดจะทำงาน![/color][/size]'
             markup: True
+            font_name: 'Sarabun-Bold.ttf'  # เรียกใช้ฟอนต์ภาษาไทย
             halign: 'center'
-            font_size: 45
-            color: 1, 0.4, 0.1, 1
+            font_size: 60
+            color: 1, 0.8, 0.2, 1
             size_hint_y: 0.4
+        # ---------------------------------
             
         TextInput:
             id: player_name
