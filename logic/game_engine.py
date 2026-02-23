@@ -35,3 +35,9 @@ class GameEngine:
             self.time_left -= 5
             print(f"Wrong! Time penalty -5s. Time left: {self.time_left}")
             return False
+        
+    def game_over(self):
+        self.is_playing = False
+        if self.timer_event:
+            self.timer_event.cancel()
+        print(f"BOOM! Game Over! Final Score: {self.score}")
