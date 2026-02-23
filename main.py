@@ -10,6 +10,7 @@ class MyGameApp(App):
         sm = ScreenManager()
         sm.add_widget(ResultScreen(name='result'))
         return sm
+    
 
 if __name__ == '__main__':
     MyGameApp().run()

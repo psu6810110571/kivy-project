@@ -79,5 +79,46 @@ category_it = [
         "choices": ["Java", "C++", "Python", "Ruby"],
         "answer": "Python",
         "hint": "ชื่อเหมือนงูเหลือมขนาดใหญ่"
+    },
+    {
+        "id": 2,
+        "question": "RAM ในคอมพิวเตอร์ทำหน้าที่อะไร?",
+        "choices": ["เก็บข้อมูลถาวร", "ประมวลผลกราฟิก", "หน่วยความจำชั่วคราว", "จ่ายไฟให้เครื่อง"],
+        "answer": "หน่วยความจำชั่วคราว",
+        "hint": "ข้อมูลจะหายไปเมื่อปิดเครื่อง"
+    },
+    {
+        "id": 3,
+        "question": "คำสั่งใดใน Linux ที่ใช้สำหรับเรียกดูรายชื่อไฟล์และโฟลเดอร์?",
+        "choices": ["cd", "ls", "mkdir", "rm"],
+        "answer": "ls",
+        "hint": "ย่อมาจากคำว่า List"
+    },
+    {
+        "id": 4,
+        "question": "ภาษา SQL ใช้สำหรับจัดการสิ่งใดเป็นหลัก?",
+        "choices": ["หน้าตาเว็บไซต์", "ฐานข้อมูล", "เครือข่าย", "ฮาร์ดแวร์"],
+        "answer": "ฐานข้อมูล",
+        "hint": "Structured Query Language"
+    },
+    {
+        "id": 5,
+        "question": "HTTP ย่อมาจากอะไร?",
+        "choices": [
+            "HyperText Transfer Protocol",
+            "High Tech Transfer Process",
+            "Hyperlink Text Terminal",
+            "Home Tool Transfer Program"
+        ],
+        "answer": "HyperText Transfer Protocol",
+        "hint": "เป็นโปรโตคอลหลักที่ใช้ในการรับส่งข้อมูลบน World Wide Web"
+    },
+    {
+        "id": 6,
+        "question": "ในภาษา Python หากต้องการเก็บข้อมูลที่ไม่ซ้ำกันเลย ควรใช้โครงสร้างข้อมูลแบบใด?",
+        "choices": ["List", "Tuple", "Dictionary", "Set"],
+        "answer": "Set",
+        "hint": "เหมือนกับเรื่องเซตในวิชาคณิตศาสตร์"
     }
+
 ]
