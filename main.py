@@ -104,6 +104,7 @@ class BombWidget(Widget):
         Color(1, 0.90, 0.30, fo*.28)
         Ellipse(pos=(cx+r*.18, cy+r*1.97), size=(dp(28), dp(28)))
 
+
 # ==========================================
 # 🎨 ส่วนที่ 1: Kivy Design
 # ==========================================
@@ -114,14 +115,16 @@ ScreenManager:
 
 <MenuScreen>:
     name: 'menu'
-    
-    # --- [พื้นหลังจาก Commit 13] ---
+
+    # พื้นหลัง + เอฟเฟกต์
     canvas.before:
         Color:
             rgba: 0.03, 0.02, 0.09, 1
         Rectangle:
             pos: self.pos
             size: self.size
+
+        # ambient glow ม่วง (ซ้าย) / ส้ม (ขวาล่าง)
         Color:
             rgba: 0.14, 0.04, 0.28, 0.50
         Ellipse:
@@ -132,6 +135,8 @@ ScreenManager:
         Ellipse:
             pos: self.width-dp(220), -dp(100)
             size: dp(400), dp(400)
+
+        # grid แนวนอน
         Color:
             rgba: 0.16, 0.16, 0.32, 0.28
         Line:
@@ -149,6 +154,8 @@ ScreenManager:
         Line:
             points: [0, self.height*0.92, self.width, self.height*0.92]
             width: dp(0.6)
+
+        # grid แนวตั้ง
         Line:
             points: [self.width*0.22, 0, self.width*0.22, self.height]
             width: dp(0.6)
@@ -158,6 +165,8 @@ ScreenManager:
         Line:
             points: [self.width*0.78, 0, self.width*0.78, self.height]
             width: dp(0.6)
+
+        # วงกลมประดับมุม (บนขวา / ล่างซ้าย)
         Color:
             rgba: 1, 0.38, 0.08, 0.13
         Line:
@@ -176,10 +185,9 @@ ScreenManager:
 
     BoxLayout:
         orientation: 'vertical'
-        padding: dp(30), dp(18)  # อัปเดตระยะขอบให้เล็กลง
-        spacing: dp(0)           # อัปเดตระยะห่างให้พอดีขึ้น
-        
-        # --- [ส่วนที่อัปเดตใน Commit 14: ป้ายชื่อเกม] ---
+        padding: dp(30), dp(18)
+        spacing: dp(0)
+
         # แถบส้มบนสุด
         BoxLayout:
             size_hint_y: None
@@ -194,10 +202,11 @@ ScreenManager:
         Widget:
             size_hint_y: 0.01
 
+        # รูประเบิด
         BombWidget:
             size_hint_y: 0.32
 
-        # ชื่อเกม BOMB QUIZ
+        # ชื่อเกม
         Label:
             id: title_label
             text: '[b]BOMB QUIZ[/b]'
@@ -239,20 +248,57 @@ ScreenManager:
 
         Widget:
             size_hint_y: 0.05
-        # ---------------------------------------------
-            
-        # --- [รออัปเกรดใน Commit ถัดไป] ---
-        TextInput:
-            id: player_name
-            hint_text: 'กรอกชื่อสายลับของคุณ...'
-            font_name: 'Sarabun'
-            font_size: 28
-            size_hint_y: None
-            height: 70
-            multiline: False
-            halign: 'center'
-            padding: [20, 15]
-            background_color: 0.9, 0.9, 0.95, 1
+
+        # --- [อัปเดตใน Commit 15: ช่องกรอกชื่อ] ---
+        # label บนช่องกรอกชื่อ
+        BoxLayout:
+            size_hint: 0.78, None
+            height: dp(24)
+            pos_hint: {'center_x': 0.5}
+            Label:
+                text: 'ชื่อผู้เล่น'
+                font_name: 'Sarabun'
+                font_size: sp(13)
+                color: 1, 0.38, 0.08, 0.9
+                halign: 'left'
+                valign: 'middle'
+
+        # ช่องกรอกชื่อ
+        BoxLayout:
+            size_hint: 0.78, None
+            height: dp(54)
+            pos_hint: {'center_x': 0.5}
+            padding: dp(2)
+            canvas.before:
+                Color:
+                    rgba: 1, 0.38, 0.08, 0.60
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(12)]
+                Color:
+                    rgba: 0.06, 0.06, 0.16, 1
+                RoundedRectangle:
+                    pos: self.x+dp(2), self.y+dp(2)
+                    size: self.width-dp(4), self.height-dp(4)
+                    radius: [dp(10)]
+            TextInput:
+                id: player_name
+                hint_text: 'พิมพ์ชื่อของคุณที่นี่...'
+                font_name: 'Sarabun'
+                font_size: sp(18)
+                multiline: False
+                halign: 'center'
+                background_color: 0, 0, 0, 0
+                background_normal: ''
+                foreground_color: 1, 1, 1, 1
+                cursor_color: 1, 0.5, 0.1, 1
+                hint_text_color: 0.30, 0.30, 0.50, 1
+                padding: dp(12), dp(14)
+
+        Widget:
+            size_hint_y: 0.04
+        # ----------------------------------------
             
         Button:
             text: 'เริ่มภารกิจ!'
