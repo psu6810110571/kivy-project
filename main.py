@@ -115,15 +115,13 @@ ScreenManager:
 <MenuScreen>:
     name: 'menu'
     
-    # --- [ส่วนที่อัปเดตใน Commit 13: สร้างพื้นหลัง Grid และแสงออร่า] ---
+    # --- [พื้นหลังจาก Commit 13] ---
     canvas.before:
         Color:
             rgba: 0.03, 0.02, 0.09, 1
         Rectangle:
             pos: self.pos
             size: self.size
-
-        # ambient glow ม่วง (ซ้าย) / ส้ม (ขวาล่าง)
         Color:
             rgba: 0.14, 0.04, 0.28, 0.50
         Ellipse:
@@ -134,8 +132,6 @@ ScreenManager:
         Ellipse:
             pos: self.width-dp(220), -dp(100)
             size: dp(400), dp(400)
-
-        # grid แนวนอน
         Color:
             rgba: 0.16, 0.16, 0.32, 0.28
         Line:
@@ -153,8 +149,6 @@ ScreenManager:
         Line:
             points: [0, self.height*0.92, self.width, self.height*0.92]
             width: dp(0.6)
-
-        # grid แนวตั้ง
         Line:
             points: [self.width*0.22, 0, self.width*0.22, self.height]
             width: dp(0.6)
@@ -164,8 +158,6 @@ ScreenManager:
         Line:
             points: [self.width*0.78, 0, self.width*0.78, self.height]
             width: dp(0.6)
-
-        # วงกลมประดับมุม (บนขวา / ล่างซ้าย)
         Color:
             rgba: 1, 0.38, 0.08, 0.13
         Line:
@@ -181,25 +173,75 @@ ScreenManager:
         Line:
             circle: dp(45), dp(45), dp(75)
             width: dp(0.8)
-    # ------------------------------------------------------------------
 
     BoxLayout:
         orientation: 'vertical'
-        padding: 50
-        spacing: 30
+        padding: dp(30), dp(18)  # อัปเดตระยะขอบให้เล็กลง
+        spacing: dp(0)           # อัปเดตระยะห่างให้พอดีขึ้น
         
+        # --- [ส่วนที่อัปเดตใน Commit 14: ป้ายชื่อเกม] ---
+        # แถบส้มบนสุด
+        BoxLayout:
+            size_hint_y: None
+            height: dp(3)
+            canvas.before:
+                Color:
+                    rgba: 1, 0.38, 0.08, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        Widget:
+            size_hint_y: 0.01
+
         BombWidget:
-            size_hint_y: 0.35
-        
+            size_hint_y: 0.32
+
+        # ชื่อเกม BOMB QUIZ
         Label:
-            text: 'เกมควิซทะลุเวลา\\n[size=30][color=#ff6666]ตอบให้ไว... ก่อนระเบิดจะทำงาน![/color][/size]'
+            id: title_label
+            text: '[b]BOMB QUIZ[/b]'
             markup: True
             font_name: 'Sarabun'
+            font_size: sp(50)
+            color: 1, 0.38, 0.08, 1
             halign: 'center'
-            font_size: 60
-            color: 1, 0.8, 0.2, 1
-            size_hint_y: 0.4
+            valign: 'middle'
+            size_hint_y: None
+            height: dp(66)
+
+        # เส้น glow ใต้ชื่อ
+        BoxLayout:
+            size_hint: 0.52, None
+            height: dp(2)
+            pos_hint: {'center_x': 0.5}
+            canvas.before:
+                Color:
+                    rgba: 1, 0.38, 0.08, 0.80
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: 1, 0.38, 0.08, 0.18
+                Rectangle:
+                    pos: self.x, self.y-dp(4)
+                    size: self.width, dp(10)
+
+        # คำโปรย
+        Label:
+            text: 'แข่งกับระเบิด  ตอบให้ทัน!'
+            font_name: 'Sarabun'
+            font_size: sp(17)
+            color: 0.68, 0.68, 0.90, 1
+            halign: 'center'
+            size_hint_y: None
+            height: dp(30)
+
+        Widget:
+            size_hint_y: 0.05
+        # ---------------------------------------------
             
+        # --- [รออัปเกรดใน Commit ถัดไป] ---
         TextInput:
             id: player_name
             hint_text: 'กรอกชื่อสายลับของคุณ...'
