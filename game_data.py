@@ -119,6 +119,34 @@ category_it = [
         "choices": ["List", "Tuple", "Dictionary", "Set"],
         "answer": "Set",
         "hint": "เหมือนกับเรื่องเซตในวิชาคณิตศาสตร์"
+    },
+    {
+        "id": 7,
+        "question": "CPU ย่อมาจากอะไร?",
+        "choices": ["Central Processing Unit", "Computer Personal Unit", "Core Processing Utility", "Control Program User"],
+        "answer": "Central Processing Unit",
+        "hint": "เปรียบเสมือนสมองของคอมพิวเตอร์ที่ทำหน้าที่ประมวลผลหลัก"
+    },
+    {
+        "id": 8,
+        "question": "ข้อใดคือตัวอย่างของเว็บเบราว์เซอร์ (Web Browser)?",
+        "choices": ["Windows 11", "Google Chrome", "Microsoft Word", "Photoshop"],
+        "answer": "Google Chrome",
+        "hint": "เป็นโปรแกรมที่ใช้สำหรับเปิดเข้าชมเว็บไซต์ต่างๆ"
+    },
+    {
+        "id": 9,
+        "question": "อุปกรณ์ใดทำหน้าที่แปลงสัญญาณเพื่อเชื่อมต่ออินเทอร์เน็ตภายในบ้าน?",
+        "choices": ["Mouse", "Keyboard", "Modem/Router", "Monitor"],
+        "answer": "Modem/Router",
+        "hint": "ทำหน้าที่รับสัญญาณจากผู้ให้บริการและกระจายสัญญาณ Wi-Fi"
+    },
+    {
+        "id": 10,
+        "question": "นามสกุลไฟล์ใดที่ใช้สำหรับตัวไฟล์โปรแกรมภาษา Python?",
+        "choices": [".html", ".cpp", ".py", ".java"],
+        "answer": ".py",
+        "hint": "ใช้อักษรสองตัวแรกของชื่อภาษา"
     }
 ]
 
