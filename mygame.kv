@@ -30,6 +30,15 @@
             color: (1, 1, 0, 1)
             font_size: '18sp'
 
+        # --- เพิ่มปุ่มจำลองเพื่อกดไปหน้าสรุปผล ---
+        Button:
+            text: "จำลองการจบเกม (ไปหน้าสรุปผล)"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '20sp'
+            size_hint: (0.5, 0.2)
+            pos_hint: {'center_x': 0.5}
+            on_release: root.manager.current = 'result'
+
 <ResultScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -46,6 +55,14 @@
             text: "คะแนนของคุณคือ: 0"
             font_name: 'THSarabunNew.ttf'
             font_size: '30sp'
+
+        # --- เพิ่มช่องสำหรับแสดงคำชม/เกรด ---
+        Label:
+            id: feedback_label
+            text: "ข้อความชมเชยจะแสดงที่นี่"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '24sp'
+            color: (0.5, 1, 0.5, 1) # สีเขียวอ่อน
 
         Button:
             text: "เล่นอีกครั้ง"
