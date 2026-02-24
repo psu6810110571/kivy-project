@@ -1,4 +1,5 @@
 from kivy.clock import Clock
+from kivy.core.audio import SoundLoader
 import random
 
 class GameEngine:
@@ -7,6 +8,12 @@ class GameEngine:
         self.time_left = 60
         self.is_playing = False
         self.timer_event = None
+
+        self.all_questions = []
+        self.current_question = None
+        
+        self.warning_sound = SoundLoader.load('assets/sounds/warning.wav')
+        self.explosion_sound = SoundLoader.load('assets/sounds/explosion.wav')
 
     def start_game(self):
         self.score = 0
