@@ -38,18 +38,9 @@ class BombWidget(Widget):
 
     # ── animations ──
     def _start_animations(self):
-        # ลอยขึ้น-ลง
-        (Animation(float_offset=dp(10), duration=1.4, t='in_out_sine') +
-         Animation(float_offset=-dp(10), duration=1.4, t='in_out_sine')
-         ).bind_on(repeat=True).start(self) if False else self._float()
-
-        # ประกายไฟกระพริบ
+        self._float()
         self._spark()
-
-        # glow หายใจ
-        (Animation(glow_scale=1.18, duration=0.9, t='in_out_sine') +
-         Animation(glow_scale=0.88, duration=0.9, t='in_out_sine')
-         ).start(self) if False else self._glow()
+        self._glow()
 
     def _float(self):
         a = (Animation(float_offset= dp(10), duration=1.4, t='in_out_sine') +
@@ -96,16 +87,12 @@ class BombWidget(Widget):
                      cx+r*.26, cy+r*1.80, cx+r*.42, cy+r*2.20], width=dp(2.5))
 
     def _draw_body(self, cx, cy, r):
-        # ตัวระเบิด
         Color(0.13, 0.13, 0.13, 1)
         Ellipse(pos=(cx-r, cy-r*.92), size=(r*2, r*1.84))
-        # highlight
         Color(0.30, 0.30, 0.30, 1)
         Ellipse(pos=(cx-r*.52, cy+r*.16), size=(r*.62, r*.40))
-        # แถบเตือน
         Color(1, 0.78, 0.0, 0.80)
         Line(circle=(cx, cy, r*.86), width=dp(5), dash_offset=8, dash_length=14)
-        # เครื่องหมาย !
         Color(1, 0.35, 0.0, 1)
         Ellipse(pos=(cx-dp(5), cy-r*.40), size=(dp(10), dp(10)))
         Rectangle(pos=(cx-dp(4), cy-r*.26), size=(dp(8), dp(22)))
@@ -126,6 +113,7 @@ KV = '''
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
+    CategoryScreen:  # <-- 1. ลงทะเบียนหน้าใหม่
 
 <MenuScreen>:
     name: 'menu'
@@ -373,8 +361,47 @@ ScreenManager:
                 Rectangle:
                     pos: self.pos
                     size: self.size
-'''
 
+# --- 2. โครงสร้างหน้า CategoryScreen ---
+<CategoryScreen>:
+    name: 'category'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        # ambient glow ม่วง (ซ้าย) / ส้ม (ขวาล่าง) ให้คุมโทนเดิม
+        Color:
+            rgba: 0.14, 0.04, 0.28, 0.50
+        Ellipse:
+            pos: -dp(140), self.height*0.30
+            size: dp(460), dp(460)
+        Color:
+            rgba: 0.40, 0.10, 0.02, 0.38
+        Ellipse:
+            pos: self.width-dp(220), -dp(100)
+            size: dp(400), dp(400)
+            
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(30), dp(40)
+        spacing: dp(20)
+
+        # หัวข้อหน้าจอ
+        Label:
+            text: '[b]เลือกหมวดหมู่ภารกิจ[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(35)
+            color: 1, 0.8, 0.2, 1
+            size_hint_y: 0.2
+        
+        # พื้นที่ว่างสำหรับปุ่มหมวดหมู่ (เดี๋ยวมาใส่ใน Commit หน้า)
+        Widget:
+            size_hint_y: 0.8
+# -------------------------------------
+'''
 
 # ── Screens & App ─────────────────────────────────────────────────────────────
 class MenuScreen(Screen):
@@ -386,6 +413,10 @@ class MenuScreen(Screen):
             title.opacity = 0
             Animation(opacity=1, duration=1.0, t='in_cubic').start(title)
 
+# --- 3. เพิ่มคลาสหน้า Category ---
+class CategoryScreen(Screen):
+    pass
+# -----------------------------
 
 class QuizApp(App):
     player_name = StringProperty('Unknown Agent')
@@ -405,7 +436,9 @@ class QuizApp(App):
     def go_to_category(self, name):
         self.player_name = name.strip() or 'Unknown Agent'
         print(f"Agent '{self.player_name}' is ready!")
-
+        # --- 4. สั่งเปลี่ยนหน้าจอ ---
+        self.root.current = 'category'
+        # ------------------------
 
 if __name__ == '__main__':
     QuizApp().run()
