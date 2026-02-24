@@ -11,7 +11,7 @@ class GameEngine:
 
         self.all_questions = []
         self.current_question = None
-        
+
         self.warning_sound = SoundLoader.load('assets/sounds/warning.wav')
         self.explosion_sound = SoundLoader.load('assets/sounds/explosion.wav')
 
@@ -48,3 +48,8 @@ class GameEngine:
         if self.timer_event:
             self.timer_event.cancel()
         print(f"BOOM! Game Over! Final Score: {self.score}")
+
+    def set_questions(self, question_list):
+        self.all_questions = question_list.copy()
+        random.shuffle(self.all_questions)
+        print(f"Loaded {len(self.all_questions)} questions and shuffled!")    
