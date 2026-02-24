@@ -1,0 +1,56 @@
+<GameScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+
+        Label:
+            id: question_text
+            text: "คำถามจะแสดงที่นี่"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '22sp'
+            halign: 'center'
+
+        Button:
+            size_hint: (None, None)
+            size: (200, 200)
+            pos_hint: {'center_x': 0.5}
+            on_release: root.show_hint()
+            
+            Image:
+                source: 'hint_professor.jpg'
+                center_x: self.parent.center_x
+                center_y: self.parent.center_y
+                size: self.parent.size
+
+        Label:
+            id: hint_label
+            text: ""
+            font_name: 'THSarabunNew.ttf'
+            color: (1, 1, 0, 1)
+            font_size: '18sp'
+
+<ResultScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 20
+        padding: 50
+
+        Label:
+            text: "จบเกมแล้ว!"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '40sp'
+
+        Label:
+            id: final_score
+            text: "คะแนนของคุณคือ: 0"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '30sp'
+
+        Button:
+            text: "เล่นอีกครั้ง"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '24sp'
+            size_hint: (0.5, 0.3)
+            pos_hint: {'center_x': 0.5}
+            on_release: root.manager.current = 'game'
