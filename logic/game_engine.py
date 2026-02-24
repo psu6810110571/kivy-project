@@ -28,6 +28,7 @@ class GameEngine:
             self.time_left -= 1
             print(f"Time left: {self.time_left}")
             
+            # แจ้งเตือนเวลาใกล้หมด
             if self.time_left == 10:
                 print("10 seconds left!")
         else:
@@ -52,4 +53,14 @@ class GameEngine:
     def set_questions(self, question_list):
         self.all_questions = question_list.copy()
         random.shuffle(self.all_questions)
-        print(f"Loaded {len(self.all_questions)} questions and shuffled!")    
+        print(f"Loaded {len(self.all_questions)} questions and shuffled!") 
+
+    def get_next_question(self):
+        #ดึงคำถามออกมาทีละข้อ (pop)
+        if len(self.all_questions) > 0:
+            self.current_question = self.all_questions.pop(0)
+            return self.current_question
+        else:
+            print("No more questions!")
+            self.game_over()
+            return None   
