@@ -113,7 +113,7 @@ KV = '''
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
-    CategoryScreen:  # <-- 1. ลงทะเบียนหน้าใหม่
+    CategoryScreen:
 
 <MenuScreen>:
     name: 'menu'
@@ -362,7 +362,7 @@ ScreenManager:
                     pos: self.pos
                     size: self.size
 
-# --- 2. โครงสร้างหน้า CategoryScreen ---
+# --- 2. หน้า CategoryScreen ---
 <CategoryScreen>:
     name: 'category'
     canvas.before:
@@ -371,7 +371,7 @@ ScreenManager:
         Rectangle:
             pos: self.pos
             size: self.size
-        # ambient glow ม่วง (ซ้าย) / ส้ม (ขวาล่าง) ให้คุมโทนเดิม
+        # ambient glow
         Color:
             rgba: 0.14, 0.04, 0.28, 0.50
         Ellipse:
@@ -388,18 +388,41 @@ ScreenManager:
         padding: dp(30), dp(40)
         spacing: dp(20)
 
-        # หัวข้อหน้าจอ
         Label:
             text: '[b]เลือกหมวดหมู่ภารกิจ[/b]'
             markup: True
             font_name: 'Sarabun'
             font_size: sp(35)
             color: 1, 0.8, 0.2, 1
-            size_hint_y: 0.2
+            size_hint_y: 0.15
         
-        # พื้นที่ว่างสำหรับปุ่มหมวดหมู่ (เดี๋ยวมาใส่ใน Commit หน้า)
+        # --- [เพิ่มปุ่มหมวดหมู่ที่ 1 ใน Commit 19] ---
+        Button:
+            text: '📘 ความรู้ทั่วไป'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: print("เลือกหมวด: ความรู้ทั่วไป") # รอเชื่อมกับระบบเกม
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.6, 0.8, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                # เส้นขอบเรืองแสง
+                Color:
+                    rgba: 0.3, 0.8, 1, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+        # ----------------------------------------
+
+        # พื้นที่ว่างสำหรับปุ่มที่ 2 และ 3
         Widget:
-            size_hint_y: 0.8
+            size_hint_y: 0.6
 # -------------------------------------
 '''
 
@@ -413,10 +436,8 @@ class MenuScreen(Screen):
             title.opacity = 0
             Animation(opacity=1, duration=1.0, t='in_cubic').start(title)
 
-# --- 3. เพิ่มคลาสหน้า Category ---
 class CategoryScreen(Screen):
     pass
-# -----------------------------
 
 class QuizApp(App):
     player_name = StringProperty('Unknown Agent')
@@ -436,9 +457,7 @@ class QuizApp(App):
     def go_to_category(self, name):
         self.player_name = name.strip() or 'Unknown Agent'
         print(f"Agent '{self.player_name}' is ready!")
-        # --- 4. สั่งเปลี่ยนหน้าจอ ---
         self.root.current = 'category'
-        # ------------------------
 
 if __name__ == '__main__':
     QuizApp().run()
