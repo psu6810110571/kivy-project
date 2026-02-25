@@ -67,4 +67,19 @@ class GameEngine:
         else:
             print("No more questions!")
             self.game_over()
-            return None   
+            return None 
+
+    def stop_game(self):
+        self.is_playing = False
+        if self.timer_event:
+            self.timer_event.cancel()
+        print("Game stop.")
+
+    def get_summary(self):
+        summary_data = {
+            "score": self.score,
+            "time_left": self.time_left,
+            "status": "Time Up" if self.time_left <= 0 else "Finished"
+        }
+        print(f"Game Summary: {summary_data}")
+        return summary_data  
