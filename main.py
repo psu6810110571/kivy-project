@@ -10,31 +10,37 @@ all_questions = category_general + category_it + category_health
 
 class GameScreen(Screen):
     def on_pre_enter(self):
-        # ฟังก์ชันนี้จะทำงานอัตโนมัติ 'ก่อน' ที่หน้าจอจะแสดงผล
         self.load_random_question()
 
     def load_random_question(self):
-        # สุ่มคำถาม 1 ข้อจากทั้งหมดมาเก็บไว้ในตัวแปร current_question
         self.current_question = random.choice(all_questions)
-        
-        # ส่งข้อความคำถามไปที่ Label
         self.ids.question_text.text = self.current_question["question"]
         
-        # ส่งตัวเลือกไปที่ปุ่มทั้ง 4
         choices = self.current_question["choices"]
         self.ids.btn_choice1.text = choices[0]
         self.ids.btn_choice2.text = choices[1]
         self.ids.btn_choice3.text = choices[2]
         self.ids.btn_choice4.text = choices[3]
         
-        # เคลียร์คำใบ้เก่าทิ้ง (เผื่อเล่นข้อใหม่)
         self.ids.hint_label.text = ""
 
     def show_hint(self):
         print("แสดงคำใบ้สำหรับคำถามนี้")
-        # ดึงคำใบ้จากข้อที่กำลังเล่นอยู่มาแสดง
         real_hint = self.current_question["hint"]
         self.ids.hint_label.text = f"คำใบ้: {real_hint}"
+
+    # --- ฟังก์ชันใหม่: ตรวจคำตอบ ---
+    def check_answer(self, selected_choice):
+        correct_answer = self.current_question["answer"]
+        
+        # เช็คว่าข้อความบนปุ่มที่กด ตรงกับ "answer" ในฐานข้อมูลไหม
+        if selected_choice == correct_answer:
+            print(f"✅ ถูกต้อง! (คุณตอบ: {selected_choice})")
+        else:
+            print(f"❌ ผิดครับ! (คุณตอบ: {selected_choice} | คำตอบที่ถูกคือ: {correct_answer})")
+            
+        # ตอบเสร็จปุ๊บ สุ่มข้อใหม่ขึ้นมาแทนที่ทันที
+        self.load_random_question()
 
 class ResultScreen(Screen):
     def on_enter(self):

@@ -57,6 +57,7 @@
                 background_normal: '' # ลบเงาสีเทาเดิมออก
                 background_color: 0.15, 0.1, 0.25, 1 # พื้นหลังปุ่มสีม่วงเข้ม
                 color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
 
             Button:
                 id: btn_choice2
@@ -66,6 +67,7 @@
                 background_normal: ''
                 background_color: 0.15, 0.1, 0.25, 1
                 color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
 
             Button:
                 id: btn_choice3
@@ -75,6 +77,7 @@
                 background_normal: ''
                 background_color: 0.15, 0.1, 0.25, 1
                 color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
 
             Button:
                 id: btn_choice4
@@ -84,6 +87,7 @@
                 background_normal: ''
                 background_color: 0.15, 0.1, 0.25, 1
                 color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
 
         # 5. ปุ่มจำลองจบเกม (ทำสีแดงส้มเหมือนปุ่ม 'เริ่มภารกิจ')
         Button:
