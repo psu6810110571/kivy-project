@@ -20,3 +20,17 @@ class GameScreen(Screen):
         if self.ui_updater:
             self.ui_updater.cancel()
         self.ui_updater = Clock.schedule_interval(self.update_ui_labels, 0.1)
+
+    def update_ui_labels(self, dt):
+        # เช็คว่าเพื่อนคนที่ 1 ตั้งชื่อ id ของ Label ว่าอะไร (สมมติว่าชื่อ time_label กับ score_label)
+        if 'time_label' in self.ids:
+            self.ids.time_label.text = f"เวลา: {self.engine.time_left}"
+        if 'score_label' in self.ids:
+            self.ids.score_label.text = f"คะแนน: {self.engine.score}"
+            
+        # ถ้าเวลาหมด (เกมจบ) ให้หยุดอัปเดตหน้าจอ และบอกให้เปลี่ยนไปหน้าสรุปผล
+        if not self.engine.is_playing and self.engine.time_left <= 0:
+            if self.ui_updater:
+                self.ui_updater.cancel()
+            print("หมดเวลา! กำลังส่งข้อมูลไปหน้าสรุปผล...")
+            # self.manager.current = 'result_screen' # โค้ดสำหรับเปลี่ยนหน้า
