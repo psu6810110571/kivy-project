@@ -34,3 +34,14 @@ class GameScreen(Screen):
                 self.ui_updater.cancel()
             print("หมดเวลา! กำลังส่งข้อมูลไปหน้าสรุปผล...")
             # self.manager.current = 'result_screen' # โค้ดสำหรับเปลี่ยนหน้า
+
+    def on_answer_click(self, selected_choice):
+        """ฟังก์ชันสำหรับให้ปุ่มตัวเลือก (ก, ข, ค, ง) เรียกใช้เมื่อถูกกด"""
+        if not self.engine.is_playing:
+            return
+            
+        is_correct = self.engine.check_answer(selected_choice, correct_answer="A")
+        
+        if is_correct:
+            print("UI ตอบถูก! โหลดคำถามข้อต่อไป...")
+            # self.engine.get_next_question() # ดึงข้อต่อไปมาแสดงบนจอ
