@@ -89,17 +89,7 @@
                 color: 1, 1, 1, 1
                 on_release: root.check_answer(self.text)
 
-        # 5. ปุ่มจำลองจบเกม (ทำสีแดงส้มเหมือนปุ่ม 'เริ่มภารกิจ')
-        Button:
-            text: "จำลองการจบเกม (ไปหน้าสรุปผล)"
-            font_name: 'THSarabunNew.ttf'
-            font_size: '22sp'
-            size_hint: (0.8, 0.3)
-            pos_hint: {'center_x': 0.5}
-            background_normal: ''
-            background_color: 0.9, 0.2, 0.1, 1 
-            on_release: root.manager.current = 'result'
-
+        
 <ResultScreen>:
     canvas.before:
         Color:

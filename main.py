@@ -2,18 +2,25 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.app import App
 import random
 
-# 1. Import ข้อมูลทั้ง 3 หมวดที่คุณทำไว้
 from game_data import category_general, category_it, category_health
 
-# 2. รวมคำถามทั้งหมดเป็นก้อนเดียว (รวม 30 ข้อ)
 all_questions = category_general + category_it + category_health
 
 class GameScreen(Screen):
     def on_pre_enter(self):
+        # 1. รีเซ็ตคะแนนและจำนวนข้อทุกครั้งที่เริ่มเกมใหม่
+        self.score = 0
+        self.question_count = 0
+        self.max_questions = 10  # เล่นรอบละ 10 ข้อ
+        
+        # 2. สุ่มดึงคำถามมา 10 ข้อจากฐานข้อมูล เพื่อไม่ให้คำถามซ้ำกันใน 1 รอบ
+        self.current_round_questions = random.sample(all_questions, self.max_questions)
+        
         self.load_random_question()
 
     def load_random_question(self):
-        self.current_question = random.choice(all_questions)
+        # ดึงคำถามตามลำดับข้อปัจจุบัน (0 ถึง 9)
+        self.current_question = self.current_round_questions[self.question_count]
         self.ids.question_text.text = self.current_question["question"]
         
         choices = self.current_question["choices"]
@@ -25,30 +32,40 @@ class GameScreen(Screen):
         self.ids.hint_label.text = ""
 
     def show_hint(self):
-        print("แสดงคำใบ้สำหรับคำถามนี้")
         real_hint = self.current_question["hint"]
         self.ids.hint_label.text = f"คำใบ้: {real_hint}"
 
-    # --- ฟังก์ชันใหม่: ตรวจคำตอบ ---
     def check_answer(self, selected_choice):
         correct_answer = self.current_question["answer"]
         
-        # เช็คว่าข้อความบนปุ่มที่กด ตรงกับ "answer" ในฐานข้อมูลไหม
+        # 3. ตรวจคำตอบและนับคะแนน
         if selected_choice == correct_answer:
-            print(f"✅ ถูกต้อง! (คุณตอบ: {selected_choice})")
+            print(f"✅ ถูกต้อง! ได้ 1 คะแนน")
+            self.score += 1  # ตอบถูกบวก 1 คะแนน
         else:
-            print(f"❌ ผิดครับ! (คุณตอบ: {selected_choice} | คำตอบที่ถูกคือ: {correct_answer})")
+            print(f"❌ ผิดครับ! (คำตอบที่ถูกคือ: {correct_answer})")
             
-        # ตอบเสร็จปุ๊บ สุ่มข้อใหม่ขึ้นมาแทนที่ทันที
-        self.load_random_question()
+        self.question_count += 1  # นับว่าเล่นไปแล้ว 1 ข้อ
+        
+        # 4. เช็คว่าเล่นครบ 10 ข้อหรือยัง
+        if self.question_count >= self.max_questions:
+            print(f"จบเกม! คะแนนรวม: {self.score}/{self.max_questions}")
+            self.manager.current = 'result' # เด้งไปหน้าสรุปผล
+        else:
+            self.load_random_question() # ยังไม่ครบ โหลดข้อต่อไป
 
 class ResultScreen(Screen):
     def on_enter(self):
-        print("เข้าสู่หน้าสรุปคะแนน")
-        mock_score = 8 
-        total_questions = 10
-        self.ids.final_score.text = f"คะแนนของคุณคือ: {mock_score} / {total_questions}"
-        feedback_text = self.get_feedback(mock_score, total_questions)
+        # 5. ดึงคะแนนจริงๆ จากหน้า GameScreen มาใช้งาน
+        game_screen = self.manager.get_screen('game')
+        real_score = game_screen.score
+        total_questions = game_screen.max_questions
+        
+        # โชว์คะแนนจริง
+        self.ids.final_score.text = f"คะแนนของคุณคือ: {real_score} / {total_questions}"
+        
+        # โชว์คำชมที่คำนวณจากคะแนนจริง
+        feedback_text = self.get_feedback(real_score, total_questions)
         self.ids.feedback_label.text = feedback_text
         
     def get_feedback(self, score, total_questions):   
