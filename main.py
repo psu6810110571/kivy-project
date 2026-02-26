@@ -1,25 +1,46 @@
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.app import App
+from kivy.uix.popup import Popup
+from kivy.properties import StringProperty, ListProperty
 import random
 
 from game_data import category_general, category_it, category_health
 
 all_questions = category_general + category_it + category_health
 
+# --- คลาสสำหรับ Popup แจ้งผล ---
+class AnswerPopup(Popup):
+    message = StringProperty("")
+    color_text = ListProperty([1, 1, 1, 1])
+
+    def __init__(self, is_correct, correct_answer, callback, **kwargs):
+        super().__init__(**kwargs)
+        self.callback = callback # ฟังก์ชันที่จะให้ทำหลังจากปิด Popup
+        
+        # จัดการข้อความและสีตามผลลัพธ์
+        if is_correct:
+            self.title = "ยอดเยี่ยม!"
+            self.message = "✅ ถูกต้อง!\nรับไปเลย 1 คะแนน"
+            self.color_text = [0.2, 0.9, 0.2, 1] # สีเขียว
+        else:
+            self.title = "เสียใจด้วย!"
+            self.message = f"❌ ผิดครับ!\nคำตอบที่ถูกต้องคือ: {correct_answer}"
+            self.color_text = [0.9, 0.2, 0.1, 1] # สีแดง
+
+    def on_dismiss(self):
+        # เมื่อ Popup ถูกปิด ให้รันฟังก์ชัน callback (เพื่อสุ่มข้อใหม่ หรือจบเกม)
+        self.callback()
+
+# --- คลาสหลักของเกม ---
 class GameScreen(Screen):
     def on_pre_enter(self):
-        # 1. รีเซ็ตคะแนนและจำนวนข้อทุกครั้งที่เริ่มเกมใหม่
         self.score = 0
         self.question_count = 0
-        self.max_questions = 10  # เล่นรอบละ 10 ข้อ
-        
-        # 2. สุ่มดึงคำถามมา 10 ข้อจากฐานข้อมูล เพื่อไม่ให้คำถามซ้ำกันใน 1 รอบ
+        self.max_questions = 10
         self.current_round_questions = random.sample(all_questions, self.max_questions)
-        
         self.load_random_question()
 
     def load_random_question(self):
-        # ดึงคำถามตามลำดับข้อปัจจุบัน (0 ถึง 9)
         self.current_question = self.current_round_questions[self.question_count]
         self.ids.question_text.text = self.current_question["question"]
         
@@ -38,33 +59,32 @@ class GameScreen(Screen):
     def check_answer(self, selected_choice):
         correct_answer = self.current_question["answer"]
         
-        # 3. ตรวจคำตอบและนับคะแนน
+        # 1. เช็คว่าตอบถูกหรือผิด
+        is_correct = False
         if selected_choice == correct_answer:
-            print(f"✅ ถูกต้อง! ได้ 1 คะแนน")
-            self.score += 1  # ตอบถูกบวก 1 คะแนน
-        else:
-            print(f"❌ ผิดครับ! (คำตอบที่ถูกคือ: {correct_answer})")
+            self.score += 1
+            is_correct = True
             
-        self.question_count += 1  # นับว่าเล่นไปแล้ว 1 ข้อ
+        self.question_count += 1
         
-        # 4. เช็คว่าเล่นครบ 10 ข้อหรือยัง
+        # 2. เปิด Popup แจ้งผล พร้อมส่งฟังก์ชัน next_step ไปให้ทำงานตอนปิด
+        popup = AnswerPopup(is_correct, correct_answer, callback=self.next_step)
+        popup.open()
+
+    def next_step(self):
+        # 3. ฟังก์ชันนี้จะทำงานเมื่อผู้เล่นกดปิด Popup
         if self.question_count >= self.max_questions:
-            print(f"จบเกม! คะแนนรวม: {self.score}/{self.max_questions}")
-            self.manager.current = 'result' # เด้งไปหน้าสรุปผล
+            self.manager.current = 'result'
         else:
-            self.load_random_question() # ยังไม่ครบ โหลดข้อต่อไป
+            self.load_random_question()
 
 class ResultScreen(Screen):
     def on_enter(self):
-        # 5. ดึงคะแนนจริงๆ จากหน้า GameScreen มาใช้งาน
         game_screen = self.manager.get_screen('game')
         real_score = game_screen.score
         total_questions = game_screen.max_questions
         
-        # โชว์คะแนนจริง
-        self.ids.final_score.text = f"คะแนนของคุณคือ: {real_score} / {total_questions}"
-        
-        # โชว์คำชมที่คำนวณจากคะแนนจริง
+        self.ids.final_score.text = f"{real_score} / {total_questions}"
         feedback_text = self.get_feedback(real_score, total_questions)
         self.ids.feedback_label.text = feedback_text
         
