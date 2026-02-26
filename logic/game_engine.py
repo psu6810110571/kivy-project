@@ -12,6 +12,10 @@ class GameEngine:
         self.all_questions = []
         self.current_question = None
 
+        self.hint_used = False 
+        self.hint_message = "" # ข้อความคำใบ้ที่จะแสดง
+        # self.ajarn_image_source = 'assets/images/ajarn.png'
+
         self.warning_sound = SoundLoader.load('assets/sounds/warning.wav')
         self.explosion_sound = SoundLoader.load('assets/sounds/explosion.wav')
 
