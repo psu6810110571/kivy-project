@@ -17,58 +17,39 @@ LabelBase.register(
     fn_bold   =os.path.join(BASE_DIR, 'Sarabun-Bold.ttf'),
 )
 
-
 # ── BombWidget ────────────────────────────────────────────────────────────────
 class BombWidget(Widget):
-    """วาดระเบิดพร้อม animation ลอย / ประกายไฟ / glow"""
-
     fuse_opacity = NumericProperty(1.0)
     float_offset = NumericProperty(0.0)
     glow_scale   = NumericProperty(1.0)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.bind(
-            pos=self._draw, size=self._draw,
-            fuse_opacity=self._draw,
-            float_offset=self._draw,
-            glow_scale=self._draw,
-        )
+        self.bind(pos=self._draw, size=self._draw, fuse_opacity=self._draw, float_offset=self._draw, glow_scale=self._draw)
         self._start_animations()
 
-    # ── animations ──
     def _start_animations(self):
         self._float()
         self._spark()
         self._glow()
 
     def _float(self):
-        a = (Animation(float_offset= dp(10), duration=1.4, t='in_out_sine') +
-             Animation(float_offset=-dp(10), duration=1.4, t='in_out_sine'))
-        a.repeat = True
-        a.start(self)
+        a = (Animation(float_offset= dp(10), duration=1.4, t='in_out_sine') + Animation(float_offset=-dp(10), duration=1.4, t='in_out_sine'))
+        a.repeat = True; a.start(self)
 
     def _spark(self):
-        a = (Animation(fuse_opacity=0.15, duration=0.18) +
-             Animation(fuse_opacity=1.0,  duration=0.18) +
-             Animation(fuse_opacity=0.4,  duration=0.12) +
-             Animation(fuse_opacity=1.0,  duration=0.22))
-        a.repeat = True
-        a.start(self)
+        a = (Animation(fuse_opacity=0.15, duration=0.18) + Animation(fuse_opacity=1.0, duration=0.18) + Animation(fuse_opacity=0.4, duration=0.12) + Animation(fuse_opacity=1.0, duration=0.22))
+        a.repeat = True; a.start(self)
 
     def _glow(self):
-        a = (Animation(glow_scale=1.18, duration=0.9, t='in_out_sine') +
-             Animation(glow_scale=0.88, duration=0.9, t='in_out_sine'))
-        a.repeat = True
-        a.start(self)
+        a = (Animation(glow_scale=1.18, duration=0.9, t='in_out_sine') + Animation(glow_scale=0.88, duration=0.9, t='in_out_sine'))
+        a.repeat = True; a.start(self)
 
-    # ── วาดระเบิด ──
     def _draw(self, *args):
         self.canvas.clear()
-        cx, r  = self.center_x, dp(42)
-        cy     = self.center_y + self.float_offset
+        cx, r = self.center_x, dp(42)
+        cy = self.center_y + self.float_offset
         gs, fo = self.glow_scale, self.fuse_opacity
-
         with self.canvas:
             self._draw_glow(cx, cy, r, gs)
             self._draw_fuse(cx, cy, r)
@@ -76,40 +57,28 @@ class BombWidget(Widget):
             self._draw_spark(cx, cy, r, fo)
 
     def _draw_glow(self, cx, cy, r, gs):
-        Color(0.9, 0.18, 0.04, 0.10 * gs)
-        Ellipse(pos=(cx - r*gs*1.6, cy - r*gs*1.5), size=(r*gs*3.2, r*gs*3.0))
-        Color(0.9, 0.18, 0.04, 0.16 * gs)
-        Ellipse(pos=(cx - r*gs*1.2, cy - r*gs*1.1), size=(r*gs*2.4, r*gs*2.2))
+        Color(0.9, 0.18, 0.04, 0.10 * gs); Ellipse(pos=(cx - r*gs*1.6, cy - r*gs*1.5), size=(r*gs*3.2, r*gs*3.0))
+        Color(0.9, 0.18, 0.04, 0.16 * gs); Ellipse(pos=(cx - r*gs*1.2, cy - r*gs*1.1), size=(r*gs*2.4, r*gs*2.2))
 
     def _draw_fuse(self, cx, cy, r):
-        Color(0.55, 0.42, 0.28, 1)
-        Line(bezier=[cx+r*.36, cy+r*.85, cx+r*.62, cy+r*1.45,
-                     cx+r*.26, cy+r*1.80, cx+r*.42, cy+r*2.20], width=dp(2.5))
+        Color(0.55, 0.42, 0.28, 1); Line(bezier=[cx+r*.36, cy+r*.85, cx+r*.62, cy+r*1.45, cx+r*.26, cy+r*1.80, cx+r*.42, cy+r*2.20], width=dp(2.5))
 
     def _draw_body(self, cx, cy, r):
-        Color(0.13, 0.13, 0.13, 1)
-        Ellipse(pos=(cx-r, cy-r*.92), size=(r*2, r*1.84))
-        Color(0.30, 0.30, 0.30, 1)
-        Ellipse(pos=(cx-r*.52, cy+r*.16), size=(r*.62, r*.40))
-        Color(1, 0.78, 0.0, 0.80)
-        Line(circle=(cx, cy, r*.86), width=dp(5), dash_offset=8, dash_length=14)
-        Color(1, 0.35, 0.0, 1)
-        Ellipse(pos=(cx-dp(5), cy-r*.40), size=(dp(10), dp(10)))
+        Color(0.13, 0.13, 0.13, 1); Ellipse(pos=(cx-r, cy-r*.92), size=(r*2, r*1.84))
+        Color(0.30, 0.30, 0.30, 1); Ellipse(pos=(cx-r*.52, cy+r*.16), size=(r*.62, r*.40))
+        Color(1, 0.78, 0.0, 0.80); Line(circle=(cx, cy, r*.86), width=dp(5), dash_offset=8, dash_length=14)
+        Color(1, 0.35, 0.0, 1); Ellipse(pos=(cx-dp(5), cy-r*.40), size=(dp(10), dp(10)))
         Rectangle(pos=(cx-dp(4), cy-r*.26), size=(dp(8), dp(22)))
 
     def _draw_spark(self, cx, cy, r, fo):
-        Color(1, 0.90, 0.15, fo)
-        Ellipse(pos=(cx+r*.36, cy+r*2.14), size=(dp(10), dp(10)))
-        Color(1, 0.55, 0.05, fo*.65)
-        Ellipse(pos=(cx+r*.28, cy+r*2.06), size=(dp(18), dp(18)))
-        Color(1, 0.90, 0.30, fo*.28)
-        Ellipse(pos=(cx+r*.18, cy+r*1.97), size=(dp(28), dp(28)))
+        Color(1, 0.90, 0.15, fo); Ellipse(pos=(cx+r*.36, cy+r*2.14), size=(dp(10), dp(10)))
+        Color(1, 0.55, 0.05, fo*.65); Ellipse(pos=(cx+r*.28, cy+r*2.06), size=(dp(18), dp(18)))
+        Color(1, 0.90, 0.30, fo*.28); Ellipse(pos=(cx+r*.18, cy+r*1.97), size=(dp(28), dp(28)))
 
-
-# ── KV ───────────────────────────────────────────────────────────────────────
+# ==========================================
+# 🎨 ส่วนที่ 1: Kivy Design
+# ==========================================
 KV = '''
-#:import FadeTransition kivy.uix.screenmanager.FadeTransition
-
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
@@ -118,15 +87,12 @@ ScreenManager:
 <MenuScreen>:
     name: 'menu'
 
-    # พื้นหลัง + เอฟเฟกต์
     canvas.before:
         Color:
             rgba: 0.03, 0.02, 0.09, 1
         Rectangle:
             pos: self.pos
             size: self.size
-
-        # ambient glow ม่วง (ซ้าย) / ส้ม (ขวาล่าง)
         Color:
             rgba: 0.14, 0.04, 0.28, 0.50
         Ellipse:
@@ -137,8 +103,6 @@ ScreenManager:
         Ellipse:
             pos: self.width-dp(220), -dp(100)
             size: dp(400), dp(400)
-
-        # grid แนวนอน
         Color:
             rgba: 0.16, 0.16, 0.32, 0.28
         Line:
@@ -156,8 +120,6 @@ ScreenManager:
         Line:
             points: [0, self.height*0.92, self.width, self.height*0.92]
             width: dp(0.6)
-
-        # grid แนวตั้ง
         Line:
             points: [self.width*0.22, 0, self.width*0.22, self.height]
             width: dp(0.6)
@@ -167,8 +129,6 @@ ScreenManager:
         Line:
             points: [self.width*0.78, 0, self.width*0.78, self.height]
             width: dp(0.6)
-
-        # วงกลมประดับมุม (บนขวา / ล่างซ้าย)
         Color:
             rgba: 1, 0.38, 0.08, 0.13
         Line:
@@ -190,7 +150,6 @@ ScreenManager:
         padding: dp(30), dp(18)
         spacing: dp(0)
 
-        # แถบส้มบนสุด
         BoxLayout:
             size_hint_y: None
             height: dp(3)
@@ -204,11 +163,9 @@ ScreenManager:
         Widget:
             size_hint_y: 0.01
 
-        # รูประเบิด
         BombWidget:
             size_hint_y: 0.32
 
-        # ชื่อเกม
         Label:
             id: title_label
             text: '[b]BOMB QUIZ[/b]'
@@ -221,7 +178,6 @@ ScreenManager:
             size_hint_y: None
             height: dp(66)
 
-        # เส้น glow ใต้ชื่อ
         BoxLayout:
             size_hint: 0.52, None
             height: dp(2)
@@ -238,7 +194,6 @@ ScreenManager:
                     pos: self.x, self.y-dp(4)
                     size: self.width, dp(10)
 
-        # คำโปรย
         Label:
             text: 'แข่งกับระเบิด  ตอบให้ทัน!'
             font_name: 'Sarabun'
@@ -251,7 +206,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.05
 
-        # label บนช่องกรอกชื่อ
         BoxLayout:
             size_hint: 0.78, None
             height: dp(24)
@@ -264,7 +218,6 @@ ScreenManager:
                 halign: 'left'
                 valign: 'middle'
 
-        # ช่องกรอกชื่อ
         BoxLayout:
             size_hint: 0.78, None
             height: dp(54)
@@ -300,7 +253,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.04
 
-        # ปุ่มเริ่มภารกิจ
         Button:
             id: start_btn
             text: '[b]  เริ่มภารกิจ!  [/b]'
@@ -338,7 +290,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.03
 
-        # version
         Label:
             text: 'TIME-ATTACK QUIZ  v1.0'
             font_name: 'Sarabun'
@@ -351,7 +302,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.01
 
-        # แถบม่วงล่างสุด
         BoxLayout:
             size_hint_y: None
             height: dp(3)
@@ -362,7 +312,6 @@ ScreenManager:
                     pos: self.pos
                     size: self.size
 
-# --- 2. หน้า CategoryScreen ---
 <CategoryScreen>:
     name: 'category'
     canvas.before:
@@ -371,7 +320,6 @@ ScreenManager:
         Rectangle:
             pos: self.pos
             size: self.size
-        # ambient glow
         Color:
             rgba: 0.14, 0.04, 0.28, 0.50
         Ellipse:
@@ -385,8 +333,8 @@ ScreenManager:
             
     BoxLayout:
         orientation: 'vertical'
-        padding: dp(30), dp(40)
-        spacing: dp(20)
+        padding: dp(40), dp(50)
+        spacing: dp(25)
 
         Label:
             text: '[b]เลือกหมวดหมู่ภารกิจ[/b]'
@@ -394,9 +342,9 @@ ScreenManager:
             font_name: 'Sarabun'
             font_size: sp(35)
             color: 1, 0.8, 0.2, 1
-            size_hint_y: 0.15
+            size_hint_y: 0.2
         
-        # --- [เพิ่มปุ่มหมวดหมู่ที่ 1 ใน Commit 19] ---
+        # 1. ปุ่มความรู้ทั่วไป (สีฟ้า)
         Button:
             text: '📘 ความรู้ทั่วไป'
             font_name: 'Sarabun'
@@ -404,33 +352,74 @@ ScreenManager:
             size_hint_y: 0.2
             background_color: 0, 0, 0, 0
             on_press: app.btn_press_anim(self)
-            on_release: print("เลือกหมวด: ความรู้ทั่วไป") # รอเชื่อมกับระบบเกม
+            on_release: app.start_game('general')
             canvas.before:
                 Color:
-                    rgba: 0.1, 0.6, 0.8, 0.8
+                    rgba: 0.1, 0.5, 0.8, 0.8
                 RoundedRectangle:
                     pos: self.pos
                     size: self.size
                     radius: [dp(15)]
-                # เส้นขอบเรืองแสง
                 Color:
                     rgba: 0.3, 0.8, 1, 0.4
                 Line:
                     rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
                     width: dp(1.2)
-        # ----------------------------------------
 
-        # พื้นที่ว่างสำหรับปุ่มที่ 2 และ 3
+        # --- [อัปเดตใหม่: เพิ่มปุ่ม 2 และ 3] ---
+        # 2. ปุ่มสุขภาพ (สีเขียว)
+        Button:
+            text: '🩺 สุขภาพ'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('health')
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.7, 0.3, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.4, 1, 0.5, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+
+        # 3. ปุ่มวิชาการ/IT (สีม่วง)
+        Button:
+            text: '💻 วิชาการ / IT'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('it')
+            canvas.before:
+                Color:
+                    rgba: 0.5, 0.2, 0.8, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.8, 0.5, 1, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+        # ------------------------------------
+
+        # พื้นที่ว่างดันปุ่มขึ้นไป
         Widget:
-            size_hint_y: 0.6
-# -------------------------------------
+            size_hint_y: 0.2
 '''
 
 # ── Screens & App ─────────────────────────────────────────────────────────────
 class MenuScreen(Screen):
-
     def on_enter(self):
-        """Fade-in ชื่อเกมตอนเข้าหน้า"""
         title = self.ids.get('title_label')
         if title:
             title.opacity = 0
@@ -449,7 +438,6 @@ class QuizApp(App):
         return Builder.load_string(KV)
 
     def btn_press_anim(self, btn):
-        """กระพริบปุ่มตอนกด"""
         a = (Animation(opacity=0.7, duration=0.08) +
              Animation(opacity=1.0, duration=0.08))
         a.start(btn)
@@ -458,6 +446,11 @@ class QuizApp(App):
         self.player_name = name.strip() or 'Unknown Agent'
         print(f"Agent '{self.player_name}' is ready!")
         self.root.current = 'category'
+
+    # ฟังก์ชันจำลองการเริ่มเกม (ส่งไม้ต่อให้เพื่อนคนที่ 2)
+    def start_game(self, category):
+        print(f"กำลังสุ่มคำถามหมวด: {category} ให้กับผู้เล่น {self.player_name}...")
+        # ตรงนี้เพื่อนคนที่ 2 จะมาเขียนโค้ดสลับไปหน้าจอเกมจริงๆ ต่อครับ
 
 if __name__ == '__main__':
     QuizApp().run()
