@@ -1,0 +1,519 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+ScreenManager:
+    transition: app.fade_transition()
+    MenuScreen:
+    CategoryScreen:
+    GameScreen:     
+    ResultScreen:    
+
+
+<MenuScreen>:
+    name: 'menu'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.14, 0.04, 0.28, 0.50
+        Ellipse:
+            pos: -dp(140), self.height*0.30
+            size: dp(460), dp(460)
+        Color:
+            rgba: 0.40, 0.10, 0.02, 0.38
+        Ellipse:
+            pos: self.width-dp(220), -dp(100)
+            size: dp(400), dp(400)
+        Color:
+            rgba: 0.16, 0.16, 0.32, 0.28
+        Line:
+            points: [0, self.height*0.15, self.width, self.height*0.15]
+            width: dp(0.6)
+        Line:
+            points: [0, self.height*0.35, self.width, self.height*0.35]
+            width: dp(0.6)
+        Line:
+            points: [0, self.height*0.55, self.width, self.height*0.55]
+            width: dp(0.6)
+        Line:
+            points: [0, self.height*0.75, self.width, self.height*0.75]
+            width: dp(0.6)
+        Line:
+            points: [0, self.height*0.92, self.width, self.height*0.92]
+            width: dp(0.6)
+        Line:
+            points: [self.width*0.22, 0, self.width*0.22, self.height]
+            width: dp(0.6)
+        Line:
+            points: [self.width*0.50, 0, self.width*0.50, self.height]
+            width: dp(0.6)
+        Line:
+            points: [self.width*0.78, 0, self.width*0.78, self.height]
+            width: dp(0.6)
+        Color:
+            rgba: 1, 0.38, 0.08, 0.13
+        Line:
+            circle: self.width-dp(50), self.height-dp(50), dp(85)
+            width: dp(0.8)
+        Color:
+            rgba: 1, 0.38, 0.08, 0.06
+        Line:
+            circle: self.width-dp(50), self.height-dp(50), dp(112)
+            width: dp(0.5)
+        Color:
+            rgba: 0.5, 0.1, 0.9, 0.10
+        Line:
+            circle: dp(45), dp(45), dp(75)
+            width: dp(0.8)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(30), dp(18)
+        spacing: dp(0)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(3)
+            canvas.before:
+                Color:
+                    rgba: 1, 0.38, 0.08, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        Widget:
+            size_hint_y: 0.01
+
+        BombWidget:
+            size_hint_y: 0.32
+
+        Label:
+            id: title_label
+            text: '[b]BOMB QUIZ[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(50)
+            color: 1, 0.38, 0.08, 1
+            halign: 'center'
+            valign: 'middle'
+            size_hint_y: None
+            height: dp(66)
+
+        BoxLayout:
+            size_hint: 0.52, None
+            height: dp(2)
+            pos_hint: {'center_x': 0.5}
+            canvas.before:
+                Color:
+                    rgba: 1, 0.38, 0.08, 0.80
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: 1, 0.38, 0.08, 0.18
+                Rectangle:
+                    pos: self.x, self.y-dp(4)
+                    size: self.width, dp(10)
+
+        Label:
+            text: 'แข่งกับระเบิด  ตอบให้ทัน!'
+            font_name: 'Sarabun'
+            font_size: sp(17)
+            color: 0.68, 0.68, 0.90, 1
+            halign: 'center'
+            size_hint_y: None
+            height: dp(30)
+
+        Widget:
+            size_hint_y: 0.05
+
+        BoxLayout:
+            size_hint: 0.78, None
+            height: dp(24)
+            pos_hint: {'center_x': 0.5}
+            Label:
+                text: 'ชื่อผู้เล่น'
+                font_name: 'Sarabun'
+                font_size: sp(13)
+                color: 1, 0.38, 0.08, 0.9
+                halign: 'left'
+                valign: 'middle'
+
+        BoxLayout:
+            size_hint: 0.78, None
+            height: dp(54)
+            pos_hint: {'center_x': 0.5}
+            padding: dp(2)
+            canvas.before:
+                Color:
+                    rgba: 1, 0.38, 0.08, 0.60
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(12)]
+                Color:
+                    rgba: 0.06, 0.06, 0.16, 1
+                RoundedRectangle:
+                    pos: self.x+dp(2), self.y+dp(2)
+                    size: self.width-dp(4), self.height-dp(4)
+                    radius: [dp(10)]
+            TextInput:
+                id: player_name
+                hint_text: 'พิมพ์ชื่อของคุณที่นี่...'
+                font_name: 'Sarabun'
+                font_size: sp(18)
+                multiline: False
+                halign: 'center'
+                background_color: 0, 0, 0, 0
+                background_normal: ''
+                foreground_color: 1, 1, 1, 1
+                cursor_color: 1, 0.5, 0.1, 1
+                hint_text_color: 0.30, 0.30, 0.50, 1
+                padding: dp(12), dp(14)
+
+        Widget:
+            size_hint_y: 0.04
+
+        Button:
+            id: start_btn
+            text: '[b]  เริ่มภารกิจ!  [/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint: 0.78, None
+            height: dp(62)
+            pos_hint: {'center_x': 0.5}
+            background_color: 0, 0, 0, 0
+            background_normal: ''
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.go_to_category(player_name.text)
+            canvas.before:
+                Color:
+                    rgba: 0.9, 0.2, 0.05, 0.25
+                RoundedRectangle:
+                    pos: self.x-dp(4), self.y-dp(4)
+                    size: self.width+dp(8), self.height+dp(8)
+                    radius: [dp(17)]
+                Color:
+                    rgba: 0.85, 0.18, 0.06, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(13)]
+                Color:
+                    rgba: 1, 1, 1, 0.07
+                RoundedRectangle:
+                    pos: self.x, self.top-self.height*0.45
+                    size: self.width, self.height*0.45
+                    radius: [dp(13), dp(13), 0, 0]
+
+        Widget:
+            size_hint_y: 0.03
+
+        Label:
+            text: 'TIME-ATTACK QUIZ  v1.0'
+            font_name: 'Sarabun'
+            font_size: sp(11)
+            color: 0.24, 0.24, 0.40, 1
+            halign: 'center'
+            size_hint_y: None
+            height: dp(20)
+
+        Widget:
+            size_hint_y: 0.01
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(3)
+            canvas.before:
+                Color:
+                    rgba: 0.45, 0.1, 0.85, 0.75
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+<CategoryScreen>:
+    name: 'category'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.14, 0.04, 0.28, 0.50
+        Ellipse:
+            pos: -dp(140), self.height*0.30
+            size: dp(460), dp(460)
+        Color:
+            rgba: 0.40, 0.10, 0.02, 0.38
+        Ellipse:
+            pos: self.width-dp(220), -dp(100)
+            size: dp(400), dp(400)
+            
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(40), dp(50)
+        spacing: dp(25)
+
+        Label:
+            text: '[b]เลือกหมวดหมู่ภารกิจ[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(35)
+            color: 1, 0.8, 0.2, 1
+            size_hint_y: 0.2
+        
+        Button:
+            text: '📘 ความรู้ทั่วไป'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('general')
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.5, 0.8, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.3, 0.8, 1, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+
+        Button:
+            text: '🩺 สุขภาพ'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('health')
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.7, 0.3, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.4, 1, 0.5, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+
+        Button:
+            text: '💻 วิชาการ / IT'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('it')
+            canvas.before:
+                Color:
+                    rgba: 0.5, 0.2, 0.8, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.8, 0.5, 1, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+
+        Widget:
+            size_hint_y: 0.2
+
+# --- ดีไซน์ของ Popup แจ้งผล ---
+<AnswerPopup>:
+    size_hint: 0.7, 0.45
+    auto_dismiss: False  # บังคับให้ต้องกดปุ่มเพื่อปิด
+    title_font: 'THSarabunNew.ttf'
+    title_size: '35sp'
+    title_align: 'center'
+    separator_color: 1, 0.5, 0, 1 # เส้นคั่นสีส้ม
+    
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        Label:
+            text: root.message
+            font_name: 'THSarabunNew.ttf'
+            font_size: '35sp'
+            color: root.color_text
+            halign: 'center'
+
+        Button:
+            text: "ไปข้อต่อไป >>"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '28sp'
+            size_hint_y: 0.4
+            background_normal: ''
+            background_color: 0.9, 0.4, 0.1, 1 # ปุ่มสีส้ม
+            on_release: root.dismiss() # กดแล้วปิด Popup
+
+# --- ดีไซน์หน้าเกมเพลย์ (เหมือนเดิม) ---
+<GameScreen>:
+    name: 'game'
+    canvas.before:
+        Color:
+            rgba: 0.08, 0.06, 0.14, 1 
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 30
+        spacing: 15
+
+        Label:
+            id: question_text
+            text: "คำถามจะแสดงที่นี่"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '35sp'
+            halign: 'center'
+            color: 1, 0.4, 0, 1
+
+        Button:
+            size_hint: (None, None)
+            size: (160, 160)
+            pos_hint: {'center_x': 0.5}
+            background_color: 0, 0, 0, 0
+            on_release: root.show_hint()
+            
+            Image:
+                source: 'hint_professor.jpg'
+                center_x: self.parent.center_x
+                center_y: self.parent.center_y
+                size: self.parent.size
+
+        Label:
+            id: hint_label
+            text: ""
+            font_name: 'THSarabunNew.ttf'
+            color: 1, 0.8, 0.2, 1 
+            font_size: '22sp'
+            size_hint_y: 0.2
+
+        GridLayout:
+            cols: 2
+            spacing: 15
+            size_hint_y: 0.6
+
+            Button:
+                id: btn_choice1
+                text: "ตัวเลือก A"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '26sp'
+                background_normal: '' 
+                background_color: 0.15, 0.1, 0.25, 1 
+                color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
+
+            Button:
+                id: btn_choice2
+                text: "ตัวเลือก B"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '26sp'
+                background_normal: ''
+                background_color: 0.15, 0.1, 0.25, 1
+                color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
+
+            Button:
+                id: btn_choice3
+                text: "ตัวเลือก C"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '26sp'
+                background_normal: ''
+                background_color: 0.15, 0.1, 0.25, 1
+                color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
+
+            Button:
+                id: btn_choice4
+                text: "ตัวเลือก D"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '26sp'
+                background_normal: ''
+                background_color: 0.15, 0.1, 0.25, 1
+                color: 1, 1, 1, 1
+                on_release: root.check_answer(self.text)
+
+# --- ดีไซน์หน้าสรุปผล (เหมือนเดิม) ---
+<ResultScreen>:
+    name: 'result'
+    canvas.before:
+        Color:
+            rgba: 0.08, 0.06, 0.14, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: 0.85, 0.65
+            pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+            padding: 20
+            spacing: 10
+            canvas.before:
+                Color:
+                    rgba: 0.15, 0.1, 0.25, 0.9  
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [25]  
+
+            Label:
+                text: "🎉 สรุปผลภารกิจ 🎉"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '45sp'
+                color: 1, 0.5, 0, 1  
+                size_hint_y: 0.2
+
+            Label:
+                text: "คะแนนที่คุณทำได้"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '26sp'
+                color: 0.8, 0.8, 0.8, 1  
+                size_hint_y: 0.1
+
+            Label:
+                id: final_score
+                text: "0 / 10"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '90sp'  
+                color: 1, 0.8, 0.1, 1  
+                bold: True
+                size_hint_y: 0.4
+
+            Label:
+                id: feedback_label
+                text: "ข้อความชมเชยจะแสดงที่นี่"
+                font_name: 'THSarabunNew.ttf'
+                font_size: '32sp'
+                color: 0.3, 0.9, 0.3, 1  
+                size_hint_y: 0.3
+
+        Button:
+            text: "เล่นอีกครั้ง (PLAY AGAIN)"
+            font_name: 'THSarabunNew.ttf'
+            font_size: '26sp'
+            size_hint: 0.7, 0.12
+            pos_hint: {'center_x': 0.5, 'y': 0.08}
+            background_normal: ''
+            background_color: 0.9, 0.2, 0.1, 1  
+            on_release: root.manager.current = 'game'
