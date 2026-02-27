@@ -43,13 +43,18 @@ class GameEngine:
             self.game_over()
 
     def check_answer(self, user_answer, correct_answer):
+        if not self.current_question:
+            return False
+            
+        correct_answer = self.current_question.get('answer', '')
+        
         if user_answer == correct_answer:
             self.score += 1
-            print(f"Correct! Score is now {self.score}")
+            print(f"Correct! Score: {self.score}")
             return True
         else:
             self.time_left -= 5
-            print(f"Wrong! Time penalty -5s. Time left: {self.time_left}")
+            print(f"Wrong! Time penalty. Time left: {self.time_left}")
             return False
         
     def game_over(self):
