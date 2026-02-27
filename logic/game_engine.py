@@ -104,3 +104,14 @@ class GameEngine:
         self.hint_message = self.current_question.get('hint', 'ไม่มีคำใบ้สำหรับข้อนี้') 
         print(f"Hint Activated: {self.hint_message}")
         return self.hint_message
+    
+    def reset_game(self):
+        self.score = 0
+        self.time_left = 60
+        self.hint_used = False
+        self.is_playing = False
+        self.current_question = None
+        if self.timer_event:
+            self.timer_event.cancel()
+        print("Game Reset! Ready for new round.")
+
