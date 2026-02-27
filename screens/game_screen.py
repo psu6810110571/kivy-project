@@ -35,17 +35,6 @@ class GameScreen(Screen):
             print("หมดเวลา! กำลังส่งข้อมูลไปหน้าสรุปผล...")
             self.manager.current = 'result_screen' # โค้ดสำหรับเปลี่ยนหน้า
 
-    def on_answer_click(self, selected_choice):
-        """ฟังก์ชันสำหรับให้ปุ่มตัวเลือก (ก, ข, ค, ง) เรียกใช้เมื่อถูกกด"""
-        if not self.engine.is_playing:
-            return
-            
-        is_correct = self.engine.check_answer(selected_choice, correct_answer="A")
-        
-        if is_correct:
-            print("UI ตอบถูก! โหลดคำถามข้อต่อไป...")
-            self.engine.get_next_question() # ดึงข้อต่อไปมาแสดงบนจอ
-
     def load_question_to_ui(self):
         """ดึงคำถามใหม่มาแสดง และเปลี่ยนข้อความบนปุ่ม ก, ข, ค, ง"""
         q_data = self.engine.get_next_question()
@@ -69,3 +58,25 @@ class GameScreen(Screen):
         else:
             self.finish_game() 
 
+    def on_answer_click(self, selected_choice):
+        """ฟังก์ชันสำหรับให้ปุ่มตัวเลือก (ก, ข, ค, ง) เรียกใช้เมื่อถูกกด"""
+        if not self.engine.is_playing:
+            return
+            
+        is_correct = self.engine.check_answer(selected_choice, correct_answer="A")
+        
+        if is_correct:
+            print("UI ตอบถูก! โหลดคำถามข้อต่อไป...")
+            self.load_question_to_ui()
+
+    def finish_game(self):
+        self.engine.game_over()
+        if self.ui_updater:
+            self.ui_updater.cancel()
+            
+        print("ส่งข้อมูลให้หน้าสรุปผล...")
+        summary = self.engine.get_summary()
+        
+        # สมมติเพื่อนตั้งชื่อหน้าสรุปผลว่า 'result_screen'
+        if self.manager:
+            self.manager.current = 'result_screen'
