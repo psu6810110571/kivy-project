@@ -94,13 +94,13 @@ class GameEngine:
         return summary_data  
     
     def use_hint(self):
-        if self.hint_used:
-            return "ใช้ตัวช่วยไปแล้วครับ!" # ป้องกันไม่ให้กดซ้ำ
+        if self.hint_used or not self.current_question:
+            return "ไม่สามารถใช้ตัวช่วยได้!"
             
         self.hint_used = True
         # หักคะแนนแลกกับการใช้ตัวช่วย
         self.score -= 1 
         
-        self.hint_message = "อาจารย์บอกว่า: ลองตัดช้อยส์ข้อ ข. ดูสิ!" 
+        self.hint_message = self.current_question.get('hint', 'ไม่มีคำใบ้สำหรับข้อนี้') 
         print(f"Hint Activated: {self.hint_message}")
         return self.hint_message
