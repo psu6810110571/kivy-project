@@ -18,6 +18,9 @@ class GameEngine:
 
         self.warning_sound = SoundLoader.load('assets/sounds/warning.wav')
         self.explosion_sound = SoundLoader.load('assets/sounds/explosion.wav')
+        self.Duringquiz_sound = SoundLoader.load('assets/sounds/Duringquiz.wav')  
+        if self.Duringquiz_sound:
+            self.Duringquiz_sound.loop = True  
 
     def start_game(self):
         # ป้องกันบั๊ก: ถ้ามีนาฬิกาเก่ารันอยู่
@@ -27,6 +30,9 @@ class GameEngine:
         self.score = 0
         self.time_left = 60
         self.is_playing = True
+
+        if self.Duringquiz_sound:
+            self.Duringquiz_sound.play()
         
         print("Game Started!")
         self.timer_event = Clock.schedule_interval(self.update_time, 1)
@@ -35,15 +41,23 @@ class GameEngine:
         if self.time_left > 0:
             self.time_left -= 1
             print(f"Time left: {self.time_left}")
+
+            if self.time_left == 10:
+                if self.Duringquiz_sound:
+                  self.Duringquiz_sound.stop()
             
             # แจ้งเตือนเวลาใกล้หมด
-            if self.time_left <= 10 and self.warning_sound:
+            if self.time_left == 10 and self.warning_sound:
                 self.warning_sound.play()
                 print("10 seconds left!")
+
+            if self.time_left == 0 and self.explosion_sound:
+                self.explosion_sound.play()
+                print("Time's up! BOOM!")
         else:
             self.game_over()
 
-    def check_answer(self, user_answer, correct_answer):
+    def check_answer(self, user_answer):
         if not self.current_question:
             return False
             
@@ -62,6 +76,15 @@ class GameEngine:
         self.is_playing = False
         if self.timer_event:
             self.timer_event.cancel()
+
+        if self.warning_sound:
+            self.warning_sound.stop()
+
+        if getattr(self, 'warning_sound', None): self.warning_sound.stop()
+        if getattr(self, 'Duringquiz_sound', None): self.Duringquiz_sound.stop()
+
+        if self.explosion_sound:
+            self.explosion_sound.stop()
         print(f"BOOM! Game Over! Final Score: {self.score}")
 
     def set_questions(self, question_list):
@@ -83,6 +106,11 @@ class GameEngine:
         self.is_playing = False
         if self.timer_event:
             self.timer_event.cancel()
+
+        if getattr(self, 'warning_sound', None):
+            self.warning_sound.stop()
+        if getattr(self, 'Duringquiz_sound', None):
+            self.Duringquiz_sound.stop()
         print("Game stop.")
 
     def get_summary(self):
@@ -114,5 +142,11 @@ class GameEngine:
         self.current_question = None
         if self.timer_event:
             self.timer_event.cancel()
+
+        if getattr(self, 'warning_sound', None):
+            self.warning_sound.stop()
+
+        if getattr(self, 'Duringquiz_sound', None):
+            self.Duringquiz_sound.stop()
         print("Game Reset! Ready for new round.")
 

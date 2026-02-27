@@ -37,6 +37,9 @@ class GameScreen(Screen):
 
     def load_question_to_ui(self):
         """ดึงคำถามใหม่มาแสดง และเปลี่ยนข้อความบนปุ่ม ก, ข, ค, ง"""
+        if 'feedback_label' in self.ids:
+            self.ids.feedback_label.text = ""
+            
         q_data = self.engine.get_next_question()
         
         if q_data:
@@ -59,14 +62,33 @@ class GameScreen(Screen):
             self.finish_game() 
 
     def on_answer_click(self, selected_choice):
-        """ฟังก์ชันสำหรับให้ปุ่มตัวเลือก (ก, ข, ค, ง) เรียกใช้เมื่อถูกกด"""
-        if not self.engine.is_playing:
+        if not self.engine.is_playing or getattr(self, 'is_waiting', False):
             return
             
-        is_correct = self.engine.check_answer(selected_choice, correct_answer="A")
+        is_correct = self.engine.check_answer(selected_choice) 
         
         if is_correct:
             print("UI ตอบถูก! โหลดคำถามข้อต่อไป...")
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = "ถูกต้อง! เยี่ยมมาก 🎉"
+                
+            self.load_question_to_ui()
+            
+        else:
+            correct_ans = self.engine.current_question.get('answer', 'ไม่มีเฉลย')
+            print(f"UI ตอบผิด! เฉลยคือ: {correct_ans}")
+            
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = f"ผิด! โดนหัก 5 วิ 💣 (เฉลย: {correct_ans})"
+            
+            self.is_waiting = True 
+            
+            Clock.schedule_once(self.next_question_delayed, 1.0)
+
+    def next_question_delayed(self, dt):
+        self.is_waiting = False
+        
+        if self.engine.is_playing:
             self.load_question_to_ui()
 
     def finish_game(self):
