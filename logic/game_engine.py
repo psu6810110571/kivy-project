@@ -37,7 +37,8 @@ class GameEngine:
             print(f"Time left: {self.time_left}")
             
             # แจ้งเตือนเวลาใกล้หมด
-            if self.time_left == 10:
+            if self.time_left <= 10 and self.warning_sound:
+                self.warning_sound.play()
                 print("10 seconds left!")
         else:
             self.game_over()
