@@ -33,7 +33,7 @@ class GameScreen(Screen):
             if self.ui_updater:
                 self.ui_updater.cancel()
             print("หมดเวลา! กำลังส่งข้อมูลไปหน้าสรุปผล...")
-            # self.manager.current = 'result_screen' # โค้ดสำหรับเปลี่ยนหน้า
+            self.manager.current = 'result_screen' # โค้ดสำหรับเปลี่ยนหน้า
 
     def on_answer_click(self, selected_choice):
         """ฟังก์ชันสำหรับให้ปุ่มตัวเลือก (ก, ข, ค, ง) เรียกใช้เมื่อถูกกด"""
@@ -44,4 +44,28 @@ class GameScreen(Screen):
         
         if is_correct:
             print("UI ตอบถูก! โหลดคำถามข้อต่อไป...")
-            # self.engine.get_next_question() # ดึงข้อต่อไปมาแสดงบนจอ
+            self.engine.get_next_question() # ดึงข้อต่อไปมาแสดงบนจอ
+
+    def load_question_to_ui(self):
+        """ดึงคำถามใหม่มาแสดง และเปลี่ยนข้อความบนปุ่ม ก, ข, ค, ง"""
+        q_data = self.engine.get_next_question()
+        
+        if q_data:
+            # สมมติเพื่อนคนที่ 1 ตั้ง id ของ Label คำถามว่า 'question_label'
+            if 'question_label' in self.ids:
+                self.ids.question_label.text = q_data['question']
+            
+            # สมมติเพื่อนตั้ง id ของปุ่มว่า btn_a, btn_b, btn_c, btn_d
+            if 'btn_a' in self.ids:
+                self.ids.btn_a.text = q_data['choices'][0]
+            if 'btn_b' in self.ids:
+                self.ids.btn_b.text = q_data['choices'][1]
+            if 'btn_c' in self.ids:
+                self.ids.btn_c.text = q_data['choices'][2]
+            if 'btn_d' in self.ids:
+                self.ids.btn_d.text = q_data['choices'][3]
+                
+            self.engine.hint_used = False
+        else:
+            self.finish_game() 
+
