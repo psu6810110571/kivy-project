@@ -28,11 +28,16 @@ class MenuScreen(Screen):
             title.opacity = 0
             Animation(opacity=1, duration=1.0, t='in_cubic').start(title)
 
-class BriefingScreen(Screen):    # <--- [เพิ่มบรรทัดนี้เข้ามา]
-    pass                         # <--- [เพิ่มบรรทัดนี้เข้ามา]
+class BriefingScreen(Screen):    
+    pass                         
 
 class CategoryScreen(Screen):
     pass
+
+# <--- [เพิ่มตรงนี้: สร้างคลาสหน้าจอ ModeScreen] --->
+class ModeScreen(Screen):
+    pass
+# <----------------------------------------->
 
 # ── 4. ตัวควบคุมแอปหลัก ─────────────────────────────────────────────────────────────
 class QuizApp(App):
@@ -54,6 +59,19 @@ class QuizApp(App):
         self.player_name = name.strip() or 'Unknown Agent'
         print(f"Agent '{self.player_name}' is ready!")
         self.root.current = 'category'
+
+    # <--- [เพิ่มตรงนี้: ฟังก์ชันเมื่อเลือกหมวดหมู่ ให้พาไปหน้าเลือกโหมด] --->
+    def select_category(self, category):
+        print(f"หมวดหมู่ที่เลือก: {category}")
+        self._category = category
+        self.root.current = 'mode'
+    
+    # <--- [เพิ่มตรงนี้: ฟังก์ชันเมื่อกดเลือกโหมดเกม] --->
+    def set_mode(self, mode):
+        print(f"โหมดที่เลือก: {mode}")
+        self._game_mode = mode
+        # (เดี๋ยวเราจะเขียนให้พาไปหน้าถัดไปใน Commit หน้านะครับ)
+    # <------------------------------------------------------->
 
     def start_game(self, category):
         print(f"กำลังสุ่มคำถามหมวด: {category} ให้กับผู้เล่น {self.player_name}...")

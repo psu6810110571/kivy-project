@@ -3,8 +3,9 @@
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
-    BriefingScreen:    # <--- [เพิ่มบรรทัดนี้เข้ามา]
+    BriefingScreen:    
     CategoryScreen:
+    ModeScreen:        # <--- [เพิ่มบรรทัดนี้เข้ามา]
 
 <MenuScreen>:
     name: 'menu'
@@ -272,7 +273,7 @@ ScreenManager:
             size_hint_y: 0.2
             background_color: 0, 0, 0, 0
             on_press: app.btn_press_anim(self)
-            on_release: app.start_game('general')
+            on_release: app.select_category('general')   # <--- [แก้ไขเป็น select_category]
             canvas.before:
                 Color:
                     rgba: 0.1, 0.5, 0.8, 0.8
@@ -293,7 +294,7 @@ ScreenManager:
             size_hint_y: 0.2
             background_color: 0, 0, 0, 0
             on_press: app.btn_press_anim(self)
-            on_release: app.start_game('health')
+            on_release: app.select_category('health')    # <--- [แก้ไขเป็น select_category]
             canvas.before:
                 Color:
                     rgba: 0.1, 0.7, 0.3, 0.8
@@ -314,7 +315,7 @@ ScreenManager:
             size_hint_y: 0.2
             background_color: 0, 0, 0, 0
             on_press: app.btn_press_anim(self)
-            on_release: app.start_game('it')
+            on_release: app.select_category('it')        # <--- [แก้ไขเป็น select_category]
             canvas.before:
                 Color:
                     rgba: 0.5, 0.2, 0.8, 0.8
@@ -331,7 +332,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.2
 
-            # ════════════ BriefingScreen ════════════
 <BriefingScreen>:
     name: 'briefing'
     canvas.before:
@@ -430,3 +430,105 @@ ScreenManager:
 
         Widget:
             size_hint_y: 0.05
+
+# <--- [เพิ่มโค้ดส่วนนี้: หน้าจอ ModeScreen] --->
+# ════════════ ModeScreen ════════════
+<ModeScreen>:
+    name: 'mode'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.18, 0.04, 0.04, 0.35
+        Ellipse:
+            pos: -dp(80), self.height*0.15
+            size: dp(340), dp(340)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(32), dp(36)
+        spacing: dp(16)
+
+        Label:
+            text: '[b]เลือกโหมดเกม[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(30)
+            color: 1, 0.78, 0.18, 1
+            size_hint_y: None
+            height: dp(50)
+            halign: 'center'
+
+        Button:
+            text: '👤   โหมดเดี่ยว'
+            font_name: 'Sarabun'
+            font_size: sp(20)
+            size_hint_y: 0.16
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.set_mode('single')
+            canvas.before:
+                Color:
+                    rgba: 0.08, 0.38, 0.70, 0.85
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(14)]
+
+        Button:
+            text: '👥   2 ผู้เล่น (ผลัดกัน)'
+            font_name: 'Sarabun'
+            font_size: sp(20)
+            size_hint_y: 0.16
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.set_mode('2player')
+            canvas.before:
+                Color:
+                    rgba: 0.06, 0.50, 0.30, 0.85
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(14)]
+
+        Button:
+            text: '💀   Sudden Death'
+            font_name: 'Sarabun'
+            font_size: sp(20)
+            size_hint_y: 0.16
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.set_mode('sudden')
+            canvas.before:
+                Color:
+                    rgba: 0.65, 0.08, 0.06, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(14)]
+
+        Button:
+            text: '📅   Daily Challenge'
+            font_name: 'Sarabun'
+            font_size: sp(20)
+            size_hint_y: 0.16
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.set_mode('daily')
+            canvas.before:
+                Color:
+                    rgba: 0.45, 0.30, 0.02, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(14)]
+
+        Widget:
+# <----------------------------------------->
