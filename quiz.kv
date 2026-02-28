@@ -532,3 +532,88 @@ ScreenManager:
 
         Widget:
 # <----------------------------------------->
+
+# <--- [เพิ่มโค้ดส่วนนี้: หน้าจอ LevelScreen] --->
+# ════════════ LevelScreen ════════════
+<LevelScreen>:
+    name: 'level'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.18, 0.04, 0.04, 0.38
+        Ellipse:
+            pos: -dp(100), self.height*0.20
+            size: dp(360), dp(360)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(32), dp(40)
+        spacing: dp(20)
+
+        Label:
+            text: '[b]เลือกระดับความยาก[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(30)
+            color: 1, 0.78, 0.18, 1
+            size_hint_y: None
+            height: dp(52)
+            halign: 'center'
+
+        Button:
+            text: '🟢   ง่าย  —  15 วิ / 4 สาย / 5 ข้อ'
+            font_name: 'Sarabun'
+            font_size: sp(19)
+            size_hint_y: 0.20
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('easy')
+            canvas.before:
+                Color:
+                    rgba: 0.06, 0.50, 0.20, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+
+        Button:
+            text: '🟡   กลาง  —  10 วิ / 5 สาย / 7 ข้อ'
+            font_name: 'Sarabun'
+            font_size: sp(19)
+            size_hint_y: 0.20
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('medium')
+            canvas.before:
+                Color:
+                    rgba: 0.55, 0.42, 0.02, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+
+        Button:
+            text: '🔴   ยาก  —  7 วิ / 6 สาย / 10 ข้อ'
+            font_name: 'Sarabun'
+            font_size: sp(19)
+            size_hint_y: 0.20
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('hard')
+            canvas.before:
+                Color:
+                    rgba: 0.72, 0.10, 0.05, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+
+        Widget:
+# <----------------------------------------->
