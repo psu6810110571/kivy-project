@@ -28,6 +28,9 @@ class MenuScreen(Screen):
             title.opacity = 0
             Animation(opacity=1, duration=1.0, t='in_cubic').start(title)
 
+class BriefingScreen(Screen):    # <--- [เพิ่มบรรทัดนี้เข้ามา]
+    pass                         # <--- [เพิ่มบรรทัดนี้เข้ามา]
+
 class CategoryScreen(Screen):
     pass
 

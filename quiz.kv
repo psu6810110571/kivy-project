@@ -3,6 +3,7 @@
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
+    BriefingScreen:    # <--- [เพิ่มบรรทัดนี้เข้ามา]
     CategoryScreen:
 
 <MenuScreen>:
@@ -329,3 +330,103 @@ ScreenManager:
 
         Widget:
             size_hint_y: 0.2
+
+            # ════════════ BriefingScreen ════════════
+<BriefingScreen>:
+    name: 'briefing'
+    canvas.before:
+        Color:
+            rgba: 0.02, 0.08, 0.04, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.05, 0.22, 0.06, 0.35
+        Ellipse:
+            pos: -dp(80), self.height*0.20
+            size: dp(350), dp(350)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(36), dp(50)
+        spacing: dp(22)
+
+        Label:
+            text: '⚠️ MISSION BRIEFING'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            color: 0.3, 1, 0.4, 1
+            halign: 'center'
+            size_hint_y: None
+            height: dp(36)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(2)
+            canvas.before:
+                Color:
+                    rgba: 0.2, 1, 0.3, 0.5
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        Label:
+            id: lbl_agent_name
+            text: 'AGENT: ???'
+            font_name: 'Sarabun'
+            font_size: sp(28)
+            bold: True
+            color: 1, 0.85, 0.1, 1
+            halign: 'center'
+            size_hint_y: None
+            height: dp(50)
+
+        Label:
+            id: lbl_briefing
+            text: 'ระเบิดถูกวางไว้ในจุดลับ...\nคุณต้องตัดสายที่ถูกต้องก่อนหมดเวลา!'
+            font_name: 'Sarabun'
+            font_size: sp(17)
+            color: 0.8, 0.95, 0.8, 1
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.width - dp(20), None
+            size_hint_y: 0.4
+
+        Widget:
+            size_hint_y: 0.05
+
+        Label:
+            id: lbl_tap
+            text: '— รับภารกิจด้านล่าง —'
+            font_name: 'Sarabun'
+            font_size: sp(15)
+            color: 0.4, 0.8, 0.4, 0.7
+            halign: 'center'
+            size_hint_y: None
+            height: dp(30)
+
+        Widget:
+            size_hint_y: 0.1
+
+        Button:
+            text: '[b]  รับภารกิจ!  [/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(20)
+            size_hint: 0.70, None
+            height: dp(56)
+            pos_hint: {'center_x': 0.5}
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.root.current = 'category'
+            canvas.before:
+                Color:
+                    rgba: 0.08, 0.55, 0.18, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(14)]
+
+        Widget:
+            size_hint_y: 0.05
