@@ -8,7 +8,6 @@ from kivy.metrics import dp, sp
 from kivy.graphics import Color, Rectangle, RoundedRectangle, Line, Ellipse
 from kivy.animation import Animation
 
-# <--- [เพิ่มส่วนนี้: ตัวแปรสีของสายไฟ] --->
 WIRE_COLORS = [
     (1.00, 0.22, 0.18),  # แดง
     (0.18, 0.72, 1.00),  # ฟ้า
@@ -18,7 +17,6 @@ WIRE_COLORS = [
     (1.00, 0.55, 0.10),  # ส้ม
 ]
 WIRE_COLOR_NAMES = ['🔴 แดง', '🔵 ฟ้า', '🟢 เขียว', '🟡 เหลือง', '🟣 ม่วง', '🟠 ส้ม']
-# <--------------------------------->
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  VignetteWidget — ไฟแดงกระพริบรอบจอตอนเวลาใกล้หมด
@@ -84,7 +82,6 @@ class ComboDisplay(Label):
         (Animation(font_size=sp(24), duration=0.12) +
          Animation(font_size=sp(18), duration=0.12)).start(self)
 
-# <--- [เพิ่มส่วนนี้: คลาส ClockBombWidget (โครงสร้างพื้นฐาน)] --->
 # ─────────────────────────────────────────────────────────────────────────────
 #  ClockBombWidget - วิดเจ็ตระเบิดจับเวลาตอนเล่นเกม
 # ─────────────────────────────────────────────────────────────────────────────
@@ -152,7 +149,6 @@ class ClockBombWidget(Widget):
         bw, bh = r*2.2, r*1.6
         bx, by = cx-bw/2, cy-bh/2
         
-        # วาดบอดี้ระเบิด
         Color(0, 0, 0, 0.40)
         RoundedRectangle(pos=(bx+dp(4), by-dp(4)), size=(bw, bh), radius=[dp(14)])
         Color(0.10, 0.10, 0.14, 1)
@@ -171,7 +167,6 @@ class ClockBombWidget(Widget):
             Color(0.20, 0.20, 0.28, 1)
             Line(points=[sx-screw_r*.6, sy, sx+screw_r*.6, sy], width=dp(1.2))
             
-        # จอ LCD เปล่าๆ
         dw, dh = bw*0.68, bh*0.52
         dx, dy = cx-dw/2, cy-dh/2+bh*0.04
         Color(0.02, 0.10, 0.04, 1)
@@ -185,16 +180,63 @@ class ClockBombWidget(Widget):
         Color(dr, dg, db, pa)
         RoundedRectangle(pos=(dx, dy), size=(dw, dh), radius=[dp(8)])
         
-        # จุด Colon กะพริบตรงกลางจอ
+        # วาดตัวเลขลงในจอ
+        sc = self.digit_scale
+        ddw, ddh = dw*sc, dh*sc
+        ddx, ddy = cx-ddw/2, cy-ddh/2+bh*0.04
+        self._draw_digits(cx, cy, ddx, ddy, ddw, ddh, dr, dg, db)
+        
         ca = 0.5 + 0.5*self.pulse
         Color(dr, dg, db, ca)
         Ellipse(pos=(cx-dp(3), cy+dp(3)), size=(dp(5), dp(5)))
         Ellipse(pos=(cx-dp(3), cy-dp(8)), size=(dp(5), dp(5)))
         
-        # ไฟ LED ขวาบน
         led_r = dp(6)
         lx, ly = bx+bw-dp(22), by+bh-dp(15)
         pl = 0.5+0.5*self.pulse if t < 0.5 else 0.4
         Color(1.0, 0.15*(1-t), 0.05, pl)
         Ellipse(pos=(lx-led_r, ly-led_r), size=(led_r*2, led_r*2))
-# <------------------------------------------------------------------------>
+
+    # <--- [เพิ่มโค้ดส่วนนี้: 2 ฟังก์ชันสำหรับวาดตัวเลขดิจิทัล] --->
+    def _draw_digits(self, cx, cy, dx, dy, dw, dh, r, g, b):
+        try:
+            val = int(self.time_display)
+        except Exception:
+            val = 0
+        val = max(0, min(99, val)) # ไม่เกิน 99 วินาที
+        left_x = dx + dw*0.12
+        mid_x  = dx + dw*0.54
+        Color(r, g, b, 0.90)
+        self._draw_7seg(left_x,  dy, dw*0.36, dh, val//10, r, g, b) # หลักสิบ
+        self._draw_7seg(mid_x,   dy, dw*0.36, dh, val%10,  r, g, b) # หลักหน่วย
+
+    def _draw_7seg(self, x, y, w, h, digit, r, g, b):
+        sl = w*0.55
+        sh = h*0.08
+        mx = x+w/2
+        ty = y+h*0.84
+        my = y+h*0.50
+        by_ = y+h*0.14
+        
+        # แผนผังไฟ 7 ขีด สำหรับตัวเลข 0-9
+        SEG = {0:[1,1,1,0,1,1,1], 1:[0,0,1,0,0,1,0], 2:[1,0,1,1,1,0,1],
+               3:[1,0,1,1,0,1,1], 4:[0,1,1,1,0,1,0], 5:[1,1,0,1,0,1,1],
+               6:[1,1,0,1,1,1,1], 7:[1,0,1,0,0,1,0], 8:[1,1,1,1,1,1,1],
+               9:[1,1,1,1,0,1,1]}
+        segs = SEG.get(digit, [0]*7)
+        
+        def hs(px, py, on): # วาดเส้นแนวนอน
+            Color(r, g, b, 0.92 if on else 0.08)
+            Rectangle(pos=(px-sl/2, py-sh/2), size=(sl, sh))
+        def vs(px, py, on): # วาดเส้นแนวตั้ง
+            Color(r, g, b, 0.92 if on else 0.08)
+            Rectangle(pos=(px-sh/2, py-sl*0.5), size=(sh, sl*0.95))
+            
+        hs(mx, ty,  segs[0])
+        vs(mx-sl/2+sh, ty-sl*0.52, segs[1])
+        vs(mx+sl/2-sh, ty-sl*0.52, segs[2])
+        hs(mx, my,  segs[3])
+        vs(mx-sl/2+sh, my-sl*0.52, segs[4])
+        vs(mx+sl/2-sh, my-sl*0.52, segs[5])
+        hs(mx, by_, segs[6])
+    # <----------------------------------------------------------->
