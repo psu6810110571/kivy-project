@@ -20,6 +20,10 @@ LabelBase.register(
 # ── 2. ดึงวิดเจ็ตระเบิดมาจากโฟลเดอร์ widgets ─────────────────────────────────────────
 from widgets.bomb import BombWidget
 
+# <--- [เพิ่มบรรทัดนี้: นำเข้าลูกเล่นไฟกระพริบและคอมโบมาเตรียมไว้] --->
+from widgets.game_ui import VignetteWidget, ComboDisplay
+# <------------------------------------------------------------>
+
 # ── 3. หน้าจอต่างๆ ─────────────────────────────────────────────────────────────
 class MenuScreen(Screen):
     def on_enter(self):
@@ -46,13 +50,11 @@ class Player2SetupScreen(Screen):
 class ResultScreen(Screen):
     pass
 
-# <--- [เพิ่มตรงนี้: สร้างคลาสหน้าจอ Leaderboard และ Achievement] --->
 class LeaderboardScreen(Screen):
     pass
 
 class AchievementScreen(Screen):
     pass
-# <---------------------------------------------------------------->
 
 # ── 4. ตัวควบคุมแอปหลัก ─────────────────────────────────────────────────────────────
 class QuizApp(App):
@@ -105,7 +107,6 @@ class QuizApp(App):
     def go_home(self):
         self.root.current = 'menu'
 
-    # <--- [เพิ่มตรงนี้: ฟังก์ชันปุ่มหน้าสถิติ] --->
     def show_leaderboard(self):
         self._lb_prev = self.root.current 
         self.root.current = 'leaderboard'
@@ -115,7 +116,6 @@ class QuizApp(App):
 
     def show_achievements(self):
         self.root.current = 'achievements'
-    # <---------------------------------------->
 
 if __name__ == '__main__':
     QuizApp().run()
