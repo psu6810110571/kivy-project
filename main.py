@@ -34,10 +34,16 @@ class BriefingScreen(Screen):
 class CategoryScreen(Screen):
     pass
 
-# <--- [เพิ่มตรงนี้: สร้างคลาสหน้าจอ ModeScreen] --->
 class ModeScreen(Screen):
     pass
-# <----------------------------------------->
+
+class LevelScreen(Screen):
+    pass
+
+# <--- [เพิ่มตรงนี้: สร้างคลาสหน้าจอ ResultScreen] --->
+class ResultScreen(Screen):
+    pass
+# <------------------------------------------------>
 
 # ── 4. ตัวควบคุมแอปหลัก ─────────────────────────────────────────────────────────────
 class QuizApp(App):
@@ -60,22 +66,31 @@ class QuizApp(App):
         print(f"Agent '{self.player_name}' is ready!")
         self.root.current = 'category'
 
-    # <--- [เพิ่มตรงนี้: ฟังก์ชันเมื่อเลือกหมวดหมู่ ให้พาไปหน้าเลือกโหมด] --->
     def select_category(self, category):
         print(f"หมวดหมู่ที่เลือก: {category}")
         self._category = category
         self.root.current = 'mode'
     
-    # <--- [เพิ่มตรงนี้: ฟังก์ชันเมื่อกดเลือกโหมดเกม] --->
     def set_mode(self, mode):
         print(f"โหมดที่เลือก: {mode}")
         self._game_mode = mode
-        # (เดี๋ยวเราจะเขียนให้พาไปหน้าถัดไปใน Commit หน้านะครับ)
-    # <------------------------------------------------------->
+        if mode == 'single':
+            self.root.current = 'level'
+        else:
+            print(f"กำลังเริ่มเกมโหมดพิเศษ: {mode}")
 
     def start_game(self, category):
         print(f"กำลังสุ่มคำถามหมวด: {category} ให้กับผู้เล่น {self.player_name}...")
         # 📌 แจ้งเพื่อนคนที่ 2: ให้เขียนโค้ดสลับหน้าจอไปที่ game_screen ตรงนี้นะ!
+
+    # <--- [เพิ่มตรงนี้: ฟังก์ชันชั่วคราวสำหรับปุ่มในหน้า Result] --->
+    def play_again(self):
+        print("เริ่มเล่นใหม่อีกครั้ง!")
+        self.root.current = 'category'
+
+    def go_home(self):
+        self.root.current = 'menu'
+    # <------------------------------------------------------->
 
 if __name__ == '__main__':
     QuizApp().run()
