@@ -168,3 +168,21 @@ class GameEngine:
             self.Duringquiz_sound.stop()
         print("Game Reset! Ready for new round.")
 
+    def setup_level(self, level_key, mode='single'):
+        self.level_key = level_key
+        self.game_mode = mode
+        
+        # ข้อมูลจำลองความยาก 
+        levels = {
+            'easy':   {'time': 15, 'mult': 1.0},
+            'medium': {'time': 10, 'mult': 1.5},
+            'hard':   {'time': 7,  'mult': 2.5},
+            'sudden': {'time': 8,  'mult': 3.0},
+            'daily':  {'time': 10, 'mult': 2.0},
+        }
+        
+        selected = levels.get(level_key, levels['easy'])
+        self.time_left = selected['time']
+        self.score_multiplier = selected['mult']
+        
+        print(f"Level Setup: {level_key} mode | Time: {self.time_left}s | Mult: x{self.score_multiplier}")
