@@ -75,19 +75,46 @@ class GameEngine:
         else:
             self.game_over()
 
-    def check_answer(self, user_answer):
+        # ถ้าถูก: คำนวณคะแนนตามโหมด, เพิ่ม Combo
+        # ถ้าผิด: หักหัวใจ (Lives), รีเซ็ต Combo
+    def check_answer(self, user_answer_index, correct_answer_index):
         if not self.current_question:
             return False
             
-        correct_answer = self.current_question.get('answer', '')
+        correct_answer_index = self.current_question.get('answer_index', 0)
         
-        if user_answer == correct_answer:
-            self.score += 1
-            print(f"Correct! Score: {self.score}")
+        if user_answer_index == correct_answer_index:
+            self.combo += 1
+            self.max_combo = max(self.max_combo, self.combo)
+            self.correct_count += 1
+            
+            # คำนวณคะแนนฐาน + โบนัสคอมโบ นำไปคูณกับความยาก
+            base_points = 100
+            combo_bonus = max(0, self.combo - 1) * 15
+            total_points = int((base_points + combo_bonus) * self.score_multiplier)
+            
+            # บวกคะแนนให้ตรงกับผู้เล่น (โหมด 1 คน หรือ 2 คน)
+            if self.game_mode == '2player':
+                if self.current_player == 1:
+                    self.p1_score += total_points
+                else:
+                    self.p2_score += total_points
+            else:
+                self.score += total_points
+                
+            print(f"Correct! +{total_points} pts | Combo: x{self.combo}")
             return True
+            
         else:
-            self.time_left -= 5
-            print(f"Wrong! Time penalty. Time left: {self.time_left}")
+            # หักหัวใจ
+            self.combo = 0
+            self.lives -= 1
+            print(f"Wrong! Lives left: {self.lives}")
+            
+            # ถ้าหัวใจหมด หรือเล่นโหมด Sudden Death (ตอบผิดทีเดียวตาย)
+            if self.lives <= 0 or self.game_mode == 'sudden':
+                self.game_over()
+                
             return False
         
     def game_over(self):
