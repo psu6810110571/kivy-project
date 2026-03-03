@@ -177,11 +177,21 @@ class GameEngine:
         return self.hint_message
     
     def reset_game(self):
+        self.stop_game()
         self.score = 0
-        self.time_left = 60
-        self.hint_used = False
-        self.is_playing = False
+        self.p1_score = 0
+        self.p2_score = 0
+        self.current_player = 1
+        self.lives = 3
+        self.combo = 0
+        self.max_combo = 0
+        self.correct_count = 0
+        self.all_questions = []
         self.current_question = None
+
+        self.hint_used = False
+        self.is_playing = False 
+        
         if self.timer_event:
             self.timer_event.cancel()
 
