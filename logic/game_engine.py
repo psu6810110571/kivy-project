@@ -45,11 +45,9 @@ class GameEngine:
         if self.timer_event:
             self.timer_event.cancel()
 
-        self.score = 0
-        self.time_left = 60
         self.is_playing = True
 
-        if self.Duringquiz_sound:
+        if getattr(self, 'Duringquiz_sound', None):
             self.Duringquiz_sound.play()
         
         print("Game Started!")
@@ -58,22 +56,14 @@ class GameEngine:
     def update_time(self, dt):
         if self.time_left > 0:
             self.time_left -= 1
-            print(f"Time left: {self.time_left}")
 
-            if self.time_left == 10:
-                if self.Duringquiz_sound:
-                  self.Duringquiz_sound.stop()
-            
-            # แจ้งเตือนเวลาใกล้หมด
-            if self.time_left == 10 and self.warning_sound:
-                self.warning_sound.play()
+        if self.time_left == 10:
+                if getattr(self, 'Duringquiz_sound', None): self.Duringquiz_sound.stop()
+                if getattr(self, 'warning_sound', None): self.warning_sound.play()
                 print("10 seconds left!")
-
-            if self.time_left == 0 and self.explosion_sound:
-                self.explosion_sound.play()
-                print("Time's up! BOOM!")
         else:
-            self.game_over()
+            self.time_up()
+            
 
         # ถ้าถูก: คำนวณคะแนนตามโหมด, เพิ่ม Combo
         # ถ้าผิด: หักหัวใจ (Lives), รีเซ็ต Combo
