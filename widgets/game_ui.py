@@ -3,6 +3,7 @@ import random
 
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
+from kivy.uix.button import Button # <--- [เพิ่มบรรทัดนี้: นำเข้า Button]
 from kivy.properties import NumericProperty, StringProperty, BooleanProperty, ListProperty
 from kivy.metrics import dp, sp
 from kivy.graphics import Color, Rectangle, RoundedRectangle, Line, Ellipse
@@ -325,7 +326,6 @@ class ClockBombWidget(Widget):
                 Color(*wc, 0.5)
                 Line(points=[wx-br*.6, wb, wx+br*.6, wb], width=dp(1.5))
 
-    # <--- [เพิ่มโค้ดส่วนนี้: วาดระเบิดตูมตาม, กู้สำเร็จ และเช็คสัมผัสสายไฟ] --->
     def _draw_explosion(self, cx, cy, r):
         t = self.explode_t
         Color(1, 0.85, 0.10, max(0, 1.0-t*0.7))
@@ -356,7 +356,6 @@ class ClockBombWidget(Widget):
         Color(0.10, 0.75, 0.25, 0.6)
         Line(rounded_rectangle=(bx, by, bw, bh, dp(14)), width=dp(3))
         
-        # วาดเส้นติ๊กถูกสีเขียว (✅)
         Color(0.15, 1.0, 0.40, 1)
         ck = r*0.5
         Line(points=[cx-ck*.7, cy, cx-ck*.2, cy-ck*.6, cx+ck*.7, cy+ck*.6],
@@ -381,8 +380,52 @@ class ClockBombWidget(Widget):
             real_i = order[display_pos]
             wx    = start_x + display_pos * step
             wb    = by_ - wlen
-            # เช็คว่านิ้วสัมผัสบริเวณปลายสายไฟหรือไม่ (ระยะห่าง +- 22dp)
             if abs(touch_x-wx) < dp(22) and abs(touch_y-wb) < dp(22):
                 return real_i
         return -1
-    # <-------------------------------------------------------------------->
+
+# <--- [เพิ่มโค้ดส่วนนี้: คลาสปุ่มตัวเลือกคำตอบ (WireAnswerButton)] --->
+# ─────────────────────────────────────────────────────────────────────────────
+#  WireAnswerButton - ปุ่มกดตัวเลือกสายไฟสีต่างๆ
+# ─────────────────────────────────────────────────────────────────────────────
+class WireAnswerButton(Button):
+    wire_index = NumericProperty(0)
+    wire_color = ListProperty([1,1,1])
+    answered   = BooleanProperty(False)
+    is_correct = BooleanProperty(False)
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.background_color  = (0,0,0,0)
+        self.background_normal = ''
+        self.font_name  = 'Sarabun'
+        self.font_size  = sp(12)
+        self.color      = (1,1,1,1)
+        self.halign     = 'center'
+        self.valign     = 'middle'
+        self.bind(pos=self._r, size=self._r, wire_color=self._r, answered=self._r)
+
+    def _r(self, *_):
+        self.canvas.before.clear()
+        wc = self.wire_color
+        with self.canvas.before:
+            if self.answered:
+                # ถ้ากดตอบแล้ว ให้เปลี่ยนเป็นสีเขียว(ถูก) หรือ แดง(ผิด)
+                c = (0.1,0.9,0.3) if self.is_correct else (1,0.2,0.1)
+                Color(*c, 0.35)
+                RoundedRectangle(pos=self.pos, size=self.size, radius=[dp(10)])
+                Color(*c, 1)
+            else:
+                # สียังไม่กด จะเป็นสีตามสายไฟ
+                Color(*wc, 0.20)
+                RoundedRectangle(pos=self.pos, size=self.size, radius=[dp(10)])
+                Color(*wc, 0.85)
+            
+            Line(rounded_rectangle=(self.x, self.y, self.width, self.height, dp(10)),
+                 width=dp(1.8))
+            
+            if not self.answered:
+                Color(*wc, 1)
+                dr = dp(4)
+                Ellipse(pos=(self.x+dp(7), self.center_y-dr), size=(dr*2, dr*2))
+# <----------------------------------------------------------------------->
