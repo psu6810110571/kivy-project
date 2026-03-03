@@ -57,7 +57,7 @@ class GameEngine:
         if self.time_left > 0:
             self.time_left -= 1
 
-        if self.time_left == 10:
+            if self.time_left == 10:
                 if getattr(self, 'Duringquiz_sound', None): self.Duringquiz_sound.stop()
                 if getattr(self, 'warning_sound', None): self.warning_sound.play()
                 print("10 seconds left!")
@@ -123,9 +123,8 @@ class GameEngine:
 
         if getattr(self, 'Duringquiz_sound', None): self.Duringquiz_sound.stop()
         if getattr(self, 'warning_sound', None): self.warning_sound.stop()
-        if getattr(self, 'Duringquiz_sound', None): self.Duringquiz_sound.play()
 
-        if self.explosion_sound:
+        if getattr(self, 'explosion_sound', None): 
             self.explosion_sound.play()
         print(f"BOOM! Game Over! Final Score: {self.score}")
 
