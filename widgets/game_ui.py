@@ -134,6 +134,25 @@ class ClockBombWidget(Widget):
         self.boss_layer   = 0
         self.wire_order   = list(range(n_wires))
 
+    def shuffle_wires(self):
+        order = list(range(int(self.num_wires)))
+        random.shuffle(order)
+        self.wire_order = order
+
+    def start_explode(self):
+        self.exploding = True
+        self.defused   = False
+        Animation(explode_t=1.0, duration=0.9, t='out_quad').start(self)
+
+    def start_defuse(self):
+        self.defused   = True
+        self.exploding = False
+
+    def anim_countdown(self):
+        a = (Animation(digit_scale=1.35, duration=0.12, t='out_back') +
+             Animation(digit_scale=1.0,  duration=0.12))
+        a.start(self)
+
     def _draw(self, *_):
         self.canvas.clear()
         w, h = self.size
@@ -143,13 +162,23 @@ class ClockBombWidget(Widget):
         cy = self.y + h * 0.62
         r  = min(w * 0.32, h * 0.40, dp(90))
         with self.canvas:
-            self._draw_bomb(cx, cy, r)
-            self._draw_wires(cx, cy, r) # <--- [เพิ่มคำสั่งให้วาดสายไฟตรงนี้] --->
+            if self.exploding:
+                self._draw_explosion(cx, cy, r)
+            elif self.defused:
+                self._draw_defused(cx, cy, r)
+            else:
+                self._draw_bomb(cx, cy, r)
+                self._draw_wires(cx, cy, r)
 
     def _draw_bomb(self, cx, cy, r):
         bw, bh = r*2.2, r*1.6
         bx, by = cx-bw/2, cy-bh/2
         
+        if self.is_boss:
+            boss_c = 1.0 if self.boss_layer == 0 else 0.6
+            Color(1, 0.4*boss_c, 0, 0.25)
+            Ellipse(pos=(bx-dp(8), by-dp(8)), size=(bw+dp(16), bh+dp(16)))
+            
         Color(0, 0, 0, 0.40)
         RoundedRectangle(pos=(bx+dp(4), by-dp(4)), size=(bw, bh), radius=[dp(14)])
         Color(0.10, 0.10, 0.14, 1)
@@ -157,8 +186,13 @@ class ClockBombWidget(Widget):
         Color(0.18, 0.18, 0.24, 1)
         RoundedRectangle(pos=(bx+dp(2), by+dp(2)), size=(bw-dp(4), bh-dp(4)), radius=[dp(12)])
         
-        Color(0.35, 0.35, 0.45, 1)
-        Line(rounded_rectangle=(bx, by, bw, bh, dp(14)), width=dp(2.5))
+        if self.is_boss:
+            lc = (1, 0.4, 0.1) if self.boss_layer == 0 else (0.8, 0.2, 1)
+            Color(*lc, 0.9)
+            Line(rounded_rectangle=(bx, by, bw, bh, dp(14)), width=dp(3.5))
+        else:
+            Color(0.35, 0.35, 0.45, 1)
+            Line(rounded_rectangle=(bx, by, bw, bh, dp(14)), width=dp(2.5))
         
         screw_r = dp(5)
         for sx, sy in [(bx+dp(12), by+dp(12)), (bx+bw-dp(12), by+dp(12)),
@@ -196,6 +230,8 @@ class ClockBombWidget(Widget):
         pl = 0.5+0.5*self.pulse if t < 0.5 else 0.4
         Color(1.0, 0.15*(1-t), 0.05, pl)
         Ellipse(pos=(lx-led_r, ly-led_r), size=(led_r*2, led_r*2))
+        Color(1.0, 0.5, 0.3, pl*0.3)
+        Ellipse(pos=(lx-led_r*2, ly-led_r*2), size=(led_r*4, led_r*4))
 
     def _draw_digits(self, cx, cy, dx, dy, dw, dh, r, g, b):
         try:
@@ -238,7 +274,6 @@ class ClockBombWidget(Widget):
         vs(mx+sl/2-sh, my-sl*0.52, segs[5])
         hs(mx, by_, segs[6])
 
-    # <--- [เพิ่มโค้ดส่วนนี้: ฟังก์ชันวาดสายไฟระเบิด] --->
     def _draw_wires(self, cx, cy, r):
         bw, bh = r*2.2, r*1.6
         by_ = cy - bh/2
@@ -259,7 +294,7 @@ class ClockBombWidget(Widget):
             wc    = WIRE_COLORS[real_i % len(WIRE_COLORS)]
             state = self.wire_states[real_i] if real_i < len(self.wire_states) else -1
 
-            if state == 0: # ตัดถูก (สายขาด แสดงไฟเขียวเล็กๆ)
+            if state == 0: 
                 mid_y = wt - wlen*0.5
                 Color(0.1, 1.0, 0.35, 1)
                 Line(points=[wx, wt, wx, mid_y+dp(4)], width=dp(3.5))
@@ -268,7 +303,7 @@ class ClockBombWidget(Widget):
                 Ellipse(pos=(wx-dp(7), mid_y-dp(7)), size=(dp(14), dp(14)))
                 Color(1, 1, 1, 0.6)
                 Ellipse(pos=(wx-dp(3), mid_y-dp(3)), size=(dp(6), dp(6)))
-            elif state == 1: # ตัดผิด (สายขาด แสดงประกายไฟสีส้มแดง)
+            elif state == 1:
                 mid_y = wt - wlen*0.45
                 Color(1, 0.2, 0.1, 1)
                 Line(points=[wx, wt, wx, mid_y+dp(6)], width=dp(3.5))
@@ -277,7 +312,7 @@ class ClockBombWidget(Widget):
                 Ellipse(pos=(wx-dp(6), mid_y-dp(6)), size=(dp(12), dp(12)))
                 Color(1, 0.4, 0.1, 0.5)
                 Ellipse(pos=(wx-dp(11), mid_y-dp(11)), size=(dp(22), dp(22)))
-            else: # สายปกติ
+            else:
                 Color(*wc, 1)
                 Line(points=[wx, wt, wx, wb], width=dp(4.5))
                 br = dp(14)
@@ -289,4 +324,65 @@ class ClockBombWidget(Widget):
                 Ellipse(pos=(wx-br*.55, wb+br*.1), size=(br, br*.55))
                 Color(*wc, 0.5)
                 Line(points=[wx-br*.6, wb, wx+br*.6, wb], width=dp(1.5))
-    # <--------------------------------------------------->
+
+    # <--- [เพิ่มโค้ดส่วนนี้: วาดระเบิดตูมตาม, กู้สำเร็จ และเช็คสัมผัสสายไฟ] --->
+    def _draw_explosion(self, cx, cy, r):
+        t = self.explode_t
+        Color(1, 0.85, 0.10, max(0, 1.0-t*0.7))
+        Ellipse(pos=(cx-r*(1+t*3), cy-r*(1+t*3)), size=(r*2*(1+t*3), r*2*(1+t*3)))
+        Color(1, 0.45, 0.02, max(0, 0.85-t))
+        Ellipse(pos=(cx-r*(0.6+t*2.2), cy-r*(0.6+t*2.2)), size=(r*2*(0.6+t*2.2), r*2*(0.6+t*2.2)))
+        Color(1, 1, 1, max(0, 0.7-t*1.2))
+        Ellipse(pos=(cx-r*(0.25+t*.8), cy-r*(0.25+t*.8)), size=(r*2*(0.25+t*.8), r*2*(0.25+t*.8)))
+        
+        for i in range(16):
+            angle = (i/16)*math.pi*2 + t*1.2
+            dist  = r*(0.5+t*4.0)
+            px    = cx + math.cos(angle)*dist
+            py    = cy + math.sin(angle)*dist
+            sz    = dp(8)*(1-t*0.8)
+            Color(0.15+i*0.02, 0.15, 0.15, max(0, 1-t*1.3))
+            Ellipse(pos=(px-sz/2, py-sz/2), size=(sz, sz))
+            
+        Color(1, 0.65, 0.1, max(0, 0.6-t))
+        Line(circle=(cx, cy, r*(0.8+t*5)), width=max(dp(1), dp(4)*(1-t)))
+
+    def _draw_defused(self, cx, cy, r):
+        bw, bh = r*2.2, r*1.6
+        bx, by = cx-bw/2, cy-bh/2
+        
+        Color(0.05, 0.18, 0.06, 1)
+        RoundedRectangle(pos=(bx, by), size=(bw, bh), radius=[dp(14)])
+        Color(0.10, 0.75, 0.25, 0.6)
+        Line(rounded_rectangle=(bx, by, bw, bh, dp(14)), width=dp(3))
+        
+        # วาดเส้นติ๊กถูกสีเขียว (✅)
+        Color(0.15, 1.0, 0.40, 1)
+        ck = r*0.5
+        Line(points=[cx-ck*.7, cy, cx-ck*.2, cy-ck*.6, cx+ck*.7, cy+ck*.6],
+             width=dp(5), cap='round', joint='round')
+
+    def get_wire_at(self, touch_x, touch_y):
+        n = int(self.num_wires)
+        if n == 0:
+            return -1
+        r  = min(self.width*0.32, self.height*0.40, dp(90))
+        bw, bh = r*2.2, r*1.6
+        cx = self.center_x + self.shake_x
+        cy = self.y + self.height*0.62
+        by_ = cy - bh/2
+        spread  = min(bw*0.85, dp(20)*n)
+        start_x = cx - spread/2 + spread/(2*n)
+        step    = spread/n if n > 1 else 0
+        wlen    = dp(72)
+        order   = list(self.wire_order) if len(self.wire_order) == n else list(range(n))
+        
+        for display_pos in range(n):
+            real_i = order[display_pos]
+            wx    = start_x + display_pos * step
+            wb    = by_ - wlen
+            # เช็คว่านิ้วสัมผัสบริเวณปลายสายไฟหรือไม่ (ระยะห่าง +- 22dp)
+            if abs(touch_x-wx) < dp(22) and abs(touch_y-wb) < dp(22):
+                return real_i
+        return -1
+    # <-------------------------------------------------------------------->
