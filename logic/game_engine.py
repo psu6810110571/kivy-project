@@ -157,9 +157,13 @@ class GameEngine:
 
     def get_summary(self):
         summary_data = {
+            "mode": self.game_mode,
             "score": self.score,
-            "time_left": self.time_left,
-            "status": "Time Up" if self.time_left <= 0 else "Finished"
+            "p1_score": self.p1_score,
+            "p2_score": self.p2_score,
+            "max_combo": self.max_combo,
+            "correct_count": self.correct_count,
+            "status": "Time Up" if self.lives > 0 else "Finished"
         }
         print(f"Game Summary: {summary_data}")
         return summary_data  
@@ -191,7 +195,7 @@ class GameEngine:
 
         self.hint_used = False
         self.is_playing = False 
-        
+
         if self.timer_event:
             self.timer_event.cancel()
 
