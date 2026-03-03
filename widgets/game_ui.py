@@ -144,6 +144,7 @@ class ClockBombWidget(Widget):
         r  = min(w * 0.32, h * 0.40, dp(90))
         with self.canvas:
             self._draw_bomb(cx, cy, r)
+            self._draw_wires(cx, cy, r) # <--- [เพิ่มคำสั่งให้วาดสายไฟตรงนี้] --->
 
     def _draw_bomb(self, cx, cy, r):
         bw, bh = r*2.2, r*1.6
@@ -180,7 +181,6 @@ class ClockBombWidget(Widget):
         Color(dr, dg, db, pa)
         RoundedRectangle(pos=(dx, dy), size=(dw, dh), radius=[dp(8)])
         
-        # วาดตัวเลขลงในจอ
         sc = self.digit_scale
         ddw, ddh = dw*sc, dh*sc
         ddx, ddy = cx-ddw/2, cy-ddh/2+bh*0.04
@@ -197,18 +197,17 @@ class ClockBombWidget(Widget):
         Color(1.0, 0.15*(1-t), 0.05, pl)
         Ellipse(pos=(lx-led_r, ly-led_r), size=(led_r*2, led_r*2))
 
-    # <--- [เพิ่มโค้ดส่วนนี้: 2 ฟังก์ชันสำหรับวาดตัวเลขดิจิทัล] --->
     def _draw_digits(self, cx, cy, dx, dy, dw, dh, r, g, b):
         try:
             val = int(self.time_display)
         except Exception:
             val = 0
-        val = max(0, min(99, val)) # ไม่เกิน 99 วินาที
+        val = max(0, min(99, val))
         left_x = dx + dw*0.12
         mid_x  = dx + dw*0.54
         Color(r, g, b, 0.90)
-        self._draw_7seg(left_x,  dy, dw*0.36, dh, val//10, r, g, b) # หลักสิบ
-        self._draw_7seg(mid_x,   dy, dw*0.36, dh, val%10,  r, g, b) # หลักหน่วย
+        self._draw_7seg(left_x,  dy, dw*0.36, dh, val//10, r, g, b)
+        self._draw_7seg(mid_x,   dy, dw*0.36, dh, val%10,  r, g, b)
 
     def _draw_7seg(self, x, y, w, h, digit, r, g, b):
         sl = w*0.55
@@ -218,17 +217,16 @@ class ClockBombWidget(Widget):
         my = y+h*0.50
         by_ = y+h*0.14
         
-        # แผนผังไฟ 7 ขีด สำหรับตัวเลข 0-9
         SEG = {0:[1,1,1,0,1,1,1], 1:[0,0,1,0,0,1,0], 2:[1,0,1,1,1,0,1],
                3:[1,0,1,1,0,1,1], 4:[0,1,1,1,0,1,0], 5:[1,1,0,1,0,1,1],
                6:[1,1,0,1,1,1,1], 7:[1,0,1,0,0,1,0], 8:[1,1,1,1,1,1,1],
                9:[1,1,1,1,0,1,1]}
         segs = SEG.get(digit, [0]*7)
         
-        def hs(px, py, on): # วาดเส้นแนวนอน
+        def hs(px, py, on):
             Color(r, g, b, 0.92 if on else 0.08)
             Rectangle(pos=(px-sl/2, py-sh/2), size=(sl, sh))
-        def vs(px, py, on): # วาดเส้นแนวตั้ง
+        def vs(px, py, on):
             Color(r, g, b, 0.92 if on else 0.08)
             Rectangle(pos=(px-sh/2, py-sl*0.5), size=(sh, sl*0.95))
             
@@ -239,4 +237,56 @@ class ClockBombWidget(Widget):
         vs(mx-sl/2+sh, my-sl*0.52, segs[4])
         vs(mx+sl/2-sh, my-sl*0.52, segs[5])
         hs(mx, by_, segs[6])
-    # <----------------------------------------------------------->
+
+    # <--- [เพิ่มโค้ดส่วนนี้: ฟังก์ชันวาดสายไฟระเบิด] --->
+    def _draw_wires(self, cx, cy, r):
+        bw, bh = r*2.2, r*1.6
+        by_ = cy - bh/2
+        n   = int(self.num_wires)
+        if n == 0:
+            return
+        spread  = min(bw*0.85, dp(20)*n)
+        start_x = cx - spread/2 + spread/(2*n)
+        step    = spread/n if n > 1 else 0
+        wlen    = dp(72)
+
+        order = list(self.wire_order) if len(self.wire_order) == n else list(range(n))
+        for display_pos in range(n):
+            real_i = order[display_pos]
+            wx    = start_x + display_pos * step
+            wt    = by_
+            wb    = wt - wlen
+            wc    = WIRE_COLORS[real_i % len(WIRE_COLORS)]
+            state = self.wire_states[real_i] if real_i < len(self.wire_states) else -1
+
+            if state == 0: # ตัดถูก (สายขาด แสดงไฟเขียวเล็กๆ)
+                mid_y = wt - wlen*0.5
+                Color(0.1, 1.0, 0.35, 1)
+                Line(points=[wx, wt, wx, mid_y+dp(4)], width=dp(3.5))
+                Line(points=[wx, wb, wx, mid_y-dp(4)], width=dp(3.5))
+                Color(0.1, 1.0, 0.35, 0.8)
+                Ellipse(pos=(wx-dp(7), mid_y-dp(7)), size=(dp(14), dp(14)))
+                Color(1, 1, 1, 0.6)
+                Ellipse(pos=(wx-dp(3), mid_y-dp(3)), size=(dp(6), dp(6)))
+            elif state == 1: # ตัดผิด (สายขาด แสดงประกายไฟสีส้มแดง)
+                mid_y = wt - wlen*0.45
+                Color(1, 0.2, 0.1, 1)
+                Line(points=[wx, wt, wx, mid_y+dp(6)], width=dp(3.5))
+                Line(points=[wx, wb, wx, mid_y-dp(6)], width=dp(3.5))
+                Color(1, 0.85, 0.1, 0.95)
+                Ellipse(pos=(wx-dp(6), mid_y-dp(6)), size=(dp(12), dp(12)))
+                Color(1, 0.4, 0.1, 0.5)
+                Ellipse(pos=(wx-dp(11), mid_y-dp(11)), size=(dp(22), dp(22)))
+            else: # สายปกติ
+                Color(*wc, 1)
+                Line(points=[wx, wt, wx, wb], width=dp(4.5))
+                br = dp(14)
+                Color(*wc, 0.25)
+                Ellipse(pos=(wx-br*1.5, wb-br*1.5), size=(br*3, br*3))
+                Color(*wc, 0.85)
+                Ellipse(pos=(wx-br, wb-br), size=(br*2, br*2))
+                Color(1, 1, 1, 0.30)
+                Ellipse(pos=(wx-br*.55, wb+br*.1), size=(br, br*.55))
+                Color(*wc, 0.5)
+                Line(points=[wx-br*.6, wb, wx+br*.6, wb], width=dp(1.5))
+    # <--------------------------------------------------->
