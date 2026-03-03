@@ -1,5 +1,16 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 
+# Global text rendering defaults to avoid Thai/diacritic glyph overlap.
+<Label>:
+    font_hinting: 'normal'
+    font_kerning: False
+    mipmap: True
+
+<Button>:
+    font_hinting: 'normal'
+    font_kerning: False
+    mipmap: True
+
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
@@ -8,9 +19,10 @@ ScreenManager:
     ModeScreen:        
     LevelScreen:
     Player2SetupScreen:
+    GameScreen:            # <--- เพิ่ม GameScreen ตรงนี้แล้ว
     ResultScreen:
-    LeaderboardScreen:     # <--- [เพิ่มบรรทัดนี้เข้ามา]
-    AchievementScreen:     # <--- [เพิ่มบรรทัดนี้เข้ามา]
+    LeaderboardScreen:     
+    AchievementScreen:     
 
 <MenuScreen>:
     name: 'menu'
@@ -752,6 +764,59 @@ ScreenManager:
 
         Widget:
 
+# <--- [เพิ่มหน้า GameScreen เบื้องต้น] --->
+<GameScreen>:
+    name: 'game'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(20)
+        spacing: dp(15)
+
+        # ส่วนที่ 1: แสดงข้อความคำถาม
+        Label:
+            id: lbl_question
+            text: 'กำลังโหลดคำถาม...'
+            font_name: 'Sarabun'
+            font_size: sp(18)
+            color: 1, 0.9, 0.8, 1
+            padding: dp(20), dp(10)
+            size_hint_y: None
+            text_size: self.width - dp(40), None
+            height: self.texture_size[1] + dp(20)
+            halign: 'center'
+            valign: 'middle'
+            line_height: 1.6
+            font_hinting: 'normal'
+            font_kerning: True
+            mipmap: True
+
+        # ส่วนที่ 2: แสดงรูปก้อนระเบิดตรงกลาง
+        BombWidget:
+            id: bomb_widget
+            size_hint_y: 0.4
+
+        # ส่วนที่ 3: พื้นที่สำหรับใส่ปุ่มตัวเลือกคำตอบ
+        GridLayout:
+            id: answer_grid
+            cols: 2
+            spacing: dp(10)
+            size_hint_y: 0.3
+
+        Button:
+            text: 'จบเกม (ไปหน้า Result)'
+            font_name: 'Sarabun'
+            size_hint_y: 0.1
+            on_release: app.root.current = 'result'
+            background_color: 0.8, 0.2, 0.2, 1
+# <----------------------------------------->
+
 <ResultScreen>:
     name: 'result'
     canvas.before:
@@ -878,7 +943,7 @@ ScreenManager:
                 background_color: 0, 0, 0, 0
                 color: 0.85, 0.70, 1, 1
                 on_press: app.btn_press_anim(self)
-                on_release: app.show_leaderboard()       # <--- [แก้ไขตรงนี้ให้เรียกฟังก์ชันแทนการ print]
+                on_release: app.show_leaderboard()
                 canvas.before:
                     Color:
                         rgba: 0.25, 0.08, 0.50, 0.85
@@ -906,7 +971,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.03
 
-# <--- [เพิ่มโค้ดส่วนนี้: หน้าจอ Leaderboard และ Achievement] --->
 # ════════════ LeaderboardScreen ════════════
 <LeaderboardScreen>:
     name: 'leaderboard'
@@ -1042,4 +1106,3 @@ ScreenManager:
                     pos: self.pos
                     size: self.size
                     radius: [dp(11)]
-# <---------------------------------------------------------------->

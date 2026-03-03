@@ -1,3 +1,8 @@
+import os
+
+# Fix Thai/diacritic glyph overlap: use PIL text provider (must be set before importing Kivy)
+os.environ.setdefault('KIVY_TEXT', 'pil')
+
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button

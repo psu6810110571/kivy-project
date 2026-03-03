@@ -69,11 +69,18 @@ class GameEngine:
 
         # ถ้าถูก: คำนวณคะแนนตามโหมด, เพิ่ม Combo
         # ถ้าผิด: หักหัวใจ (Lives), รีเซ็ต Combo
-    def check_answer(self, user_answer_index, correct_answer_index):
+    def check_answer(self, user_answer_index, correct_answer_index=None):
         if not self.current_question:
             return False
-            
-        correct_answer_index = self.current_question.get('answer_index', 0)
+
+        # รองรับ 2 รูปแบบ:
+        # 1) caller ส่ง correct_answer_index เข้ามา (เช่น test_engine.py)
+        # 2) ใช้เฉลยที่เก็บอยู่ใน current_question (answer_index หรือ correct)
+        if correct_answer_index is None:
+            if 'answer_index' in self.current_question:
+                correct_answer_index = self.current_question.get('answer_index', 0)
+            else:
+                correct_answer_index = self.current_question.get('correct', 0)
         
         if user_answer_index == correct_answer_index:
             self.combo += 1
