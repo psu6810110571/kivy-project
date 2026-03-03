@@ -63,7 +63,6 @@ class GameEngine:
                 print("10 seconds left!")
         else:
             self.time_up()
-            
 
         # ถ้าถูก: คำนวณคะแนนตามโหมด, เพิ่ม Combo
         # ถ้าผิด: หักหัวใจ (Lives), รีเซ็ต Combo
@@ -106,20 +105,28 @@ class GameEngine:
                 self.game_over()
                 
             return False
+    
+    def time_up(self):
+        if not self.is_playing: return
         
+        self.combo = 0
+        self.lives -= 1
+        print(f"Time Up! Lives left: {self.lives}")
+        
+        if self.lives <= 0 or self.game_mode == 'sudden':
+            self.game_over()
+
     def game_over(self):
         self.is_playing = False
         if self.timer_event:
             self.timer_event.cancel()
 
-        if self.warning_sound:
-            self.warning_sound.stop()
-
-        if getattr(self, 'warning_sound', None): self.warning_sound.stop()
         if getattr(self, 'Duringquiz_sound', None): self.Duringquiz_sound.stop()
+        if getattr(self, 'warning_sound', None): self.warning_sound.stop()
+        if getattr(self, 'Duringquiz_sound', None): self.Duringquiz_sound.play()
 
         if self.explosion_sound:
-            self.explosion_sound.stop()
+            self.explosion_sound.play()
         print(f"BOOM! Game Over! Final Score: {self.score}")
 
     def set_questions(self, question_list):
