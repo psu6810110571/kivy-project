@@ -4,13 +4,31 @@ import random
 
 class GameEngine:
     def __init__(self):
+        # 1. ตัวแปรพื้นฐาน
         self.score = 0
-        self.time_left = 60
+        self.time_left = 0
         self.is_playing = False
         self.timer_event = None
 
+        # 2. ข้อมูลคำถาม (รอรับจากเพื่อน)
         self.all_questions = []
         self.current_question = None
+
+        # 3. ตัวแปรระบบใหม่ (Lives & Combo)
+        self.lives = 3
+        self.combo = 0
+        self.max_combo = 0
+        self.correct_count = 0
+
+        # 4. ตัวแปรสำหรับโหมดเกมและความยาก
+        self.game_mode = 'single' # โหมด: single, 2player, sudden, daily
+        self.level_key = 'easy'   # ระดับ: easy, medium, hard
+        self.score_multiplier = 1.0
+
+        # 5. ตัวแปรโหมด 2 ผู้เล่น
+        self.p1_score = 0
+        self.p2_score = 0
+        self.current_player = 1 # 1 หรือ 2
 
         self.hint_used = False 
         self.hint_message = "" # ข้อความคำใบ้ที่จะแสดง
