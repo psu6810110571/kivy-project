@@ -3,14 +3,15 @@
 ScreenManager:
     transition: app.fade_transition()
     MenuScreen:
-    BriefingScreen:    
+    BriefingScreen:
     CategoryScreen:
-    ModeScreen:        
+    ModeScreen:
     LevelScreen:
     Player2SetupScreen:
+    GameScreen:
     ResultScreen:
-    LeaderboardScreen:     # <--- [เพิ่มบรรทัดนี้เข้ามา]
-    AchievementScreen:     # <--- [เพิ่มบรรทัดนี้เข้ามา]
+    LeaderboardScreen:
+    AchievementScreen:
 
 <MenuScreen>:
     name: 'menu'
@@ -259,7 +260,7 @@ ScreenManager:
             size_hint_y: 0.015
 
         Label:
-            text: 'TIME-ATTACK QUIZ  v1.0'
+            text: 'BOMB QUIZ  v4.0'
             font_name: 'Sarabun'
             font_size: sp(11)
             color: 0.24, 0.24, 0.40, 1
@@ -397,7 +398,7 @@ ScreenManager:
         Ellipse:
             pos: self.width-dp(220), -dp(100)
             size: dp(400), dp(400)
-            
+
     BoxLayout:
         orientation: 'vertical'
         padding: dp(40), dp(50)
@@ -410,7 +411,7 @@ ScreenManager:
             font_size: sp(35)
             color: 1, 0.8, 0.2, 1
             size_hint_y: 0.2
-        
+
         Button:
             text: '📘 ความรู้ทั่วไป'
             font_name: 'Sarabun'
@@ -752,6 +753,11 @@ ScreenManager:
 
         Widget:
 
+# ════════════ GameScreen (placeholder สำหรับเพื่อนคนที่ 2) ════════════
+<GameScreen>:
+    name: 'game'
+
+# ════════════ ResultScreen ════════════
 <ResultScreen>:
     name: 'result'
     canvas.before:
@@ -878,7 +884,7 @@ ScreenManager:
                 background_color: 0, 0, 0, 0
                 color: 0.85, 0.70, 1, 1
                 on_press: app.btn_press_anim(self)
-                on_release: app.show_leaderboard()       # <--- [แก้ไขตรงนี้ให้เรียกฟังก์ชันแทนการ print]
+                on_release: app.show_leaderboard()
                 canvas.before:
                     Color:
                         rgba: 0.25, 0.08, 0.50, 0.85
@@ -906,7 +912,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.03
 
-# <--- [เพิ่มโค้ดส่วนนี้: หน้าจอ Leaderboard และ Achievement] --->
 # ════════════ LeaderboardScreen ════════════
 <LeaderboardScreen>:
     name: 'leaderboard'
@@ -1042,4 +1047,3 @@ ScreenManager:
                     pos: self.pos
                     size: self.size
                     radius: [dp(11)]
-# <---------------------------------------------------------------->

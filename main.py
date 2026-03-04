@@ -19,10 +19,10 @@ LabelBase.register(
 
 # ── 2. ดึงวิดเจ็ตระเบิดมาจากโฟลเดอร์ widgets ─────────────────────────────────────────
 from widgets.bomb import BombWidget
-
-# <--- [เพิ่มบรรทัดนี้: นำเข้าลูกเล่นไฟกระพริบและคอมโบมาเตรียมไว้] --->
 from widgets.game_ui import VignetteWidget, ComboDisplay
-# <------------------------------------------------------------>
+
+# ── นำเข้า GameScreen จาก screens ────────────────────────────────────────────────────
+from screens.game_screen import GameScreen
 
 # ── 3. หน้าจอต่างๆ ─────────────────────────────────────────────────────────────
 class MenuScreen(Screen):
@@ -32,8 +32,8 @@ class MenuScreen(Screen):
             title.opacity = 0
             Animation(opacity=1, duration=1.0, t='in_cubic').start(title)
 
-class BriefingScreen(Screen):    
-    pass                         
+class BriefingScreen(Screen):
+    pass
 
 class CategoryScreen(Screen):
     pass
@@ -73,14 +73,19 @@ class QuizApp(App):
 
     def go_to_category(self, name):
         self.player_name = name.strip() or 'Unknown Agent'
-        print(f"Agent '{self.player_name}' is ready!")
-        self.root.current = 'category'
+        # อัปเดตชื่อ Agent ใน BriefingScreen
+        try:
+            briefing = self.root.get_screen('briefing')
+            briefing.ids.lbl_agent_name.text = f'AGENT: {self.player_name}'
+        except Exception:
+            pass
+        self.root.current = 'briefing'
 
     def select_category(self, category):
         print(f"หมวดหมู่ที่เลือก: {category}")
         self._category = category
         self.root.current = 'mode'
-    
+
     def set_mode(self, mode):
         print(f"โหมดที่เลือก: {mode}")
         self._game_mode = mode
@@ -88,17 +93,23 @@ class QuizApp(App):
             self.root.current = 'level'
         elif mode == '2player':
             self.root.current = 'p2setup'
-        else:
-            print(f"กำลังเริ่มเกมโหมดพิเศษ: {mode}")
+        elif mode == 'sudden':
+            self._level = 'sudden'
+            self.root.current = 'game'
+        elif mode == 'daily':
+            self._level = 'daily'
+            self.root.current = 'game'
 
     def start_2player(self, p2name):
         self._p2_name = p2name.strip() or 'Player 2'
         print(f"ตั้งชื่อผู้เล่น 2 สำเร็จ: {self._p2_name}")
-        self.start_game('medium')
+        self._level = 'medium'
+        self.root.current = 'game'
 
     def start_game(self, level):
         print(f"กำลังเริ่มเกมระดับ: {level}...")
-        # 📌 แจ้งเพื่อนคนที่ 2: ให้เขียนโค้ดสลับหน้าจอไปที่ game_screen ตรงนี้นะ!
+        self._level = level
+        self.root.current = 'game'
 
     def play_again(self):
         print("เริ่มเล่นใหม่อีกครั้ง!")
@@ -108,7 +119,7 @@ class QuizApp(App):
         self.root.current = 'menu'
 
     def show_leaderboard(self):
-        self._lb_prev = self.root.current 
+        self._lb_prev = self.root.current
         self.root.current = 'leaderboard'
 
     def go_back_from_lb(self):
