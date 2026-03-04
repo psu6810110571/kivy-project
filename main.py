@@ -20,3 +20,28 @@ try:
     )
 except Exception:
     pass
+
+class MenuScreen(Screen):
+    def on_enter(self):
+        title = self.ids.get('title_label')
+        if title:
+            title.opacity = 0
+            Animation(opacity=1, duration=1.0, t='in_cubic').start(title)
+
+class BriefingScreen(Screen):
+    pass
+
+class CategoryScreen(Screen):
+    pass
+
+class ModeScreen(Screen):
+    pass
+
+class LevelScreen(Screen):
+    pass
+
+class Player2SetupScreen(Screen):
+    pass
+
+class ResultScreen(Screen):
+    pass
