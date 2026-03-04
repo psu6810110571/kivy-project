@@ -23,6 +23,7 @@ ACHIEVEMENTS = [
     {"id": "tag_team",     "icon": "👥", "name": "Tag Team",     "desc": "ชนะโหมด 2 ผู้เล่น"},
 ]
 
+
 # ══════════════════════════════════════════════════════════════════════════════
 #  Leaderboard
 # ══════════════════════════════════════════════════════════════════════════════
@@ -36,6 +37,7 @@ def _load_lb() -> list:
         print(f"[LB] load error: {e}")
     return []
 
+
 def _save_lb(data: list):
     try:
         with open(LB_FILE, 'w', encoding='utf-8') as f:
@@ -43,26 +45,44 @@ def _save_lb(data: list):
     except Exception as e:
         print(f"[LB] save error: {e}")
 
+
 def save_score(name: str, score: int, category: str = 'general', level: str = 'easy'):
-    if score <= 0: return
+    """บันทึกคะแนนลง leaderboard.json"""
+    if score <= 0:
+        return
     data = _load_lb()
-    entry = {"name": name, "score": score, "category": category, "level": level}
+    entry = {
+        "name":     name,
+        "score":    score,
+        "category": category,
+        "level":    level,
+    }
     data.append(entry)
     data.sort(key=lambda x: x['score'], reverse=True)
     data = data[:MAX_ENTRIES]
     _save_lb(data)
     print(f"[LB] saved: {name} → {score} pts ({category}/{level})")
 
+
 def load_scores() -> list:
+    """โหลดคะแนนทั้งหมด เรียงจากมากไปน้อย"""
     return _load_lb()
 
+
 def get_rank(score: int) -> int:
+    """คืนอันดับของคะแนนนี้ใน leaderboard (1 = สูงสุด)"""
     data = _load_lb()
     for i, entry in enumerate(data):
-        if score >= entry['score']: return i + 1
+        if score >= entry['score']:
+            return i + 1
     return len(data) + 1
 
+
 def populate_leaderboard(grid_widget):
+    """
+    เติมข้อมูลลงใน GridLayout ของ LeaderboardScreen
+    grid_widget = self.ids.lb_grid
+    """
     from kivy.uix.label import Label
     from kivy.uix.boxlayout import BoxLayout
     from kivy.graphics import Color, RoundedRectangle
@@ -72,7 +92,12 @@ def populate_leaderboard(grid_widget):
     data = _load_lb()
 
     if not data:
-        lbl = Label(text='ยังไม่มีคะแนน\nเล่นเกมก่อนแล้วกลับมาดู!', font_name='Sarabun', font_size=sp(16), color=(0.6, 0.6, 0.8, 1), halign='center', size_hint_y=None, height=dp(80))
+        lbl = Label(
+            text='ยังไม่มีคะแนน\nเล่นเกมก่อนแล้วกลับมาดู!',
+            font_name='Sarabun', font_size=sp(16),
+            color=(0.6, 0.6, 0.8, 1), halign='center',
+            size_hint_y=None, height=dp(80)
+        )
         grid_widget.add_widget(lbl)
         return
 
@@ -84,26 +109,41 @@ def populate_leaderboard(grid_widget):
         score_text = str(entry.get('score', 0)) + ' pts'
         mode_text  = f"{entry.get('category','?')}/{entry.get('level','?')}"
 
-        row = BoxLayout(orientation='horizontal', size_hint_y=None, height=dp(48), padding=dp(10), spacing=dp(6))
+        row = BoxLayout(
+            orientation='horizontal',
+            size_hint_y=None, height=dp(48),
+            padding=dp(10), spacing=dp(6)
+        )
 
-        if i == 1: bg_color = (0.35, 0.27, 0.02, 0.85)
-        elif i == 2: bg_color = (0.20, 0.20, 0.22, 0.80)
-        elif i == 3: bg_color = (0.25, 0.12, 0.04, 0.80)
-        else: bg_color = (0.08, 0.08, 0.18, 0.70)
+        # พื้นหลังแต่ละแถว
+        if i == 1:
+            bg_color = (0.35, 0.27, 0.02, 0.85)
+        elif i == 2:
+            bg_color = (0.20, 0.20, 0.22, 0.80)
+        elif i == 3:
+            bg_color = (0.25, 0.12, 0.04, 0.80)
+        else:
+            bg_color = (0.08, 0.08, 0.18, 0.70)
 
         with row.canvas.before:
             Color(*bg_color)
             row._bg = RoundedRectangle(pos=row.pos, size=row.size, radius=[dp(10)])
-        row.bind(pos=lambda w, v: setattr(w._bg, 'pos', v), size=lambda w, v: setattr(w._bg, 'size', v))
+        row.bind(pos=lambda w, v: setattr(w._bg, 'pos', v),
+                 size=lambda w, v: setattr(w._bg, 'size', v))
 
         def _lbl(text, fs=14, color=(1, 1, 1, 1), sh=0.15, bold=False):
-            return Label(text=text, font_name='Sarabun', font_size=sp(fs), color=color, halign='center', bold=bold, size_hint_x=sh)
+            l = Label(text=text, font_name='Sarabun', font_size=sp(fs),
+                      color=color, halign='center', bold=bold,
+                      size_hint_x=sh)
+            return l
 
         row.add_widget(_lbl(rank_text,  14, (1, 0.85, 0.1, 1),  0.12))
         row.add_widget(_lbl(name_text,  15, (1, 1, 1, 1),       0.40, bold=True))
         row.add_widget(_lbl(score_text, 16, (1, 0.75, 0.1, 1),  0.28, bold=True))
         row.add_widget(_lbl(mode_text,  11, (0.55, 0.55, 0.75, 1), 0.20))
+
         grid_widget.add_widget(row)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Achievements
@@ -118,12 +158,14 @@ def _load_ach() -> set:
         print(f"[ACH] load error: {e}")
     return set()
 
+
 def _save_ach(unlocked: set):
     try:
         with open(ACH_FILE, 'w', encoding='utf-8') as f:
             json.dump(list(unlocked), f, ensure_ascii=False)
     except Exception as e:
         print(f"[ACH] save error: {e}")
+
 
 def unlock_achievement(ach_id: str) -> bool:
     """ปลดล็อก achievement คืนค่า True ถ้าปลดล็อกใหม่"""
@@ -135,9 +177,11 @@ def unlock_achievement(ach_id: str) -> bool:
         return True
     return False
 
+
 def check_and_unlock(summary: dict) -> list:
     """
     ตรวจสอบเงื่อนไข achievement จาก summary ที่ได้หลังจบเกม
+    คืนค่าเป็น list ของ achievement ที่ปลดล็อกใหม่
     """
     newly = []
 
@@ -147,26 +191,94 @@ def check_and_unlock(summary: dict) -> list:
             if ach:
                 newly.append(ach)
 
+    # First Blood — เล่นครั้งแรก
     try_unlock('first_blood')
 
+    # On Fire — Combo ≥ 5
     if summary.get('max_combo', 0) >= 5:
         try_unlock('on_fire')
 
+    # Perfect — ไม่มีผิดเลย (lives ยังครบ 3)
+    # ตรวจจาก correct_count vs total (ต้องส่งมาใน summary)
     if summary.get('lives_left', 0) >= 3 and summary.get('correct_count', 0) > 0:
         try_unlock('perfect')
 
+    # Survivor — Sudden Death ผ่าน 5 ข้อ
     if summary.get('mode') == 'sudden' and summary.get('correct_count', 0) >= 5:
         try_unlock('survivor')
 
+    # Daily Agent — ทำ Daily Challenge สำเร็จ
     if summary.get('mode') == 'daily':
         try_unlock('daily_agent')
 
+    # Hard Cleared — ผ่าน Hard โดยไม่เสียชีวิต
     if (summary.get('level') == 'hard' and
             summary.get('lives_left', 0) >= 3 and
             summary.get('correct_count', 0) >= 10):
         try_unlock('hard_cleared')
 
+    # Tag Team — ชนะโหมด 2 ผู้เล่น
     if summary.get('mode') == '2player':
         try_unlock('tag_team')
 
     return newly
+
+
+def populate_achievements(grid_widget):
+    """
+    เติมข้อมูล Achievements ลงใน GridLayout
+    grid_widget = self.ids.ach_grid
+    """
+    from kivy.uix.label import Label
+    from kivy.uix.boxlayout import BoxLayout
+    from kivy.graphics import Color, RoundedRectangle
+    from kivy.metrics import dp, sp
+
+    grid_widget.clear_widgets()
+    unlocked = _load_ach()
+
+    for ach in ACHIEVEMENTS:
+        is_unlocked = ach['id'] in unlocked
+
+        row = BoxLayout(
+            orientation='horizontal',
+            size_hint_y=None, height=dp(56),
+            padding=dp(12), spacing=dp(8)
+        )
+
+        bg_color = (0.06, 0.28, 0.08, 0.88) if is_unlocked else (0.08, 0.08, 0.16, 0.70)
+        with row.canvas.before:
+            Color(*bg_color)
+            row._bg = RoundedRectangle(pos=row.pos, size=row.size, radius=[dp(12)])
+        row.bind(pos=lambda w, v: setattr(w._bg, 'pos', v),
+                 size=lambda w, v: setattr(w._bg, 'size', v))
+
+        # ไอคอนล็อค/ปลด
+        lock_icon = '✅' if is_unlocked else '🔒'
+        lock_lbl = Label(
+            text=lock_icon, font_name='Sarabun',
+            font_size=sp(20), size_hint_x=0.12
+        )
+
+        # ชื่อ Achievement
+        name_color = (1, 1, 1, 1) if is_unlocked else (0.5, 0.5, 0.6, 1)
+        name_lbl = Label(
+            text=f'{ach["icon"]} {ach["name"]}',
+            font_name='Sarabun', font_size=sp(15),
+            bold=is_unlocked, color=name_color,
+            halign='left', size_hint_x=0.50
+        )
+
+        # คำอธิบาย
+        desc_color = (0.8, 0.95, 0.8, 1) if is_unlocked else (0.4, 0.4, 0.5, 1)
+        desc_lbl = Label(
+            text=ach['desc'],
+            font_name='Sarabun', font_size=sp(12),
+            color=desc_color, halign='right',
+            size_hint_x=0.38
+        )
+
+        row.add_widget(lock_lbl)
+        row.add_widget(name_lbl)
+        row.add_widget(desc_lbl)
+        grid_widget.add_widget(row)
