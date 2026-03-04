@@ -114,3 +114,34 @@ class QuizApp(App):
         elif mode == 'daily':
             self._level = 'daily'
             self.root.current = 'game'
+
+    def start_2player(self, p2name):
+        self._p2_name = p2name.strip() or 'Player 2'
+        print(f"ตั้งชื่อผู้เล่น 2 สำเร็จ: {self._p2_name}")
+        self._level = 'medium'
+        self.root.current = 'game'
+
+    def start_game(self, level):
+        print(f"กำลังเริ่มเกมระดับ: {level}...")
+        self._level = level
+        self.root.current = 'game'
+
+    def play_again(self):
+        print("เริ่มเล่นใหม่อีกครั้ง!")
+        self.root.current = 'category'
+
+    def go_home(self):
+        self.root.current = 'menu'
+
+    def show_leaderboard(self):
+        self._lb_prev = self.root.current
+        self.root.current = 'leaderboard'
+
+    def go_back_from_lb(self):
+        self.root.current = getattr(self, '_lb_prev', 'menu')
+
+    def show_achievements(self):
+        self.root.current = 'achievements'
+
+if __name__ == '__main__':
+    QuizApp().run()
