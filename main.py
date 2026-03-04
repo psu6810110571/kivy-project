@@ -85,3 +85,32 @@ class QuizApp(App):
     # เผื่อในไฟล์ .kv มีบางปุ่มใช้ on_press: app.btn_anim(self)
     def btn_anim(self, btn):
         self.btn_press_anim(btn)
+
+    def go_to_category(self, name):
+        self.player_name = name.strip() or 'Unknown Agent'
+        # อัปเดตชื่อ Agent ใน BriefingScreen
+        try:
+            briefing = self.root.get_screen('briefing')
+            briefing.ids.lbl_agent_name.text = f'AGENT: {self.player_name}'
+        except Exception:
+            pass
+        self.root.current = 'briefing'
+
+    def select_category(self, category):
+        print(f"หมวดหมู่ที่เลือก: {category}")
+        self._category = category
+        self.root.current = 'mode'
+
+    def set_mode(self, mode):
+        print(f"โหมดที่เลือก: {mode}")
+        self._game_mode = mode
+        if mode == 'single':
+            self.root.current = 'level'
+        elif mode == '2player':
+            self.root.current = 'p2setup'
+        elif mode == 'sudden':
+            self._level = 'sudden'
+            self.root.current = 'game'
+        elif mode == 'daily':
+            self._level = 'daily'
+            self.root.current = 'game'
