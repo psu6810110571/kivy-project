@@ -44,16 +44,10 @@ def _save_lb(data: list):
         print(f"[LB] save error: {e}")
 
 def save_score(name: str, score: int, category: str = 'general', level: str = 'easy'):
-    """บันทึกคะแนนลง leaderboard.json"""
     if score <= 0:
         return
     data = _load_lb()
-    entry = {
-        "name":     name,
-        "score":    score,
-        "category": category,
-        "level":    level,
-    }
+    entry = {"name": name, "score": score, "category": category, "level": level}
     data.append(entry)
     data.sort(key=lambda x: x['score'], reverse=True)
     data = data[:MAX_ENTRIES]
@@ -61,13 +55,72 @@ def save_score(name: str, score: int, category: str = 'general', level: str = 'e
     print(f"[LB] saved: {name} → {score} pts ({category}/{level})")
 
 def load_scores() -> list:
-    """โหลดคะแนนทั้งหมด เรียงจากมากไปน้อย"""
     return _load_lb()
 
 def get_rank(score: int) -> int:
-    """คืนอันดับของคะแนนนี้ใน leaderboard (1 = สูงสุด)"""
     data = _load_lb()
     for i, entry in enumerate(data):
         if score >= entry['score']:
             return i + 1
     return len(data) + 1
+
+def populate_leaderboard(grid_widget):
+    """
+    เติมข้อมูลลงใน GridLayout ของ LeaderboardScreen
+    """
+    from kivy.uix.label import Label
+    from kivy.uix.boxlayout import BoxLayout
+    from kivy.graphics import Color, RoundedRectangle
+    from kivy.metrics import dp, sp
+
+    grid_widget.clear_widgets()
+    data = _load_lb()
+
+    if not data:
+        lbl = Label(
+            text='ยังไม่มีคะแนน\nเล่นเกมก่อนแล้วกลับมาดู!',
+            font_name='Sarabun', font_size=sp(16),
+            color=(0.6, 0.6, 0.8, 1), halign='center',
+            size_hint_y=None, height=dp(80)
+        )
+        grid_widget.add_widget(lbl)
+        return
+
+    medals = {1: '🥇', 2: '🥈', 3: '🥉'}
+
+    for i, entry in enumerate(data[:20], start=1):
+        rank_text  = medals.get(i, str(i) + '.')
+        name_text  = entry.get('name', '???')
+        score_text = str(entry.get('score', 0)) + ' pts'
+        mode_text  = f"{entry.get('category','?')}/{entry.get('level','?')}"
+
+        row = BoxLayout(
+            orientation='horizontal', size_hint_y=None, height=dp(48),
+            padding=dp(10), spacing=dp(6)
+        )
+
+        if i == 1:
+            bg_color = (0.35, 0.27, 0.02, 0.85)
+        elif i == 2:
+            bg_color = (0.20, 0.20, 0.22, 0.80)
+        elif i == 3:
+            bg_color = (0.25, 0.12, 0.04, 0.80)
+        else:
+            bg_color = (0.08, 0.08, 0.18, 0.70)
+
+        with row.canvas.before:
+            Color(*bg_color)
+            row._bg = RoundedRectangle(pos=row.pos, size=row.size, radius=[dp(10)])
+        row.bind(pos=lambda w, v: setattr(w._bg, 'pos', v),
+                 size=lambda w, v: setattr(w._bg, 'size', v))
+
+        def _lbl(text, fs=14, color=(1, 1, 1, 1), sh=0.15, bold=False):
+            return Label(text=text, font_name='Sarabun', font_size=sp(fs),
+                         color=color, halign='center', bold=bold, size_hint_x=sh)
+
+        row.add_widget(_lbl(rank_text,  14, (1, 0.85, 0.1, 1),  0.12))
+        row.add_widget(_lbl(name_text,  15, (1, 1, 1, 1),       0.40, bold=True))
+        row.add_widget(_lbl(score_text, 16, (1, 0.75, 0.1, 1),  0.28, bold=True))
+        row.add_widget(_lbl(mode_text,  11, (0.55, 0.55, 0.75, 1), 0.20))
+
+        grid_widget.add_widget(row)
