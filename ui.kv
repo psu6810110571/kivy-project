@@ -878,78 +878,78 @@ ScreenManager:
                         size: self.size
                         radius: [dp(6)]
 
-            # ── Timer Bar ─────────────────────────────────────────────────────
-            ProgressBar:
-                id: timer_bar
-                size_hint_y: None
-                height: dp(7)
-                max: 15
-                value: 15
+        # ── Timer Bar ─────────────────────────────────────────────────────
+        ProgressBar:
+            id: timer_bar
+            size_hint_y: None
+            height: dp(7)
+            max: 15
+            value: 15
 
-            # ── Question Box ──────────────────────────────────────────────────
-            BoxLayout:
-                size_hint_y: None
-                height: dp(72)
-                padding: dp(10), dp(8)
-                canvas.before:
-                    Color:
-                        rgba: 0.07, 0.07, 0.18, 0.95
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [dp(10)]
-                    Color:
-                        rgba: 1, 0.38, 0.08, 0.28
-                    Line:
-                        rounded_rectangle: (self.x, self.y, self.width, self.height, dp(10))
-                        width: dp(1.2)
-                Label:
-                    id: question_label
-                    text: 'รอคำถาม...'
-                    font_name: 'Sarabun'
-                    font_size: sp(16)
-                    color: 1, 1, 1, 1
-                    halign: 'center'
-                    valign: 'middle'
-                    text_size: self.size
+        # ── Question Box ──────────────────────────────────────────────────
+        BoxLayout:
+            size_hint_y: None
+            height: dp(72)
+            padding: dp(10), dp(8)
+            canvas.before:
+                Color:
+                    rgba: 0.07, 0.07, 0.18, 0.95
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(10)]
+                Color:
+                    rgba: 1, 0.38, 0.08, 0.28
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(10))
+                    width: dp(1.2)
+            Label:
+                id: question_label
+                text: 'รอคำถาม...'
+                font_name: 'Sarabun'
+                font_size: sp(16)
+                color: 1, 1, 1, 1
+                halign: 'center'
+                valign: 'middle'
+                text_size: self.size
 
-            # ── Bomb Widget ───────────────────────────────────────────────────
-            ClockBombWidget:
-                id: bomb_widget
-                size_hint_y: 0.42
+        # ── Bomb Widget ───────────────────────────────────────────────────
+        ClockBombWidget:
+            id: bomb_widget
+            size_hint_y: 0.42
 
-            # ── Combo + Feedback ──────────────────────────────────────────────
-            BoxLayout:
-                size_hint_y: None
-                height: dp(40)
-                orientation: 'vertical'
+        # ── Combo + Feedback ──────────────────────────────────────────────
+        BoxLayout:
+            size_hint_y: None
+            height: dp(40)
+            orientation: 'vertical'
 
-                ComboDisplay:
-                    id: combo_display
-                    size_hint_y: 0.45
-                    size_hint_x: 1
+            ComboDisplay:
+                id: combo_display
+                size_hint_y: 0.45
+                size_hint_x: 1
 
-                Label:
-                    id: feedback_label
-                    text: '✂ แตะปลายสายที่ตรงกับคำตอบ!'
-                    font_name: 'Sarabun'
-                    font_size: sp(13)
-                    color: 0.65, 0.85, 1, 0.9
-                    halign: 'center'
-                    size_hint_y: 0.55
+            Label:
+                id: feedback_label
+                text: '✂ แตะปลายสายที่ตรงกับคำตอบ!'
+                font_name: 'Sarabun'
+                font_size: sp(13)
+                color: 0.65, 0.85, 1, 0.9
+                halign: 'center'
+                size_hint_y: 0.55
 
-            # ── Wire Answer Buttons ───────────────────────────────────────────
-            GridLayout:
-                id: wire_btn_container
-                size_hint_y: None
-                height: dp(88)
-                cols: 3
-                spacing: dp(5)
-                padding: dp(6), dp(4)
+        # ── Wire Answer Buttons ───────────────────────────────────────────
+        GridLayout:
+            id: wire_btn_container
+            size_hint_y: None
+            height: dp(88)
+            cols: 3
+            spacing: dp(5)
+            padding: dp(6), dp(4)
 
-            Widget:
-                size_hint_y: None
-                height: dp(6)
+        Widget:
+            size_hint_y: None
+            height: dp(6)
 
 # ════════════ ResultScreen ════════════
 <ResultScreen>:
