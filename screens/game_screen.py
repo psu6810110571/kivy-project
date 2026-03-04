@@ -152,3 +152,52 @@ class GameScreen(Screen):
             self.ids.question_label.text = q.get('question', '')
 
         self._update_hud()
+
+    # ─── กดสายไฟ ─────────────────────────────────────────────────────────────
+    def _on_wire_press(self, wire_idx):
+        if not self.engine.is_playing or self.is_waiting:
+            return
+
+        is_correct = (wire_idx == self.correct_wire)
+
+        # มาร์คปุ่ม
+        if wire_idx < len(self.wire_buttons):
+            self.wire_buttons[wire_idx].answered  = True
+            self.wire_buttons[wire_idx].is_correct = is_correct
+
+        # อัปเดต bomb wire state
+        bomb = self.ids.get('bomb_widget')
+        if bomb and wire_idx < len(bomb.wire_states):
+            states         = list(bomb.wire_states)
+            states[wire_idx] = 0 if is_correct else 1
+            bomb.wire_states = states
+
+        if is_correct:
+            self._register_correct()
+            if bomb:
+                bomb.start_defuse()
+            combo = self.engine.combo
+            if 'feedback_label' in self.ids:
+                extra = f'  🔥 COMBO ×{combo}!' if combo >= 2 else ''
+                self.ids.feedback_label.text = f'✅ ถูกต้อง!{extra}'
+            if 'combo_display' in self.ids:
+                self.ids.combo_display.combo = combo
+                self.ids.combo_display.flash()
+            Clock.schedule_once(lambda dt: self._load_question(), 0.7)
+        else:
+            self._register_wrong()
+            if bomb:
+                bomb.start_explode()
+                self._shake(bomb)
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = '💥 ผิด! หัวใจหายไป 1 ดวง'
+            if 'vignette' in self.ids:
+                self.ids.vignette.pulse_red()
+
+            if self.engine.is_playing:
+                self.is_waiting = True
+                Clock.schedule_once(lambda dt: self._after_wrong(), 1.2)
+            else:
+                Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
+
+        self._update_hud()
