@@ -303,3 +303,33 @@ class GameScreen(Screen):
             Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
         else:
             Clock.schedule_once(lambda dt: self._after_wrong(), 1.5)
+
+
+    # ─── HUD ─────────────────────────────────────────────────────────────────
+    def _update_hud(self):
+        app  = App.get_running_app()
+        mode = getattr(app, '_game_mode', 'single')
+        e    = self.engine
+
+        if 'lbl_player' in self.ids:
+            if mode == '2player':
+                p    = 'P1' if e.current_player == 1 else 'P2'
+                name = app.player_name if e.current_player == 1 else getattr(app, '_p2_name', 'P2')
+                self.ids.lbl_player.text = f'{p}: {name}'
+            else:
+                self.ids.lbl_player.text = f'P1: {app.player_name}'
+
+        if 'lbl_score' in self.ids:
+            score = e.p1_score if mode == '2player' else e.score
+            self.ids.lbl_score.text = f'{score} pts'
+
+        if 'lbl_lives' in self.ids:
+            h = max(0, e.lives)
+            self.ids.lbl_lives.text = '❤' * h + '🖤' * (3 - h)
+
+        if 'lbl_timer' in self.ids:
+            self.ids.lbl_timer.text = str(int(e.time_left))
+
+        if 'lbl_qnum' in self.ids:
+            total = '∞' if getattr(app, '_level', 'easy') == 'sudden' else str(self.q_total)
+            self.ids.lbl_qnum.text = f'{self.q_num}/{total}'
