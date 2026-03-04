@@ -45,3 +45,19 @@ class Player2SetupScreen(Screen):
 
 class ResultScreen(Screen):
     pass
+
+class LeaderboardScreen(Screen):
+    def on_enter(self):
+        try:
+            from data.leaderboard_mgr import populate_leaderboard
+            populate_leaderboard(self.ids.lb_grid)
+        except Exception as e:
+            print(f"[LB] on_enter error: {e}")
+
+class AchievementScreen(Screen):
+    def on_enter(self):
+        try:
+            from data.leaderboard_mgr import populate_achievements
+            populate_achievements(self.ids.ach_grid)
+        except Exception as e:
+            print(f"[ACH] on_enter error: {e}")
