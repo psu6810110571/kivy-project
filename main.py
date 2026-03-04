@@ -61,3 +61,27 @@ class AchievementScreen(Screen):
             populate_achievements(self.ids.ach_grid)
         except Exception as e:
             print(f"[ACH] on_enter error: {e}")
+
+# ── ตัวควบคุมแอปหลัก ─────────────────────────────────────────────────────────────
+class QuizApp(App):
+    player_name = StringProperty('Unknown Agent')
+    
+    # [สำคัญ] เพิ่มตัวแปรเหล่านี้เพื่อให้ ui.kv ดึงไปใช้วาดแถบเวลาได้โดยไม่ Error
+    timer_ratio = NumericProperty(1.0)
+    timer_color = ListProperty([0.15, 1.0, 0.28])
+
+    def fade_transition(self):
+        return FadeTransition(duration=0.3)
+
+    def build(self):
+        # บังคับโหลดไฟล์ ui.kv ตรงๆ แค่รอบเดียวจบ ป้องกันบัคซ้อนกันและบัคจอดำ!
+        return Builder.load_file('ui.kv')
+
+    def btn_press_anim(self, btn):
+        a = (Animation(opacity=0.7, duration=0.08) +
+             Animation(opacity=1.0, duration=0.08))
+        a.start(btn)
+        
+    # เผื่อในไฟล์ .kv มีบางปุ่มใช้ on_press: app.btn_anim(self)
+    def btn_anim(self, btn):
+        self.btn_press_anim(btn)
