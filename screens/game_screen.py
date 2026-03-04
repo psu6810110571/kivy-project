@@ -83,3 +83,23 @@ class GameScreen(Screen):
         if self._shuffle_ev:
             self._shuffle_ev.cancel()
         self.wire_buttons = []
+
+    # ─── สร้างปุ่มสายไฟ ──────────────────────────────────────────────────────
+    def _build_wire_buttons(self, level):
+        wire_count = {'easy': 4, 'medium': 5, 'hard': 6, 'sudden': 5, 'daily': 4}
+        n = wire_count.get(level, 4)
+
+        container = self.ids.get('wire_btn_container')
+        if not container:
+            return
+        container.clear_widgets()
+        self.wire_buttons = []
+
+        for i in range(n):
+            btn = WireAnswerButton()
+            btn.wire_index = i
+            btn.wire_color = list(WIRE_COLORS[i % len(WIRE_COLORS)])
+            btn.text       = ''
+            btn.bind(on_release=lambda b, idx=i: self._on_wire_press(idx))
+            container.add_widget(btn)
+            self.wire_buttons.append(btn)
