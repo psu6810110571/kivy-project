@@ -228,3 +228,24 @@ class GameScreen(Screen):
         print(f"Wrong! Lives: {e.lives}")
         if e.lives <= 0 or e.game_mode == 'sudden':
             e.game_over()
+
+    # ─── shake animation ─────────────────────────────────────────────────────
+    def _shake(self, widget):
+        a = (Animation(shake_x=10,  duration=0.06) +
+             Animation(shake_x=-10, duration=0.06) +
+             Animation(shake_x=7,   duration=0.06) +
+             Animation(shake_x=-7,  duration=0.06) +
+             Animation(shake_x=0,   duration=0.06))
+        a.start(widget)
+
+    def _after_wrong(self):
+        self.is_waiting = False
+        if self.engine.is_playing:
+            self._load_question()
+        else:
+            self._finish_game()
+
+    def _shuffle_wires(self, dt):
+        bomb = self.ids.get('bomb_widget')
+        if bomb:
+            bomb.shuffle_wires()
