@@ -249,3 +249,57 @@ class GameScreen(Screen):
         bomb = self.ids.get('bomb_widget')
         if bomb:
             bomb.shuffle_wires()
+
+
+    # ─── tick ─────────────────────────────────────────────────────────────────
+    def _tick(self, dt):
+        if not self.engine.is_playing:
+            return
+
+        t     = self.engine.time_left
+        ratio = t / self.max_time if self.max_time > 0 else 0
+
+        bomb = self.ids.get('bomb_widget')
+        if bomb:
+            bomb.time_ratio   = ratio
+            bomb.time_display = str(int(t))
+            if ratio < 0.25:
+                bomb.anim_countdown()
+
+        if 'timer_bar' in self.ids:
+            self.ids.timer_bar.value = max(0, t)
+
+        if 'vignette' in self.ids:
+            if ratio < 0.25:
+                self.ids.vignette.pulse_red()
+            elif ratio < 0.5:
+                self.ids.vignette.show(0.35)
+            else:
+                self.ids.vignette.hide()
+
+        if 'lbl_timer' in self.ids:
+            self.ids.lbl_timer.text = str(int(t))
+
+        if t <= 0 and not self.is_waiting:
+            self._on_time_up()
+
+    def _on_time_up(self):
+        self.is_waiting = True
+        e = self.engine
+        e.combo  = 0
+        e.lives -= 1
+        if 'vignette' in self.ids:
+            self.ids.vignette.pulse_red()
+        bomb = self.ids.get('bomb_widget')
+        if bomb:
+            bomb.start_explode()
+            self._shake(bomb)
+        if 'feedback_label' in self.ids:
+            self.ids.feedback_label.text = '⏰ หมดเวลา! หัวใจหายไป 1 ดวง'
+        self._update_hud()
+
+        if e.lives <= 0 or e.game_mode == 'sudden':
+            e.game_over()
+            Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
+        else:
+            Clock.schedule_once(lambda dt: self._after_wrong(), 1.5)
