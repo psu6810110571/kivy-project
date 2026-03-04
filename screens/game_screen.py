@@ -333,3 +333,83 @@ class GameScreen(Screen):
         if 'lbl_qnum' in self.ids:
             total = '∞' if getattr(app, '_level', 'easy') == 'sudden' else str(self.q_total)
             self.ids.lbl_qnum.text = f'{self.q_num}/{total}'
+
+    # ─── จบเกม ────────────────────────────────────────────────────────────────
+    def _finish_game(self):
+        if self.ui_updater:
+            self.ui_updater.cancel()
+        if self._shuffle_ev:
+            self._shuffle_ev.cancel()
+
+        self.engine.game_over()
+        summary = self.engine.get_summary()
+        app     = App.get_running_app()
+
+        # บันทึก Leaderboard
+        try:
+            from data.leaderboard_mgr import save_score
+            cat   = getattr(app, '_category',  'general')
+            level = getattr(app, '_level',     'easy')
+            mode  = summary.get('mode', 'single')
+            if mode == '2player':
+                save_score(app.player_name,
+                           summary.get('p1_score', 0), cat, level)
+                save_score(getattr(app, '_p2_name', 'Player 2'),
+                           summary.get('p2_score', 0), cat, level)
+            else:
+                save_score(app.player_name, summary.get('score', 0), cat, level)
+        except Exception as ex:
+            print(f"[WARN] leaderboard save: {ex}")
+
+        # ส่งข้อมูลไปหน้า Result
+        try:
+            result = self.manager.get_screen('result')
+            self._fill_result(result, summary)
+        except Exception as ex:
+            print(f"[WARN] result screen: {ex}")
+
+        if self.manager:
+            self.manager.current = 'result'
+
+    def _fill_result(self, result, summary):
+        app  = App.get_running_app()
+        mode = summary.get('mode', 'single')
+
+        if mode == '2player':
+            p1s = summary.get('p1_score', 0)
+            p2s = summary.get('p2_score', 0)
+            p2n = getattr(app, '_p2_name', 'Player 2')
+            winner = app.player_name if p1s >= p2s else p2n
+            result.ids.lbl_result_title.text  = '🏆 จบการแข่งขัน!'
+            result.ids.lbl_result_agent.text  = f'🥇 {winner} ชนะ!'
+            result.ids.lbl_result_score.text  = f'P1: {p1s}  vs  P2: {p2s}'
+            result.ids.lbl_result_stats.text  = f'Max Combo ×{summary.get("max_combo", 0)}'
+            result.ids.lbl_result_msg.text    = ''
+        else:
+            score = summary.get('score', 0)
+            result.ids.lbl_result_title.text  = '🎉 ภารกิจสำเร็จ!'
+            result.ids.lbl_result_agent.text  = f'AGENT: {app.player_name}'
+            result.ids.lbl_result_score.text  = f'{score} pts'
+            cc = summary.get('correct_count', 0)
+            mc = summary.get('max_combo', 0)
+            result.ids.lbl_result_stats.text  = f'ถูก {cc} ข้อ  |  Max Combo ×{mc}'
+            msgs = {
+                'easy':   '🟢 ระเบิดถูกปลดชนวนแล้ว!',
+                'medium': '🟡 ยอดเยี่ยม! คุณผ่านมาได้!',
+                'hard':   '🔴 เก่งมาก! โหมดยากไม่ยากเลย!',
+                'sudden': '💀 อยู่รอดได้นานมาก!',
+                'daily':  '📅 เสร็จสิ้นภารกิจประจำวัน!',
+            }
+            lvl = getattr(app, '_level', 'easy')
+            result.ids.lbl_result_msg.text = msgs.get(lvl, '🎉 ดีมาก!')
+
+        # อันดับ
+        try:
+            from data.leaderboard_mgr import get_rank
+            rank = get_rank(summary.get('score', 0))
+            result.ids.lbl_rank.text = f'#{rank} อันดับที่ {rank}!'
+        except Exception:
+            result.ids.lbl_rank.text = ''
+
+        result.ids.lbl_new_ach.text = ''
+    
