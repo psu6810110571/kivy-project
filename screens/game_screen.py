@@ -201,3 +201,30 @@ class GameScreen(Screen):
                 Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
 
         self._update_hud()
+
+    # ─── คำนวณคะแนน/ชีวิต โดยตรง ─────────────────────────────────────────────
+    def _register_correct(self):
+        e = self.engine
+        e.combo       += 1
+        e.max_combo    = max(e.max_combo, e.combo)
+        e.correct_count += 1
+        t_ratio        = e.time_left / self.max_time if self.max_time > 0 else 0
+        base           = int((t_ratio * 100 + 50) * e.score_multiplier)
+        bonus          = max(0, e.combo - 1) * 15
+        pts            = base + bonus
+        if e.game_mode == '2player':
+            if e.current_player == 1:
+                e.p1_score += pts
+            else:
+                e.p2_score += pts
+        else:
+            e.score += pts
+        print(f"Correct! +{pts} pts | Combo x{e.combo}")
+
+    def _register_wrong(self):
+        e        = self.engine
+        e.combo  = 0
+        e.lives -= 1
+        print(f"Wrong! Lives: {e.lives}")
+        if e.lives <= 0 or e.game_mode == 'sudden':
+            e.game_over()
