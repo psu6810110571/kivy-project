@@ -758,3 +758,122 @@ ScreenManager:
                     radius: [dp(13)]
 
         Widget:
+
+# ════════════ GameScreen ════════════
+<GameScreen>:
+    name: 'game'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.22, 0.04, 0.06, 0.30
+        Ellipse:
+            pos: -dp(80), self.height*0.08
+            size: dp(340), dp(340)
+
+    VignetteWidget:
+        id: vignette
+        pos: root.pos
+        size: root.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(2)
+
+        # ── HUD Bar ──────────────────────────────────────────────────────
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(3)
+            padding: dp(4), dp(5)
+            canvas.before:
+                Color:
+                    rgba: 0.05, 0.05, 0.12, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Label:
+                id: lbl_player
+                text: 'P1: Agent'
+                font_name: 'Sarabun'
+                font_size: sp(12)
+                color: 0.8, 0.8, 1, 1
+                halign: 'center'
+                size_hint_x: 0.26
+                canvas.before:
+                    Color:
+                        rgba: 0.10, 0.10, 0.24, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(6)]
+
+            Label:
+                id: lbl_score
+                text: '0 pts'
+                font_name: 'Sarabun'
+                font_size: sp(14)
+                bold: True
+                color: 1, 0.80, 0.1, 1
+                halign: 'center'
+                size_hint_x: 0.22
+                canvas.before:
+                    Color:
+                        rgba: 0.15, 0.10, 0.02, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(6)]
+
+            Label:
+                id: lbl_lives
+                text: '❤❤❤'
+                font_name: 'Sarabun'
+                font_size: sp(17)
+                color: 1, 0.28, 0.28, 1
+                halign: 'center'
+                size_hint_x: 0.22
+                canvas.before:
+                    Color:
+                        rgba: 0.18, 0.04, 0.04, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(6)]
+
+            Label:
+                id: lbl_timer
+                text: '10'
+                font_name: 'Sarabun'
+                font_size: sp(24)
+                bold: True
+                color: 1, 0.45, 0.1, 1
+                halign: 'center'
+                size_hint_x: 0.14
+                canvas.before:
+                    Color:
+                        rgba: 0.18, 0.08, 0.02, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(6)]
+
+            Label:
+                id: lbl_qnum
+                text: '1/5'
+                font_name: 'Sarabun'
+                font_size: sp(12)
+                color: 0.65, 0.65, 0.85, 1
+                halign: 'center'
+                size_hint_x: 0.16
+                canvas.before:
+                    Color:
+                        rgba: 0.10, 0.10, 0.20, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(6)]
