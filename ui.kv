@@ -580,3 +580,181 @@ ScreenManager:
                     radius: [dp(14)]
 
         Widget:
+
+# ════════════ LevelScreen ════════════
+<LevelScreen>:
+    name: 'level'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.18, 0.04, 0.04, 0.38
+        Ellipse:
+            pos: -dp(100), self.height*0.20
+            size: dp(360), dp(360)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(32), dp(40)
+        spacing: dp(20)
+
+        Label:
+            text: '[b]เลือกระดับความยาก[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(30)
+            color: 1, 0.78, 0.18, 1
+            size_hint_y: None
+            height: dp(52)
+            halign: 'center'
+
+        Button:
+            text: '🟢   ง่าย  —  15 วิ / 4 สาย / 5 ข้อ'
+            font_name: 'Sarabun'
+            font_size: sp(19)
+            size_hint_y: 0.20
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('easy')
+            canvas.before:
+                Color:
+                    rgba: 0.06, 0.50, 0.20, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+
+        Button:
+            text: '🟡   กลาง  —  10 วิ / 5 สาย / 7 ข้อ'
+            font_name: 'Sarabun'
+            font_size: sp(19)
+            size_hint_y: 0.20
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('medium')
+            canvas.before:
+                Color:
+                    rgba: 0.55, 0.42, 0.02, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+
+        Button:
+            text: '🔴   ยาก  —  7 วิ / 6 สาย / 10 ข้อ'
+            font_name: 'Sarabun'
+            font_size: sp(19)
+            size_hint_y: 0.20
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_game('hard')
+            canvas.before:
+                Color:
+                    rgba: 0.72, 0.10, 0.05, 0.88
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+
+        Widget:
+
+# ════════════ Player2SetupScreen ════════════
+<Player2SetupScreen>:
+    name: 'p2setup'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.04, 0.22, 0.06, 0.35
+        Ellipse:
+            pos: -dp(80), self.height*0.15
+            size: dp(340), dp(340)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(36), dp(50)
+        spacing: dp(24)
+
+        Label:
+            text: '[b]👥  2 ผู้เล่น[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(32)
+            color: 0.3, 1, 0.5, 1
+            halign: 'center'
+            size_hint_y: None
+            height: dp(56)
+
+        Label:
+            text: 'ชื่อผู้เล่นที่ 2'
+            font_name: 'Sarabun'
+            font_size: sp(14)
+            color: 0.6, 1, 0.7, 0.9
+            halign: 'left'
+            size_hint_y: None
+            height: dp(24)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(54)
+            padding: dp(2)
+            canvas.before:
+                Color:
+                    rgba: 0.2, 0.9, 0.3, 0.55
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(12)]
+                Color:
+                    rgba: 0.05, 0.10, 0.06, 1
+                RoundedRectangle:
+                    pos: self.x+dp(2), self.y+dp(2)
+                    size: self.width-dp(4), self.height-dp(4)
+                    radius: [dp(10)]
+            TextInput:
+                id: p2_name
+                hint_text: 'ชื่อผู้เล่น 2...'
+                font_name: 'Sarabun'
+                font_size: sp(18)
+                multiline: False
+                halign: 'center'
+                background_color: 0, 0, 0, 0
+                background_normal: ''
+                foreground_color: 1, 1, 1, 1
+                cursor_color: 0.3, 1, 0.5, 1
+                hint_text_color: 0.3, 0.5, 0.35, 1
+                padding: dp(12), dp(13)
+
+        Widget:
+            size_hint_y: 0.1
+
+        Button:
+            text: '[b]  เริ่มแข่ง!  [/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint: 0.75, None
+            height: dp(60)
+            pos_hint: {'center_x': 0.5}
+            background_color: 0, 0, 0, 0
+            color: 1, 1, 1, 1
+            on_press: app.btn_press_anim(self)
+            on_release: app.start_2player(p2_name.text)
+            canvas.before:
+                Color:
+                    rgba: 0.08, 0.60, 0.22, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(13)]
+
+        Widget:
