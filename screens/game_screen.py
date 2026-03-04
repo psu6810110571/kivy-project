@@ -86,3 +86,69 @@ class GameScreen(Screen):
             self.ids.bomb_widget.reset(self.correct_wire, len(self.wire_buttons))
         if 'question_label' in self.ids:
             self.ids.question_label.text = q.get('question', '')
+
+
+    def _on_wire_press(self, wire_idx):
+        #เมื่อผู้เล่นกดตัดสายไฟ: ส่งไปให้สมองตรวจคำตอบ
+        if not self.engine.is_playing or self.is_waiting: return
+
+        # เรียกใช้สมองเกมของคุณ
+        is_correct = self.engine.check_answer(wire_idx, self.correct_wire)
+        bomb = self.ids.get('bomb_widget')
+
+        if is_correct:
+            if bomb: bomb.start_defuse()
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = f'✅ รอดตาย! (Combo x{self.engine.combo})'
+            Clock.schedule_once(lambda dt: self._load_question(), 0.7)
+        else:
+            if bomb: bomb.start_explode()
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = '💥 ผิดสาย! โดนหักหัวใจ!'
+            
+            self.is_waiting = True
+            if self.engine.lives > 0:
+                Clock.schedule_once(lambda dt: self._after_wrong(), 1.2)
+            else:
+                Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
+
+    def _after_wrong(self):
+        self.is_waiting = False
+        self._load_question()
+
+    def _tick(self, dt):
+        if not self.engine.is_playing: return
+        
+        t = self.engine.time_left
+        
+        if 'lbl_timer' in self.ids: self.ids.lbl_timer.text = str(t)
+        if 'lbl_score' in self.ids: self.ids.lbl_score.text = f"{self.engine.score} pts"
+        if 'lbl_lives' in self.ids: 
+            self.ids.lbl_lives.text = '❤' * self.engine.lives + '🖤' * (3 - self.engine.lives)
+
+        bomb = self.ids.get('bomb_widget')
+        if bomb:
+            bomb.time_ratio = t / self.max_time if self.max_time > 0 else 0
+            bomb.time_display = str(t)
+
+        # ให้หน้าจอระเบิดถ้าสมองเกมบอกว่าเวลาหมด
+        if t <= 0 and not self.is_waiting:
+            self.is_waiting = True
+            if bomb: bomb.start_explode()
+            if 'feedback_label' in self.ids: self.ids.feedback_label.text = '⏰ หมดเวลา! หักหัวใจ!'
+            
+            if self.engine.lives > 0:
+                Clock.schedule_once(lambda dt: self._after_wrong(), 1.5)
+            else:
+                Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
+
+    def _finish_game(self):
+        if self.ui_updater: self.ui_updater.cancel()
+        self.engine.game_over()
+        
+        app = App.get_running_app()
+        app.latest_summary = self.engine.get_summary()
+        
+        if self.manager:
+            self.manager.current = 'result'
+
