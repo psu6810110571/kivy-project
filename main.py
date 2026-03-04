@@ -21,9 +21,6 @@ LabelBase.register(
 from widgets.bomb import BombWidget
 from widgets.game_ui import VignetteWidget, ComboDisplay
 
-# ── นำเข้า GameScreen จาก screens ────────────────────────────────────────────────────
-from screens.game_screen import GameScreen
-
 # ── 3. หน้าจอต่างๆ ─────────────────────────────────────────────────────────────
 class MenuScreen(Screen):
     def on_enter(self):
