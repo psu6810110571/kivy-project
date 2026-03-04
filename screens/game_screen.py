@@ -103,3 +103,52 @@ class GameScreen(Screen):
             btn.bind(on_release=lambda b, idx=i: self._on_wire_press(idx))
             container.add_widget(btn)
             self.wire_buttons.append(btn)
+
+    # ─── โหลดคำถาม ───────────────────────────────────────────────────────────
+    def _load_question(self):
+        if 'feedback_label' in self.ids:
+            self.ids.feedback_label.text = '✂ แตะปลายสายที่ตรงกับคำตอบ!'
+
+        q = self.engine.get_next_question()
+        if not q:
+            self._finish_game()
+            return
+
+        self.q_num += 1
+        n       = len(self.wire_buttons)
+        choices = list(q.get('choices', []))
+        ans_idx = q.get('answer_index', 0)
+        correct_text = choices[ans_idx] if ans_idx < len(choices) else choices[0]
+
+        # ถ้าตัวเลือกน้อยกว่าสายไฟ → เพิ่ม decoy
+        while len(choices) < n:
+            choices.append(f'— ไม่มี —')
+
+        random.shuffle(choices)
+
+        # กำหนด text ให้ปุ่ม
+        for i, btn in enumerate(self.wire_buttons):
+            btn.answered  = False
+            btn.is_correct = False
+            btn.text = choices[i] if i < len(choices) else ''
+
+        # หาว่า correct_text อยู่สายไหน
+        self.correct_wire = 0
+        for i, btn in enumerate(self.wire_buttons):
+            if btn.text == correct_text:
+                self.correct_wire = i
+                break
+
+        # รีเซ็ต bomb
+        bomb = self.ids.get('bomb_widget')
+        if bomb:
+            bomb.reset(self.correct_wire, n)
+
+        # รีเซ็ตเวลา
+        self.engine.time_left = self.max_time
+
+        # แสดงคำถาม
+        if 'question_label' in self.ids:
+            self.ids.question_label.text = q.get('question', '')
+
+        self._update_hud()
