@@ -381,3 +381,102 @@ ScreenManager:
 
         Widget:
             size_hint_y: 0.05
+
+# ════════════ CategoryScreen ════════════
+<CategoryScreen>:
+    name: 'category'
+    canvas.before:
+        Color:
+            rgba: 0.03, 0.02, 0.09, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.14, 0.04, 0.28, 0.50
+        Ellipse:
+            pos: -dp(140), self.height*0.30
+            size: dp(460), dp(460)
+        Color:
+            rgba: 0.40, 0.10, 0.02, 0.38
+        Ellipse:
+            pos: self.width-dp(220), -dp(100)
+            size: dp(400), dp(400)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(40), dp(50)
+        spacing: dp(25)
+
+        Label:
+            text: '[b]เลือกหมวดหมู่ภารกิจ[/b]'
+            markup: True
+            font_name: 'Sarabun'
+            font_size: sp(35)
+            color: 1, 0.8, 0.2, 1
+            size_hint_y: 0.2
+
+        Button:
+            text: '📘 ความรู้ทั่วไป'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.select_category('general')
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.5, 0.8, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.3, 0.8, 1, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+
+        Button:
+            text: '🩺 สุขภาพ'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.select_category('health')
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.7, 0.3, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.4, 1, 0.5, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+
+        Button:
+            text: '💻 วิชาการ / IT'
+            font_name: 'Sarabun'
+            font_size: sp(22)
+            size_hint_y: 0.2
+            background_color: 0, 0, 0, 0
+            on_press: app.btn_press_anim(self)
+            on_release: app.select_category('it')
+            canvas.before:
+                Color:
+                    rgba: 0.5, 0.2, 0.8, 0.8
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(15)]
+                Color:
+                    rgba: 0.8, 0.5, 1, 0.4
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
+                    width: dp(1.2)
+
+        Widget:
+            size_hint_y: 0.2
