@@ -1,5 +1,11 @@
 [
   {
+    "name": "Unknown Agent",
+    "score": 2175,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "sas",
     "score": 960,
     "category": "general",
