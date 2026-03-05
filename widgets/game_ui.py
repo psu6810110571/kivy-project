@@ -1,9 +1,10 @@
 import math
 import random
 
+from kivy.app import App # <--- [เพิ่มบรรทัดนี้ เพื่อให้ระบบกดสายไฟเชื่อมต่อหาแอปหลักได้]
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from kivy.uix.button import Button # <--- [เพิ่มบรรทัดนี้: นำเข้า Button]
+from kivy.uix.button import Button
 from kivy.properties import NumericProperty, StringProperty, BooleanProperty, ListProperty
 from kivy.metrics import dp, sp
 from kivy.graphics import Color, Rectangle, RoundedRectangle, Line, Ellipse
@@ -17,7 +18,9 @@ WIRE_COLORS = [
     (0.85, 0.25, 1.00),  # ม่วง
     (1.00, 0.55, 0.10),  # ส้ม
 ]
-WIRE_COLOR_NAMES = ['🔴 แดง', '🔵 ฟ้า', '🟢 เขียว', '🟡 เหลือง', '🟣 ม่วง', '🟠 ส้ม']
+
+# เอาสัญลักษณ์แปลกๆ ออก เพื่อป้องกันบัคตัวหนังสือสี่เหลี่ยม
+WIRE_COLOR_NAMES = ['แดง', 'ฟ้า', 'เขียว', 'เหลือง', 'ม่วง', 'ส้ม']
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  VignetteWidget — ไฟแดงกระพริบรอบจอตอนเวลาใกล้หมด
@@ -74,7 +77,7 @@ class ComboDisplay(Label):
         
     def _upd(self, *_):
         if self.combo >= 2:
-            self.text = f'🔥 COMBO ×{self.combo}!'
+            self.text = f'COMBO ×{self.combo}!' # เอา emoji ออกกันบัค
             Animation(opacity=1, duration=0.15).start(self)
         else:
             Animation(opacity=0, duration=0.3).start(self)
@@ -384,7 +387,28 @@ class ClockBombWidget(Widget):
                 return real_i
         return -1
 
-# <--- [เพิ่มโค้ดส่วนนี้: คลาสปุ่มตัวเลือกคำตอบ (WireAnswerButton)] --->
+    # <--- [เพิ่มโค้ดส่วนนี้: ฟังก์ชันเพื่อให้ระเบิดจับการคลิกที่สายไฟได้] --->
+    def on_touch_down(self, touch):
+        # 1. เช็คว่าผู้เล่นกดโดนพื้นที่ระเบิดหรือไม่
+        if self.collide_point(*touch.pos):
+            # 2. เช็คว่าตำแหน่งที่กด ตรงกับปลายสายไฟเส้นไหน
+            wire_idx = self.get_wire_at(touch.x, touch.y)
+            if wire_idx != -1:
+                # 3. ถ้ากดโดนสายไฟ ให้ไปสั่ง "คลิกปุ่ม" ด้านล่างให้แบบอัตโนมัติ!
+                app = App.get_running_app()
+                if app and app.root and app.root.has_screen('game'):
+                    game_screen = app.root.get_screen('game')
+                    btn_container = game_screen.ids.get('wire_btn_container')
+                    if btn_container:
+                        for btn in btn_container.children:
+                            if hasattr(btn, 'wire_index') and btn.wire_index == wire_idx:
+                                if not btn.answered:
+                                    # สั่งจำลองการกดปุ่ม (กดลง และ ปล่อย)
+                                    btn.dispatch('on_press')
+                                    btn.dispatch('on_release')
+                                return True # กินคำสั่งแตะนี้ไปเลย
+        return super().on_touch_down(touch)
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  WireAnswerButton - ปุ่มกดตัวเลือกสายไฟสีต่างๆ
 # ─────────────────────────────────────────────────────────────────────────────
@@ -428,4 +452,3 @@ class WireAnswerButton(Button):
                 Color(*wc, 1)
                 dr = dp(4)
                 Ellipse(pos=(self.x+dp(7), self.center_y-dr), size=(dr*2, dr*2))
-# <----------------------------------------------------------------------->

@@ -32,7 +32,6 @@ class GameEngine:
 
         self.hint_used = False 
         self.hint_message = "" # ข้อความคำใบ้ที่จะแสดง
-        # self.ajarn_image_source = 'assets/images/ajarn.png'
 
         self.warning_sound = SoundLoader.load('assets/sounds/warning.wav')
         self.explosion_sound = SoundLoader.load('assets/sounds/explosion.wav')
@@ -67,8 +66,8 @@ class GameEngine:
         else:
             self.time_up()
 
-        # ถ้าถูก: คำนวณคะแนนตามโหมด, เพิ่ม Combo
-        # ถ้าผิด: หักหัวใจ (Lives), รีเซ็ต Combo
+    # ถ้าถูก: คำนวณคะแนนตามโหมด, เพิ่ม Combo
+    # ถ้าผิด: หักหัวใจ (Lives), รีเซ็ต Combo
     def check_answer(self, user_answer_index, correct_answer_index):
         if not self.current_question:
             return False

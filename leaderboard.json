@@ -1,8 +1,26 @@
 [
   {
+    "name": "หหฟ",
+    "score": 676,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "Unknown Agent",
     "score": 450,
     "category": "general",
     "level": "medium"
+  },
+  {
+    "name": "หฟห",
+    "score": 150,
+    "category": "general",
+    "level": "easy"
+  },
+  {
+    "name": "ฟห",
+    "score": 130,
+    "category": "general",
+    "level": "easy"
   }
 ]
