@@ -1,4 +1,7 @@
 import os
+# บังคับใช้ SDL2 audio ก่อน import kivy ทุกอย่าง — แก้เสียงไม่ดังบน Windows
+os.environ['KIVY_AUDIO'] = 'sdl2'
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
@@ -109,28 +112,61 @@ class QuizApp(App):
         elif mode == '2player':
             self.root.current = 'p2setup'
         elif mode == 'sudden':
+            # [FIX] ป้องกัน AttributeError ถ้ายังไม่ได้เลือก category
+            if not getattr(self, '_category', None):
+                self._category = 'general'
             self._level = 'sudden'
             self.root.current = 'game'
         elif mode == 'daily':
+            if not getattr(self, '_category', None):
+                self._category = 'general'
             self._level = 'daily'
             self.root.current = 'game'
 
     def start_2player(self, p2name):
         self._p2_name = p2name.strip() or 'Player 2'
         print(f"ตั้งชื่อผู้เล่น 2 สำเร็จ: {self._p2_name}")
+        # [FIX] set _game_mode และ _category ให้ครบก่อนเข้าเกม
+        if not getattr(self, '_category', None):
+            self._category = 'general'
+        self._game_mode = '2player'
         self._level = 'medium'
         self.root.current = 'game'
 
     def start_game(self, level):
         print(f"กำลังเริ่มเกมระดับ: {level}...")
+        # [FIX] ป้องกัน AttributeError ถ้ายังไม่มี _category / _game_mode
+        if not getattr(self, '_category', None):
+            self._category = 'general'
+        if not getattr(self, '_game_mode', None):
+            self._game_mode = 'single'
         self._level = level
         self.root.current = 'game'
 
+    def _stop_game_engine(self):
+        """[FIX] หยุด engine + timer อย่างปลอดภัย ป้องกัน timer leak"""
+        try:
+            gs = self.root.get_screen('game')
+            if gs.engine.is_playing:
+                gs.engine.stop_game()
+            if gs.ui_updater:
+                gs.ui_updater.cancel()
+                gs.ui_updater = None
+            if gs._shuffle_ev:
+                gs._shuffle_ev.cancel()
+                gs._shuffle_ev = None
+        except Exception as e:
+            print(f"[WARN] _stop_game_engine: {e}")
+
     def play_again(self):
         print("เริ่มเล่นใหม่อีกครั้ง!")
+        # [FIX] หยุด engine ก่อนป้องกัน game state ค้างจากรอบก่อน
+        self._stop_game_engine()
         self.root.current = 'category'
 
     def go_home(self):
+        # [FIX] หยุด engine ก่อนกลับ menu ป้องกัน timer ยังรันใน background
+        self._stop_game_engine()
         self.root.current = 'menu'
 
     def show_leaderboard(self):

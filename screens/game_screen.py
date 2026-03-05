@@ -35,8 +35,15 @@ class GameScreen(Screen):
         # รีเซ็ตเกม
         self.engine.reset_game()
         self.engine.setup_level(level, mode)
-        self.max_time = self.engine.time_left
-        self.q_num    = 0
+        self.max_time    = self.engine.time_left
+        self.q_num       = 0
+        self.is_waiting  = False  # [FIX] reset flag ป้องกัน stuck จากรอบก่อน
+        self._finishing  = False  # [FIX] reset guard ป้องกัน _finish_game ซ้ำ
+
+        # [FIX] sync timer_bar.max ให้ตรงกับแต่ละ level (เดิมตายตัวที่ 15 ใน ui.kv)
+        if 'timer_bar' in self.ids:
+            self.ids.timer_bar.max   = self.max_time
+            self.ids.timer_bar.value = self.max_time
 
         # จำนวนข้อตามความยาก
         q_counts = {'easy': 5, 'medium': 7, 'hard': 10, 'sudden': 30, 'daily': 5}
@@ -78,10 +85,13 @@ class GameScreen(Screen):
             self._shuffle_ev = Clock.schedule_interval(self._shuffle_wires, 2.0)
 
     def on_leave(self):
+        # [FIX] cancel และ set None ทุกตัวป้องกัน timer ยังรันหลังออกจากหน้า
         if self.ui_updater:
             self.ui_updater.cancel()
+            self.ui_updater = None
         if self._shuffle_ev:
             self._shuffle_ev.cancel()
+            self._shuffle_ev = None
         self.wire_buttons = []
 
     # ─── สร้างปุ่มสายไฟ ──────────────────────────────────────────────────────
@@ -147,6 +157,11 @@ class GameScreen(Screen):
         # รีเซ็ตเวลา
         self.engine.time_left = self.max_time
 
+        # [FIX] sync timer_bar ทุกครั้งที่โหลดคำถามใหม่
+        if 'timer_bar' in self.ids:
+            self.ids.timer_bar.max   = self.max_time
+            self.ids.timer_bar.value = self.max_time
+
         # แสดงคำถาม
         if 'question_label' in self.ids:
             self.ids.question_label.text = q.get('question', '')
@@ -189,6 +204,8 @@ class GameScreen(Screen):
             if bomb:
                 bomb.start_explode()
                 self._shake(bomb)
+            # เล่นเสียงระเบิดทันทีที่กดผิด (sync กับ animation)
+            self.engine.play_explosion()
             if 'feedback_label' in self.ids:
                 self.ids.feedback_label.text = '💥 ผิด! หัวใจหายไป 1 ดวง'
             if 'vignette' in self.ids:
@@ -226,8 +243,10 @@ class GameScreen(Screen):
         e.combo  = 0
         e.lives -= 1
         print(f"Wrong! Lives: {e.lives}")
+        # [FIX] ไม่เรียก game_over() ที่นี่ — ให้ _on_wire_press ตรวจ is_playing แล้วจัดการเอง
+        # เพื่อป้องกัน game_over + _finish_game ถูกเรียกซ้ำซ้อน
         if e.lives <= 0 or e.game_mode == 'sudden':
-            e.game_over()
+            e.is_playing = False  # แค่ flag ว่าจบ ไม่เรียก game_over ตรงๆ
 
     # ─── shake animation ─────────────────────────────────────────────────────
     def _shake(self, widget):
@@ -267,7 +286,8 @@ class GameScreen(Screen):
                 bomb.anim_countdown()
 
         if 'timer_bar' in self.ids:
-            self.ids.timer_bar.value = max(0, t)
+            # [FIX] clamp value ไม่ให้เกิน max (เดิมอาจเกิน 15 ถ้า max ไม่ sync)
+            self.ids.timer_bar.value = max(0, min(t, self.max_time))
 
         if 'vignette' in self.ids:
             if ratio < 0.25:
@@ -294,6 +314,8 @@ class GameScreen(Screen):
         if bomb:
             bomb.start_explode()
             self._shake(bomb)
+        # เล่นเสียงระเบิดตอนหมดเวลา (sync กับ animation)
+        self.engine.play_explosion()
         if 'feedback_label' in self.ids:
             self.ids.feedback_label.text = '⏰ หมดเวลา! หัวใจหายไป 1 ดวง'
         self._update_hud()
@@ -336,12 +358,32 @@ class GameScreen(Screen):
 
     # ─── จบเกม ────────────────────────────────────────────────────────────────
     def _finish_game(self):
+        # [FIX] ป้องกันเรียกซ้ำ
+        if getattr(self, '_finishing', False):
+            return
+        self._finishing = True
+
         if self.ui_updater:
             self.ui_updater.cancel()
+            self.ui_updater = None
         if self._shuffle_ev:
             self._shuffle_ev.cancel()
+            self._shuffle_ev = None
 
-        self.engine.game_over()
+        # [FIX] เรียก game_over ครั้งเดียว — ไม่เรียกซ้ำถ้า engine หยุดแล้ว
+        if self.engine.is_playing:
+            self.engine.game_over()
+        else:
+            # หยุดเสียงถ้า engine หยุดแล้วแต่เสียงยังเล่นอยู่
+            if self.engine.timer_event:
+                self.engine.timer_event.cancel()
+                self.engine.timer_event = None
+            if getattr(self.engine, 'Duringquiz_sound', None):
+                self.engine.Duringquiz_sound.stop()
+            if getattr(self.engine, 'warning_sound', None):
+                self.engine.warning_sound.stop()
+            if getattr(self.engine, 'explosion_sound', None):
+                self.engine.explosion_sound.play()
         summary = self.engine.get_summary()
         app     = App.get_running_app()
 
@@ -361,17 +403,25 @@ class GameScreen(Screen):
         except Exception as ex:
             print(f"[WARN] leaderboard save: {ex}")
 
+        # [FIX] ตรวจ Achievement และเก็บผลไว้ส่งไปหน้า Result
+        new_ach = []
+        try:
+            from data.leaderboard_mgr import check_and_unlock
+            new_ach = check_and_unlock(summary)
+        except Exception as ex:
+            print(f"[WARN] achievement check: {ex}")
+
         # ส่งข้อมูลไปหน้า Result
         try:
             result = self.manager.get_screen('result')
-            self._fill_result(result, summary)
+            self._fill_result(result, summary, new_ach)
         except Exception as ex:
             print(f"[WARN] result screen: {ex}")
 
         if self.manager:
             self.manager.current = 'result'
 
-    def _fill_result(self, result, summary):
+    def _fill_result(self, result, summary, new_ach=None):
         app  = App.get_running_app()
         mode = summary.get('mode', 'single')
 
@@ -411,5 +461,9 @@ class GameScreen(Screen):
         except Exception:
             result.ids.lbl_rank.text = ''
 
-        result.ids.lbl_new_ach.text = ''
-    
+        # [FIX] แสดง achievement ที่ปลดล็อกใหม่ แทนที่จะเป็น '' เสมอ
+        if new_ach:
+            ach_text = '  '.join([f'{a["icon"]} {a["name"]}' for a in new_ach])
+            result.ids.lbl_new_ach.text = f'ปลดล็อก: {ach_text}'
+        else:
+            result.ids.lbl_new_ach.text = ''

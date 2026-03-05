@@ -907,7 +907,7 @@ ScreenManager:
                 background_color: 0, 0, 0, 0
                 color: 1, 0.3, 0.3, 1
                 on_press: app.btn_press_anim(self)
-                on_release: app.root.current = 'menu'
+                on_release: app.go_home()  # [FIX] หยุด engine ก่อนกลับ menu
                 canvas.before:
                     Color:
                         rgba: 0.25, 0.05, 0.05, 1
