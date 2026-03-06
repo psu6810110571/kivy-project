@@ -30,7 +30,9 @@ class GameEngine:
         self.all_questions    = []
         self.current_question = None
 
-        self.lives         = 3
+        self.lives         = 3   # ใช้สำหรับ single / sudden
+        self.p1_lives      = 3   # ชีวิต P1 สำหรับ 2player
+        self.p2_lives      = 3   # ชีวิต P2 สำหรับ 2player
         self.combo         = 0
         self.max_combo     = 0
         self.correct_count = 0
@@ -51,7 +53,6 @@ class GameEngine:
     # ── เสียง ─────────────────────────────────────────────────────────────────
 
     def _reload_sounds(self):
-        """โหลด sound object ใหม่ทุกรอบ — SDL2 บน Windows ต้องทำแบบนี้"""
         self.Duringquiz_sound = _load_sound('assets/sounds/Duringquiz.wav')
         self.warning_sound    = _load_sound('assets/sounds/warning.wav')
         self.explosion_sound  = _load_sound('assets/sounds/explosion.wav')
@@ -80,10 +81,42 @@ class GameEngine:
             print(f"[SOUND] stop error: {e}")
 
     def play_explosion(self):
-        """เรียกจากภายนอก (game_screen) เพื่อเล่นเสียงระเบิด"""
         self._stop(self.Duringquiz_sound)
         self._stop(self.warning_sound)
         self._play(self.explosion_sound)
+
+    # ── ชีวิตของผู้เล่นปัจจุบัน (helper) ────────────────────────────────────
+
+    def get_current_lives(self):
+        """คืนชีวิตของผู้เล่นที่กำลังเล่นอยู่"""
+        if self.game_mode == '2player':
+            return self.p1_lives if self.current_player == 1 else self.p2_lives
+        return self.lives
+
+    def lose_life(self):
+        """หักชีวิตผู้เล่นปัจจุบัน และคืนค่าชีวิตที่เหลือ"""
+        if self.game_mode == '2player':
+            if self.current_player == 1:
+                self.p1_lives -= 1
+                remaining = self.p1_lives
+            else:
+                self.p2_lives -= 1
+                remaining = self.p2_lives
+        else:
+            self.lives -= 1
+            remaining = self.lives
+        print(f"[LIFE] P{self.current_player} lives: {remaining}")
+        return remaining
+
+    def both_players_dead(self):
+        """คืน True ถ้าทั้ง 2 คนหมดชีวิต"""
+        if self.game_mode == '2player':
+            return self.p1_lives <= 0 and self.p2_lives <= 0
+        return self.lives <= 0
+
+    def current_player_dead(self):
+        """คืน True ถ้าผู้เล่นปัจจุบันหมดชีวิต"""
+        return self.get_current_lives() <= 0
 
     # ── เริ่มเกม ──────────────────────────────────────────────────────────────
 
@@ -129,20 +162,18 @@ class GameEngine:
             print(f"Correct! +{total_points} pts | Combo: x{self.combo}")
             return True
         else:
-            self.combo  = 0
-            self.lives -= 1
-            print(f"Wrong! Lives left: {self.lives}")
-            if self.lives <= 0 or self.game_mode == 'sudden':
+            self.combo = 0
+            self.lose_life()
+            if self.both_players_dead() or self.game_mode == 'sudden':
                 self.game_over()
             return False
 
     def time_up(self):
         if not self.is_playing:
             return
-        self.combo  = 0
-        self.lives -= 1
-        print(f"Time Up! Lives left: {self.lives}")
-        if self.lives <= 0 or self.game_mode == 'sudden':
+        self.combo = 0
+        self.lose_life()
+        if self.both_players_dead() or self.game_mode == 'sudden':
             self.game_over()
 
     # ── จบเกม ─────────────────────────────────────────────────────────────────
@@ -154,8 +185,6 @@ class GameEngine:
             self.timer_event = None
         self._stop(self.Duringquiz_sound)
         self._stop(self.warning_sound)
-        # หมายเหตุ: เสียงระเบิดตอน game_over จะถูกเล่นโดย game_screen
-        # เพื่อให้ sync กับ animation ระเบิดบนหน้าจอ
         print(f"BOOM! Game Over! Final Score: {self.score}")
 
     # ── คำถาม ─────────────────────────────────────────────────────────────────
@@ -195,10 +224,12 @@ class GameEngine:
             "score":         self.score,
             "p1_score":      self.p1_score,
             "p2_score":      self.p2_score,
+            "p1_lives":      self.p1_lives,
+            "p2_lives":      self.p2_lives,
             "max_combo":     self.max_combo,
             "correct_count": self.correct_count,
             "lives_left":    self.lives,
-            "status":        "Finished" if self.lives > 0 else "Game Over",
+            "status":        "Finished" if not self.both_players_dead() else "Game Over",
         }
         print(f"Game Summary: {summary_data}")
         return summary_data
@@ -221,6 +252,8 @@ class GameEngine:
         self.p2_score       = 0
         self.current_player = 1
         self.lives          = 3
+        self.p1_lives       = 3
+        self.p2_lives       = 3
         self.combo          = 0
         self.max_combo      = 0
         self.correct_count  = 0

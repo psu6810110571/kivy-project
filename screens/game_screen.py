@@ -6,50 +6,47 @@ from kivy.animation import Animation
 from logic.game_engine import GameEngine
 from widgets.game_ui import (
     ClockBombWidget, WireAnswerButton,
-    VignetteWidget, ComboDisplay,
+    VignetteWidget, ComboDisplay, LivesWidget,
     WIRE_COLORS, WIRE_COLOR_NAMES
 )
 import random
+
 
 class GameScreen(Screen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.engine        = GameEngine()
-        self.ui_updater    = None
-        self._shuffle_ev   = None
-        self.correct_wire  = 0
-        self.wire_buttons  = []
-        self.is_waiting    = False
-        self.max_time      = 10
-        self.q_total       = 5
-        self.q_num         = 0
+        self.engine       = GameEngine()
+        self.ui_updater   = None
+        self._shuffle_ev  = None
+        self.correct_wire = 0
+        self.wire_buttons = []
+        self.is_waiting   = False
+        self.max_time     = 10
+        self.q_total      = 5
+        self.q_num        = 0
 
     # ─── เข้าหน้าจอเกม ──────────────────────────────────────────────────────
     def on_enter(self):
-        app    = App.get_running_app()
-        level  = getattr(app, '_level',      'easy')
-        mode   = getattr(app, '_game_mode',  'single')
-        cat    = getattr(app, '_category',   'general')
+        app   = App.get_running_app()
+        level = getattr(app, '_level',     'easy')
+        mode  = getattr(app, '_game_mode', 'single')
+        cat   = getattr(app, '_category',  'general')
 
-        # รีเซ็ตเกม
         self.engine.reset_game()
         self.engine.setup_level(level, mode)
-        self.max_time    = self.engine.time_left
-        self.q_num       = 0
-        self.is_waiting  = False  # [FIX] reset flag ป้องกัน stuck จากรอบก่อน
-        self._finishing  = False  # [FIX] reset guard ป้องกัน _finish_game ซ้ำ
+        self.max_time   = self.engine.time_left
+        self.q_num      = 0
+        self.is_waiting = False
+        self._finishing = False
 
-        # [FIX] sync timer_bar.max ให้ตรงกับแต่ละ level (เดิมตายตัวที่ 15 ใน ui.kv)
         if 'timer_bar' in self.ids:
             self.ids.timer_bar.max   = self.max_time
             self.ids.timer_bar.value = self.max_time
 
-        # จำนวนข้อตามความยาก
         q_counts = {'easy': 5, 'medium': 7, 'hard': 10, 'sudden': 30, 'daily': 5}
         self.q_total = q_counts.get(level, 5)
 
-        # โหลดคำถาม
         try:
             from data.questions import get_questions
             questions = get_questions(cat, level)
@@ -58,34 +55,27 @@ class GameScreen(Screen):
             print(f"[WARN] questions load error: {e}")
             fallback = [
                 {
-                    "question": f"คำถามตัวอย่างข้อ {i+1}?",
-                    "choices":  ["ตัวเลือก 1", "ตัวเลือก 2", "ตัวเลือก 3", "ตัวเลือก 4"],
+                    "question":     f"คำถามตัวอย่างข้อ {i+1}?",
+                    "choices":      ["ตัวเลือก 1", "ตัวเลือก 2", "ตัวเลือก 3", "ตัวเลือก 4"],
                     "answer_index": 0
                 }
                 for i in range(self.q_total)
             ]
             self.engine.set_questions(fallback)
 
-        # สร้างปุ่มสายไฟ
         self._build_wire_buttons(level)
-
-        # เริ่มเกม
         self.engine.start_game()
 
-        # อัปเดต UI
         if self.ui_updater:
             self.ui_updater.cancel()
         self.ui_updater = Clock.schedule_interval(self._tick, 0.1)
 
-        # โหลดคำถามแรก
         self._load_question()
 
-        # Shuffle สายไฟในโหมด Hard
         if level == 'hard':
             self._shuffle_ev = Clock.schedule_interval(self._shuffle_wires, 2.0)
 
     def on_leave(self):
-        # [FIX] cancel และ set None ทุกตัวป้องกัน timer ยังรันหลังออกจากหน้า
         if self.ui_updater:
             self.ui_updater.cancel()
             self.ui_updater = None
@@ -117,52 +107,45 @@ class GameScreen(Screen):
     # ─── โหลดคำถาม ───────────────────────────────────────────────────────────
     def _load_question(self):
         if 'feedback_label' in self.ids:
-            self.ids.feedback_label.text = '✂ แตะปลายสายที่ตรงกับคำตอบ!'
+            self.ids.feedback_label.text = '> แตะปลายสายที่ตรงกับคำตอบ! <'
 
         q = self.engine.get_next_question()
         if not q:
             self._finish_game()
             return
 
-        self.q_num += 1
-        n       = len(self.wire_buttons)
-        choices = list(q.get('choices', []))
-        ans_idx = q.get('answer_index', 0)
-        correct_text = choices[ans_idx] if ans_idx < len(choices) else choices[0]
+        self.q_num   += 1
+        n             = len(self.wire_buttons)
+        choices       = list(q.get('choices', []))
+        ans_idx       = q.get('answer_index', 0)
+        correct_text  = choices[ans_idx] if ans_idx < len(choices) else choices[0]
 
-        # ถ้าตัวเลือกน้อยกว่าสายไฟ → เพิ่ม decoy
         while len(choices) < n:
-            choices.append(f'— ไม่มี —')
+            choices.append('— ไม่มี —')
 
         random.shuffle(choices)
 
-        # กำหนด text ให้ปุ่ม
         for i, btn in enumerate(self.wire_buttons):
-            btn.answered  = False
+            btn.answered   = False
             btn.is_correct = False
             btn.text = choices[i] if i < len(choices) else ''
 
-        # หาว่า correct_text อยู่สายไหน
         self.correct_wire = 0
         for i, btn in enumerate(self.wire_buttons):
             if btn.text == correct_text:
                 self.correct_wire = i
                 break
 
-        # รีเซ็ต bomb
         bomb = self.ids.get('bomb_widget')
         if bomb:
             bomb.reset(self.correct_wire, n)
 
-        # รีเซ็ตเวลา
         self.engine.time_left = self.max_time
 
-        # [FIX] sync timer_bar ทุกครั้งที่โหลดคำถามใหม่
         if 'timer_bar' in self.ids:
             self.ids.timer_bar.max   = self.max_time
             self.ids.timer_bar.value = self.max_time
 
-        # แสดงคำถาม
         if 'question_label' in self.ids:
             self.ids.question_label.text = q.get('question', '')
 
@@ -175,15 +158,13 @@ class GameScreen(Screen):
 
         is_correct = (wire_idx == self.correct_wire)
 
-        # มาร์คปุ่ม
         if wire_idx < len(self.wire_buttons):
-            self.wire_buttons[wire_idx].answered  = True
+            self.wire_buttons[wire_idx].answered   = True
             self.wire_buttons[wire_idx].is_correct = is_correct
 
-        # อัปเดต bomb wire state
         bomb = self.ids.get('bomb_widget')
         if bomb and wire_idx < len(bomb.wire_states):
-            states         = list(bomb.wire_states)
+            states           = list(bomb.wire_states)
             states[wire_idx] = 0 if is_correct else 1
             bomb.wire_states = states
 
@@ -193,42 +174,82 @@ class GameScreen(Screen):
                 bomb.start_defuse()
             combo = self.engine.combo
             if 'feedback_label' in self.ids:
-                extra = f'  🔥 COMBO ×{combo}!' if combo >= 2 else ''
-                self.ids.feedback_label.text = f'✅ ถูกต้อง!{extra}'
+                extra = f'  ** COMBO x{combo}! **' if combo >= 2 else ''
+                self.ids.feedback_label.text = f'[ OK ] ถูกต้อง!{extra}'
             if 'combo_display' in self.ids:
                 self.ids.combo_display.combo = combo
                 self.ids.combo_display.flash()
+
+            if self.engine.game_mode == '2player':
+                self._switch_player()
+
             Clock.schedule_once(lambda dt: self._load_question(), 0.7)
         else:
             self._register_wrong()
             if bomb:
                 bomb.start_explode()
                 self._shake(bomb)
-            # เล่นเสียงระเบิดทันทีที่กดผิด (sync กับ animation)
             self.engine.play_explosion()
             if 'feedback_label' in self.ids:
-                self.ids.feedback_label.text = '💥 ผิด! หัวใจหายไป 1 ดวง'
+                app = App.get_running_app()
+                lvl = getattr(app, '_level', 'easy')
+                if lvl == 'sudden':
+                    self.ids.feedback_label.text = '[ X ] ผิด! จบเกม!'
+                else:
+                    self.ids.feedback_label.text = '[ X ] ผิด! หัวใจหายไป 1 ดวง'
             if 'vignette' in self.ids:
                 self.ids.vignette.pulse_red()
 
             if self.engine.is_playing:
                 self.is_waiting = True
+                # อัปเดต HUD ก่อนสลับผู้เล่น เพื่อให้แสดงชีวิตของคนที่ตอบผิดถูกต้อง
+                self._update_hud()
+                if self.engine.game_mode == '2player':
+                    self._switch_player()
                 Clock.schedule_once(lambda dt: self._after_wrong(), 1.2)
             else:
+                self._update_hud()
                 Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
+            return  # ออกได้เลย ไม่ต้องเรียก _update_hud() ด้านล่างอีก
 
         self._update_hud()
 
-    # ─── คำนวณคะแนน/ชีวิต โดยตรง ─────────────────────────────────────────────
+    # ─── สลับผู้เล่น ─────────────────────────────────────────────────────────
+    def _switch_player(self):
+        e = self.engine
+        if e.both_players_dead():
+            return
+
+        next_p      = 2 if e.current_player == 1 else 1
+        next_lives  = e.p1_lives if next_p == 1 else e.p2_lives
+        if next_lives <= 0:
+            return  # อีกคนหมดชีวิตแล้ว ไม่สลับ
+
+        e.current_player = next_p
+        app  = App.get_running_app()
+        name = app.player_name if e.current_player == 1 else getattr(app, '_p2_name', 'Player 2')
+        print(f"[2P] สลับเป็น Player {e.current_player}: {name}")
+
+        if 'feedback_label' in self.ids:
+            p_label = f'P{e.current_player}: {name}'
+            Clock.schedule_once(
+                lambda dt: self._show_player_banner(p_label), 0.4
+            )
+
+    def _show_player_banner(self, label_text):
+        if 'feedback_label' in self.ids:
+            self.ids.feedback_label.text = f'🎯 ตาของ {label_text}!'
+
+    # ─── คำนวณคะแนน/ชีวิต ────────────────────────────────────────────────────
     def _register_correct(self):
         e = self.engine
-        e.combo       += 1
-        e.max_combo    = max(e.max_combo, e.combo)
+        e.combo         += 1
+        e.max_combo      = max(e.max_combo, e.combo)
         e.correct_count += 1
-        t_ratio        = e.time_left / self.max_time if self.max_time > 0 else 0
-        base           = int((t_ratio * 100 + 50) * e.score_multiplier)
-        bonus          = max(0, e.combo - 1) * 15
-        pts            = base + bonus
+        t_ratio = e.time_left / self.max_time if self.max_time > 0 else 0
+        base    = int((t_ratio * 100 + 50) * e.score_multiplier)
+        bonus   = max(0, e.combo - 1) * 15
+        pts     = base + bonus
         if e.game_mode == '2player':
             if e.current_player == 1:
                 e.p1_score += pts
@@ -239,14 +260,11 @@ class GameScreen(Screen):
         print(f"Correct! +{pts} pts | Combo x{e.combo}")
 
     def _register_wrong(self):
-        e        = self.engine
-        e.combo  = 0
-        e.lives -= 1
-        print(f"Wrong! Lives: {e.lives}")
-        # [FIX] ไม่เรียก game_over() ที่นี่ — ให้ _on_wire_press ตรวจ is_playing แล้วจัดการเอง
-        # เพื่อป้องกัน game_over + _finish_game ถูกเรียกซ้ำซ้อน
-        if e.lives <= 0 or e.game_mode == 'sudden':
-            e.is_playing = False  # แค่ flag ว่าจบ ไม่เรียก game_over ตรงๆ
+        e = self.engine
+        e.combo = 0
+        e.lose_life()
+        if e.both_players_dead() or e.game_mode == 'sudden':
+            e.is_playing = False
 
     # ─── shake animation ─────────────────────────────────────────────────────
     def _shake(self, widget):
@@ -269,7 +287,6 @@ class GameScreen(Screen):
         if bomb:
             bomb.shuffle_wires()
 
-
     # ─── tick ─────────────────────────────────────────────────────────────────
     def _tick(self, dt):
         if not self.engine.is_playing:
@@ -286,7 +303,6 @@ class GameScreen(Screen):
                 bomb.anim_countdown()
 
         if 'timer_bar' in self.ids:
-            # [FIX] clamp value ไม่ให้เกิน max (เดิมอาจเกิน 15 ถ้า max ไม่ sync)
             self.ids.timer_bar.value = max(0, min(t, self.max_time))
 
         if 'vignette' in self.ids:
@@ -306,31 +322,41 @@ class GameScreen(Screen):
     def _on_time_up(self):
         self.is_waiting = True
         e = self.engine
-        e.combo  = 0
-        e.lives -= 1
+        e.combo = 0
+        e.lose_life()
+
         if 'vignette' in self.ids:
             self.ids.vignette.pulse_red()
         bomb = self.ids.get('bomb_widget')
         if bomb:
             bomb.start_explode()
             self._shake(bomb)
-        # เล่นเสียงระเบิดตอนหมดเวลา (sync กับ animation)
         self.engine.play_explosion()
+
         if 'feedback_label' in self.ids:
-            self.ids.feedback_label.text = '⏰ หมดเวลา! หัวใจหายไป 1 ดวง'
+            app = App.get_running_app()
+            lvl = getattr(app, '_level', 'easy')
+            if lvl == 'sudden':
+                self.ids.feedback_label.text = '[ ! ] หมดเวลา! จบเกม!'
+            else:
+                self.ids.feedback_label.text = '[ ! ] หมดเวลา! หัวใจหายไป 1 ดวง'
+
+        if e.game_mode == '2player' and not e.both_players_dead():
+            self._switch_player()
+
         self._update_hud()
 
-        if e.lives <= 0 or e.game_mode == 'sudden':
+        if e.both_players_dead() or e.game_mode == 'sudden':
             e.game_over()
             Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
         else:
             Clock.schedule_once(lambda dt: self._after_wrong(), 1.5)
 
-
     # ─── HUD ─────────────────────────────────────────────────────────────────
     def _update_hud(self):
         app  = App.get_running_app()
         mode = getattr(app, '_game_mode', 'single')
+        lvl  = getattr(app, '_level', 'easy')
         e    = self.engine
 
         if 'lbl_player' in self.ids:
@@ -342,23 +368,37 @@ class GameScreen(Screen):
                 self.ids.lbl_player.text = f'P1: {app.player_name}'
 
         if 'lbl_score' in self.ids:
-            score = e.p1_score if mode == '2player' else e.score
+            if mode == '2player':
+                score = e.p1_score if e.current_player == 1 else e.p2_score
+            else:
+                score = e.score
             self.ids.lbl_score.text = f'{score} pts'
 
         if 'lbl_lives' in self.ids:
-            h = max(0, e.lives)
-            self.ids.lbl_lives.text = '❤' * h + '🖤' * (3 - h)
+            if lvl == 'sudden':
+                self.ids.lbl_lives.lives     = 0
+                self.ids.lbl_lives.max_lives = 0
+                self.ids.lbl_lives.is_sudden = True
+            elif mode == '2player':
+                # ── แสดงชีวิตของผู้เล่นที่กำลังเล่นอยู่ ──────────────────
+                current_lives = e.p1_lives if e.current_player == 1 else e.p2_lives
+                self.ids.lbl_lives.lives     = max(0, current_lives)
+                self.ids.lbl_lives.max_lives = 3
+                self.ids.lbl_lives.is_sudden = False
+            else:
+                self.ids.lbl_lives.lives     = max(0, e.lives)
+                self.ids.lbl_lives.max_lives = 3
+                self.ids.lbl_lives.is_sudden = False
 
         if 'lbl_timer' in self.ids:
             self.ids.lbl_timer.text = str(int(e.time_left))
 
         if 'lbl_qnum' in self.ids:
-            total = '∞' if getattr(app, '_level', 'easy') == 'sudden' else str(self.q_total)
+            total = 'inf' if lvl == 'sudden' else str(self.q_total)
             self.ids.lbl_qnum.text = f'{self.q_num}/{total}'
 
     # ─── จบเกม ────────────────────────────────────────────────────────────────
     def _finish_game(self):
-        # [FIX] ป้องกันเรียกซ้ำ
         if getattr(self, '_finishing', False):
             return
         self._finishing = True
@@ -370,11 +410,9 @@ class GameScreen(Screen):
             self._shuffle_ev.cancel()
             self._shuffle_ev = None
 
-        # [FIX] เรียก game_over ครั้งเดียว — ไม่เรียกซ้ำถ้า engine หยุดแล้ว
         if self.engine.is_playing:
             self.engine.game_over()
         else:
-            # หยุดเสียงถ้า engine หยุดแล้วแต่เสียงยังเล่นอยู่
             if self.engine.timer_event:
                 self.engine.timer_event.cancel()
                 self.engine.timer_event = None
@@ -382,16 +420,14 @@ class GameScreen(Screen):
                 self.engine.Duringquiz_sound.stop()
             if getattr(self.engine, 'warning_sound', None):
                 self.engine.warning_sound.stop()
-            if getattr(self.engine, 'explosion_sound', None):
-                self.engine.explosion_sound.play()
+
         summary = self.engine.get_summary()
         app     = App.get_running_app()
 
-        # บันทึก Leaderboard
         try:
             from data.leaderboard_mgr import save_score
-            cat   = getattr(app, '_category',  'general')
-            level = getattr(app, '_level',     'easy')
+            cat   = getattr(app, '_category', 'general')
+            level = getattr(app, '_level',    'easy')
             mode  = summary.get('mode', 'single')
             if mode == '2player':
                 save_score(app.player_name,
@@ -403,7 +439,6 @@ class GameScreen(Screen):
         except Exception as ex:
             print(f"[WARN] leaderboard save: {ex}")
 
-        # [FIX] ตรวจ Achievement และเก็บผลไว้ส่งไปหน้า Result
         new_ach = []
         try:
             from data.leaderboard_mgr import check_and_unlock
@@ -411,7 +446,6 @@ class GameScreen(Screen):
         except Exception as ex:
             print(f"[WARN] achievement check: {ex}")
 
-        # ส่งข้อมูลไปหน้า Result
         try:
             result = self.manager.get_screen('result')
             self._fill_result(result, summary, new_ach)
@@ -424,36 +458,46 @@ class GameScreen(Screen):
     def _fill_result(self, result, summary, new_ach=None):
         app  = App.get_running_app()
         mode = summary.get('mode', 'single')
+        lvl  = getattr(app, '_level', 'easy')
 
         if mode == '2player':
-            p1s = summary.get('p1_score', 0)
-            p2s = summary.get('p2_score', 0)
-            p2n = getattr(app, '_p2_name', 'Player 2')
+            p1s    = summary.get('p1_score', 0)
+            p2s    = summary.get('p2_score', 0)
+            p1l    = summary.get('p1_lives', 0)
+            p2l    = summary.get('p2_lives', 0)
+            p2n    = getattr(app, '_p2_name', 'Player 2')
             winner = app.player_name if p1s >= p2s else p2n
-            result.ids.lbl_result_title.text  = '🏆 จบการแข่งขัน!'
-            result.ids.lbl_result_agent.text  = f'🥇 {winner} ชนะ!'
-            result.ids.lbl_result_score.text  = f'P1: {p1s}  vs  P2: {p2s}'
-            result.ids.lbl_result_stats.text  = f'Max Combo ×{summary.get("max_combo", 0)}'
-            result.ids.lbl_result_msg.text    = ''
+            result.ids.lbl_result_title.text = 'จบการแข่งขัน!'
+            result.ids.lbl_result_agent.text = f'{winner} ชนะ!'
+            result.ids.lbl_result_score.text = f'P1: {p1s} pts  vs  P2: {p2s} pts'
+            result.ids.lbl_result_stats.text = (
+                f'P1 ❤×{p1l}  |  P2 ❤×{p2l}  |  Max Combo x{summary.get("max_combo", 0)}'
+            )
+            result.ids.lbl_result_msg.text = ''
         else:
             score = summary.get('score', 0)
-            result.ids.lbl_result_title.text  = '🎉 ภารกิจสำเร็จ!'
-            result.ids.lbl_result_agent.text  = f'AGENT: {app.player_name}'
-            result.ids.lbl_result_score.text  = f'{score} pts'
-            cc = summary.get('correct_count', 0)
-            mc = summary.get('max_combo', 0)
-            result.ids.lbl_result_stats.text  = f'ถูก {cc} ข้อ  |  Max Combo ×{mc}'
-            msgs = {
-                'easy':   '🟢 ระเบิดถูกปลดชนวนแล้ว!',
-                'medium': '🟡 ยอดเยี่ยม! คุณผ่านมาได้!',
-                'hard':   '🔴 เก่งมาก! โหมดยากไม่ยากเลย!',
-                'sudden': '💀 อยู่รอดได้นานมาก!',
-                'daily':  '📅 เสร็จสิ้นภารกิจประจำวัน!',
-            }
-            lvl = getattr(app, '_level', 'easy')
-            result.ids.lbl_result_msg.text = msgs.get(lvl, '🎉 ดีมาก!')
+            cc    = summary.get('correct_count', 0)
+            mc    = summary.get('max_combo', 0)
 
-        # อันดับ
+            if lvl == 'sudden':
+                result.ids.lbl_result_title.text = 'เกมโอเวอร์!'
+                result.ids.lbl_result_stats.text = f'รอด {cc} ข้อ  |  Max Combo x{mc}'
+            else:
+                result.ids.lbl_result_title.text = 'ภารกิจสำเร็จ!'
+                result.ids.lbl_result_stats.text = f'ถูก {cc} ข้อ  |  Max Combo x{mc}'
+
+            result.ids.lbl_result_agent.text = f'AGENT: {app.player_name}'
+            result.ids.lbl_result_score.text = f'{score} pts'
+
+            msgs = {
+                'easy':   'ระเบิดถูกปลดชนวนแล้ว!',
+                'medium': 'ยอดเยี่ยม! คุณผ่านมาได้!',
+                'hard':   'เก่งมาก! โหมดยากไม่ยากเลย!',
+                'sudden': f'อยู่รอดได้ {cc} ข้อ!',
+                'daily':  'เสร็จสิ้นภารกิจประจำวัน!',
+            }
+            result.ids.lbl_result_msg.text = msgs.get(lvl, 'ดีมาก!')
+
         try:
             from data.leaderboard_mgr import get_rank
             rank = get_rank(summary.get('score', 0))
@@ -461,9 +505,8 @@ class GameScreen(Screen):
         except Exception:
             result.ids.lbl_rank.text = ''
 
-        # [FIX] แสดง achievement ที่ปลดล็อกใหม่ แทนที่จะเป็น '' เสมอ
         if new_ach:
-            ach_text = '  '.join([f'{a["icon"]} {a["name"]}' for a in new_ach])
+            ach_text = '  '.join([a["name"] for a in new_ach])
             result.ids.lbl_new_ach.text = f'ปลดล็อก: {ach_text}'
         else:
             result.ids.lbl_new_ach.text = ''
