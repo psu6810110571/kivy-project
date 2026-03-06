@@ -18,6 +18,18 @@
     "level": "easy"
   },
   {
+    "name": "1",
+    "score": 675,
+    "category": "general",
+    "level": "medium"
+  },
+  {
+    "name": "maxZA",
+    "score": 562,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "Unknown Agent",
     "score": 467,
     "category": "general",
@@ -36,8 +48,26 @@
     "level": "medium"
   },
   {
+    "name": "1",
+    "score": 420,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "sasa",
     "score": 398,
+    "category": "general",
+    "level": "easy"
+  },
+  {
+    "name": "Unknown Agent",
+    "score": 315,
+    "category": "general",
+    "level": "easy"
+  },
+  {
+    "name": "ฟห",
+    "score": 308,
     "category": "general",
     "level": "easy"
   },
@@ -48,10 +78,34 @@
     "level": "easy"
   },
   {
+    "name": "sa",
+    "score": 280,
+    "category": "it",
+    "level": "daily"
+  },
+  {
+    "name": "1",
+    "score": 210,
+    "category": "general",
+    "level": "medium"
+  },
+  {
+    "name": "2",
+    "score": 180,
+    "category": "health",
+    "level": "medium"
+  },
+  {
     "name": "หฟห",
     "score": 150,
     "category": "general",
     "level": "easy"
+  },
+  {
+    "name": "sa",
+    "score": 150,
+    "category": "general",
+    "level": "medium"
   },
   {
     "name": "Unknown Agent",

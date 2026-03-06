@@ -1,7 +1,7 @@
 import math
 import random
 
-from kivy.app import App # <--- [เพิ่มบรรทัดนี้ เพื่อให้ระบบกดสายไฟเชื่อมต่อหาแอปหลักได้]
+from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -19,11 +19,10 @@ WIRE_COLORS = [
     (1.00, 0.55, 0.10),  # ส้ม
 ]
 
-# เอาสัญลักษณ์แปลกๆ ออก เพื่อป้องกันบัคตัวหนังสือสี่เหลี่ยม
 WIRE_COLOR_NAMES = ['แดง', 'ฟ้า', 'เขียว', 'เหลือง', 'ม่วง', 'ส้ม']
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  VignetteWidget — ไฟแดงกระพริบรอบจอตอนเวลาใกล้หมด
+#  VignetteWidget
 # ─────────────────────────────────────────────────────────────────────────────
 class VignetteWidget(Widget):
     vignette_alpha = NumericProperty(0.0)
@@ -61,49 +60,49 @@ class VignetteWidget(Widget):
         a.start(self)
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  ComboDisplay — ข้อความแสดงคอมโบ
+#  ComboDisplay
 # ─────────────────────────────────────────────────────────────────────────────
 class ComboDisplay(Label):
     combo = NumericProperty(0)
-    
+
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.font_name='Sarabun'
-        self.font_size=sp(18)
-        self.bold=True
-        self.halign='center'
-        self.color=(1,0.85,0.1,0)
+        self.font_name = 'Sarabun'
+        self.font_size = sp(18)
+        self.bold      = True
+        self.halign    = 'center'
+        self.color     = (1, 0.85, 0.1, 0)
         self.bind(combo=self._upd)
-        
+
     def _upd(self, *_):
         if self.combo >= 2:
-            self.text = f'COMBO ×{self.combo}!' # เอา emoji ออกกันบัค
+            self.text = f'COMBO x{self.combo}!'
             Animation(opacity=1, duration=0.15).start(self)
         else:
             Animation(opacity=0, duration=0.3).start(self)
-            
+
     def flash(self):
         (Animation(font_size=sp(24), duration=0.12) +
          Animation(font_size=sp(18), duration=0.12)).start(self)
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  ClockBombWidget - วิดเจ็ตระเบิดจับเวลาตอนเล่นเกม
+#  ClockBombWidget
 # ─────────────────────────────────────────────────────────────────────────────
 class ClockBombWidget(Widget):
-    wire_states    = ListProperty([])
-    correct_wire   = NumericProperty(0)
-    num_wires      = NumericProperty(4)
-    time_ratio     = NumericProperty(1.0)
-    time_display   = StringProperty('10')
-    pulse          = NumericProperty(0.0)
-    exploding      = BooleanProperty(False)
-    explode_t      = NumericProperty(0.0)
-    shake_x        = NumericProperty(0.0)
-    defused        = BooleanProperty(False)
-    digit_scale    = NumericProperty(1.0)
-    is_boss        = BooleanProperty(False)
-    boss_layer     = NumericProperty(0)   
-    wire_order     = ListProperty([])
+    wire_states  = ListProperty([])
+    correct_wire = NumericProperty(0)
+    num_wires    = NumericProperty(4)
+    time_ratio   = NumericProperty(1.0)
+    time_display = StringProperty('10')
+    pulse        = NumericProperty(0.0)
+    exploding    = BooleanProperty(False)
+    explode_t    = NumericProperty(0.0)
+    shake_x      = NumericProperty(0.0)
+    defused      = BooleanProperty(False)
+    digit_scale  = NumericProperty(1.0)
+    is_boss      = BooleanProperty(False)
+    boss_layer   = NumericProperty(0)
+    wire_order   = ListProperty([])
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -125,18 +124,18 @@ class ClockBombWidget(Widget):
         a.start(self)
 
     def reset(self, correct_idx, n_wires, is_boss=False):
-        self.num_wires    = n_wires
-        self.wire_states  = [-1] * n_wires
+        self.num_wires   = n_wires
+        self.wire_states = [-1] * n_wires
         self.correct_wire = correct_idx
-        self.exploding    = False
-        self.explode_t    = 0.0
-        self.shake_x      = 0.0
-        self.defused      = False
-        self.time_ratio   = 1.0
-        self.digit_scale  = 1.0
-        self.is_boss      = is_boss
-        self.boss_layer   = 0
-        self.wire_order   = list(range(n_wires))
+        self.exploding   = False
+        self.explode_t   = 0.0
+        self.shake_x     = 0.0
+        self.defused     = False
+        self.time_ratio  = 1.0
+        self.digit_scale = 1.0
+        self.is_boss     = is_boss
+        self.boss_layer  = 0
+        self.wire_order  = list(range(n_wires))
 
     def shuffle_wires(self):
         order = list(range(int(self.num_wires)))
@@ -177,19 +176,16 @@ class ClockBombWidget(Widget):
     def _draw_bomb(self, cx, cy, r):
         bw, bh = r*2.2, r*1.6
         bx, by = cx-bw/2, cy-bh/2
-        
         if self.is_boss:
             boss_c = 1.0 if self.boss_layer == 0 else 0.6
             Color(1, 0.4*boss_c, 0, 0.25)
             Ellipse(pos=(bx-dp(8), by-dp(8)), size=(bw+dp(16), bh+dp(16)))
-            
         Color(0, 0, 0, 0.40)
         RoundedRectangle(pos=(bx+dp(4), by-dp(4)), size=(bw, bh), radius=[dp(14)])
         Color(0.10, 0.10, 0.14, 1)
         RoundedRectangle(pos=(bx, by), size=(bw, bh), radius=[dp(14)])
         Color(0.18, 0.18, 0.24, 1)
         RoundedRectangle(pos=(bx+dp(2), by+dp(2)), size=(bw-dp(4), bh-dp(4)), radius=[dp(12)])
-        
         if self.is_boss:
             lc = (1, 0.4, 0.1) if self.boss_layer == 0 else (0.8, 0.2, 1)
             Color(*lc, 0.9)
@@ -197,7 +193,6 @@ class ClockBombWidget(Widget):
         else:
             Color(0.35, 0.35, 0.45, 1)
             Line(rounded_rectangle=(bx, by, bw, bh, dp(14)), width=dp(2.5))
-        
         screw_r = dp(5)
         for sx, sy in [(bx+dp(12), by+dp(12)), (bx+bw-dp(12), by+dp(12)),
                        (bx+dp(12), by+bh-dp(12)), (bx+bw-dp(12), by+bh-dp(12))]:
@@ -205,30 +200,25 @@ class ClockBombWidget(Widget):
             Ellipse(pos=(sx-screw_r, sy-screw_r), size=(screw_r*2, screw_r*2))
             Color(0.20, 0.20, 0.28, 1)
             Line(points=[sx-screw_r*.6, sy, sx+screw_r*.6, sy], width=dp(1.2))
-            
         dw, dh = bw*0.68, bh*0.52
         dx, dy = cx-dw/2, cy-dh/2+bh*0.04
         Color(0.02, 0.10, 0.04, 1)
         RoundedRectangle(pos=(dx, dy), size=(dw, dh), radius=[dp(8)])
         Color(0, 0.12, 0.02, 0.8)
         RoundedRectangle(pos=(dx+dp(2), dy+dp(2)), size=(dw-dp(4), dh-dp(4)), radius=[dp(6)])
-        
         t = self.time_ratio
         dr, dg, db = (0.10, 1.00, 0.25) if t > 0.5 else ((1.00, 0.70, 0.05) if t > 0.25 else (1.00, 0.15, 0.05))
         pa = 0.08 + 0.14*self.pulse if t <= 0.25 else 0.04
         Color(dr, dg, db, pa)
         RoundedRectangle(pos=(dx, dy), size=(dw, dh), radius=[dp(8)])
-        
         sc = self.digit_scale
         ddw, ddh = dw*sc, dh*sc
         ddx, ddy = cx-ddw/2, cy-ddh/2+bh*0.04
         self._draw_digits(cx, cy, ddx, ddy, ddw, ddh, dr, dg, db)
-        
         ca = 0.5 + 0.5*self.pulse
         Color(dr, dg, db, ca)
         Ellipse(pos=(cx-dp(3), cy+dp(3)), size=(dp(5), dp(5)))
         Ellipse(pos=(cx-dp(3), cy-dp(8)), size=(dp(5), dp(5)))
-        
         led_r = dp(6)
         lx, ly = bx+bw-dp(22), by+bh-dp(15)
         pl = 0.5+0.5*self.pulse if t < 0.5 else 0.4
@@ -246,8 +236,8 @@ class ClockBombWidget(Widget):
         left_x = dx + dw*0.12
         mid_x  = dx + dw*0.54
         Color(r, g, b, 0.90)
-        self._draw_7seg(left_x,  dy, dw*0.36, dh, val//10, r, g, b)
-        self._draw_7seg(mid_x,   dy, dw*0.36, dh, val%10,  r, g, b)
+        self._draw_7seg(left_x, dy, dw*0.36, dh, val//10, r, g, b)
+        self._draw_7seg(mid_x,  dy, dw*0.36, dh, val%10,  r, g, b)
 
     def _draw_7seg(self, x, y, w, h, digit, r, g, b):
         sl = w*0.55
@@ -256,20 +246,17 @@ class ClockBombWidget(Widget):
         ty = y+h*0.84
         my = y+h*0.50
         by_ = y+h*0.14
-        
         SEG = {0:[1,1,1,0,1,1,1], 1:[0,0,1,0,0,1,0], 2:[1,0,1,1,1,0,1],
                3:[1,0,1,1,0,1,1], 4:[0,1,1,1,0,1,0], 5:[1,1,0,1,0,1,1],
                6:[1,1,0,1,1,1,1], 7:[1,0,1,0,0,1,0], 8:[1,1,1,1,1,1,1],
                9:[1,1,1,1,0,1,1]}
         segs = SEG.get(digit, [0]*7)
-        
         def hs(px, py, on):
             Color(r, g, b, 0.92 if on else 0.08)
             Rectangle(pos=(px-sl/2, py-sh/2), size=(sl, sh))
         def vs(px, py, on):
             Color(r, g, b, 0.92 if on else 0.08)
             Rectangle(pos=(px-sh/2, py-sl*0.5), size=(sh, sl*0.95))
-            
         hs(mx, ty,  segs[0])
         vs(mx-sl/2+sh, ty-sl*0.52, segs[1])
         vs(mx+sl/2-sh, ty-sl*0.52, segs[2])
@@ -288,7 +275,6 @@ class ClockBombWidget(Widget):
         start_x = cx - spread/2 + spread/(2*n)
         step    = spread/n if n > 1 else 0
         wlen    = dp(72)
-
         order = list(self.wire_order) if len(self.wire_order) == n else list(range(n))
         for display_pos in range(n):
             real_i = order[display_pos]
@@ -297,8 +283,7 @@ class ClockBombWidget(Widget):
             wb    = wt - wlen
             wc    = WIRE_COLORS[real_i % len(WIRE_COLORS)]
             state = self.wire_states[real_i] if real_i < len(self.wire_states) else -1
-
-            if state == 0: 
+            if state == 0:
                 mid_y = wt - wlen*0.5
                 Color(0.1, 1.0, 0.35, 1)
                 Line(points=[wx, wt, wx, mid_y+dp(4)], width=dp(3.5))
@@ -337,7 +322,6 @@ class ClockBombWidget(Widget):
         Ellipse(pos=(cx-r*(0.6+t*2.2), cy-r*(0.6+t*2.2)), size=(r*2*(0.6+t*2.2), r*2*(0.6+t*2.2)))
         Color(1, 1, 1, max(0, 0.7-t*1.2))
         Ellipse(pos=(cx-r*(0.25+t*.8), cy-r*(0.25+t*.8)), size=(r*2*(0.25+t*.8), r*2*(0.25+t*.8)))
-        
         for i in range(16):
             angle = (i/16)*math.pi*2 + t*1.2
             dist  = r*(0.5+t*4.0)
@@ -346,19 +330,16 @@ class ClockBombWidget(Widget):
             sz    = dp(8)*(1-t*0.8)
             Color(0.15+i*0.02, 0.15, 0.15, max(0, 1-t*1.3))
             Ellipse(pos=(px-sz/2, py-sz/2), size=(sz, sz))
-            
         Color(1, 0.65, 0.1, max(0, 0.6-t))
         Line(circle=(cx, cy, r*(0.8+t*5)), width=max(dp(1), dp(4)*(1-t)))
 
     def _draw_defused(self, cx, cy, r):
         bw, bh = r*2.2, r*1.6
         bx, by = cx-bw/2, cy-bh/2
-        
         Color(0.05, 0.18, 0.06, 1)
         RoundedRectangle(pos=(bx, by), size=(bw, bh), radius=[dp(14)])
         Color(0.10, 0.75, 0.25, 0.6)
         Line(rounded_rectangle=(bx, by, bw, bh, dp(14)), width=dp(3))
-        
         Color(0.15, 1.0, 0.40, 1)
         ck = r*0.5
         Line(points=[cx-ck*.7, cy, cx-ck*.2, cy-ck*.6, cx+ck*.7, cy+ck*.6],
@@ -368,33 +349,28 @@ class ClockBombWidget(Widget):
         n = int(self.num_wires)
         if n == 0:
             return -1
-        r  = min(self.width*0.32, self.height*0.40, dp(90))
+        r   = min(self.width*0.32, self.height*0.40, dp(90))
         bw, bh = r*2.2, r*1.6
-        cx = self.center_x + self.shake_x
-        cy = self.y + self.height*0.62
+        cx  = self.center_x + self.shake_x
+        cy  = self.y + self.height*0.62
         by_ = cy - bh/2
         spread  = min(bw*0.85, dp(20)*n)
         start_x = cx - spread/2 + spread/(2*n)
         step    = spread/n if n > 1 else 0
         wlen    = dp(72)
         order   = list(self.wire_order) if len(self.wire_order) == n else list(range(n))
-        
         for display_pos in range(n):
             real_i = order[display_pos]
-            wx    = start_x + display_pos * step
-            wb    = by_ - wlen
+            wx = start_x + display_pos * step
+            wb = by_ - wlen
             if abs(touch_x-wx) < dp(22) and abs(touch_y-wb) < dp(22):
                 return real_i
         return -1
 
-    # <--- [เพิ่มโค้ดส่วนนี้: ฟังก์ชันเพื่อให้ระเบิดจับการคลิกที่สายไฟได้] --->
     def on_touch_down(self, touch):
-        # 1. เช็คว่าผู้เล่นกดโดนพื้นที่ระเบิดหรือไม่
         if self.collide_point(*touch.pos):
-            # 2. เช็คว่าตำแหน่งที่กด ตรงกับปลายสายไฟเส้นไหน
             wire_idx = self.get_wire_at(touch.x, touch.y)
             if wire_idx != -1:
-                # 3. ถ้ากดโดนสายไฟ ให้ไปสั่ง "คลิกปุ่ม" ด้านล่างให้แบบอัตโนมัติ!
                 app = App.get_running_app()
                 if app and app.root and app.root.has_screen('game'):
                     game_screen = app.root.get_screen('game')
@@ -403,14 +379,13 @@ class ClockBombWidget(Widget):
                         for btn in btn_container.children:
                             if hasattr(btn, 'wire_index') and btn.wire_index == wire_idx:
                                 if not btn.answered:
-                                    # สั่งจำลองการกดปุ่ม (กดลง และ ปล่อย)
                                     btn.dispatch('on_press')
                                     btn.dispatch('on_release')
-                                return True # กินคำสั่งแตะนี้ไปเลย
+                                return True
         return super().on_touch_down(touch)
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  WireAnswerButton - ปุ่มกดตัวเลือกสายไฟสีต่างๆ
+#  WireAnswerButton
 # ─────────────────────────────────────────────────────────────────────────────
 class WireAnswerButton(Button):
     wire_index = NumericProperty(0)
@@ -434,21 +409,95 @@ class WireAnswerButton(Button):
         wc = self.wire_color
         with self.canvas.before:
             if self.answered:
-                # ถ้ากดตอบแล้ว ให้เปลี่ยนเป็นสีเขียว(ถูก) หรือ แดง(ผิด)
                 c = (0.1,0.9,0.3) if self.is_correct else (1,0.2,0.1)
                 Color(*c, 0.35)
                 RoundedRectangle(pos=self.pos, size=self.size, radius=[dp(10)])
                 Color(*c, 1)
             else:
-                # สียังไม่กด จะเป็นสีตามสายไฟ
                 Color(*wc, 0.20)
                 RoundedRectangle(pos=self.pos, size=self.size, radius=[dp(10)])
                 Color(*wc, 0.85)
-            
             Line(rounded_rectangle=(self.x, self.y, self.width, self.height, dp(10)),
                  width=dp(1.8))
-            
             if not self.answered:
                 Color(*wc, 1)
                 dr = dp(4)
                 Ellipse(pos=(self.x+dp(7), self.center_y-dr), size=(dr*2, dr*2))
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  LivesWidget — แสดงชีวิตเป็นวงกลม
+# ─────────────────────────────────────────────────────────────────────────────
+class LivesWidget(Widget):
+    lives     = NumericProperty(3)
+    max_lives = NumericProperty(3)
+    is_sudden = BooleanProperty(False)
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.bind(
+            pos=self._draw, size=self._draw,
+            lives=self._draw, max_lives=self._draw,
+            is_sudden=self._draw,
+        )
+
+    def _draw(self, *_):
+        self.canvas.clear()
+        w, h = self.width, self.height
+        if w < 4 or h < 4:
+            return
+
+        with self.canvas:
+            if self.is_sudden:
+                # ── Sudden Death: วงกลมสีส้มแดง 1 ดวง ──
+                r  = min(w, h) * 0.22
+                cx = self.center_x
+                cy = self.center_y
+                # เรืองแสงรอบนอก
+                Color(1, 0.25, 0.05, 0.20)
+                Ellipse(pos=(cx-r*2.0, cy-r*2.0), size=(r*4.0, r*4.0))
+                Color(1, 0.25, 0.05, 0.40)
+                Ellipse(pos=(cx-r*1.4, cy-r*1.4), size=(r*2.8, r*2.8))
+                # วงกลมหลักสีส้มแดง
+                Color(1, 0.22, 0.05, 1)
+                Ellipse(pos=(cx-r, cy-r), size=(r*2, r*2))
+                # highlight ด้านบน
+                Color(1, 0.65, 0.4, 0.50)
+                Ellipse(pos=(cx-r*0.55, cy+r*0.15), size=(r*0.7, r*0.45))
+                # จุดดำตรงกลาง
+                Color(0.10, 0.02, 0.02, 0.85)
+                Ellipse(pos=(cx-r*0.38, cy-r*0.38), size=(r*0.76, r*0.76))
+            else:
+                # ── โหมดปกติ: วาดวงกลมชีวิต ──
+                n      = max(1, int(self.max_lives))
+                pad    = dp(5)
+                r      = min((w - pad*(n+1)) / (n*2), h*0.30)
+                r      = max(r, dp(5))
+                total_w = n*r*2 + (n-1)*pad
+                start_x = self.center_x - total_w/2 + r
+                cy      = self.center_y
+
+                for i in range(n):
+                    cx    = start_x + i*(r*2 + pad)
+                    alive = i < int(self.lives)
+
+                    if alive:
+                        # วงกลมเต็ม — ชีวิตที่เหลือ (แดงสด)
+                        Color(1, 0.15, 0.15, 0.25)
+                        Ellipse(pos=(cx-r*1.6, cy-r*1.6), size=(r*3.2, r*3.2))
+                        Color(0.90, 0.12, 0.12, 1)
+                        Ellipse(pos=(cx-r, cy-r), size=(r*2, r*2))
+                        # ขอบสว่าง
+                        Color(1, 0.45, 0.45, 0.60)
+                        Line(circle=(cx, cy, r), width=dp(1.2))
+                        # highlight
+                        Color(1, 0.75, 0.75, 0.55)
+                        Ellipse(pos=(cx-r*0.52, cy+r*0.12), size=(r*0.65, r*0.42))
+                    else:
+                        # วงกลมว่าง — ชีวิตที่หายไป (แดงเข้มมืด)
+                        Color(0.28, 0.06, 0.06, 1)
+                        Ellipse(pos=(cx-r, cy-r), size=(r*2, r*2))
+                        Color(0.15, 0.03, 0.03, 1)
+                        Ellipse(pos=(cx-r*0.68, cy-r*0.68), size=(r*1.36, r*1.36))
+                        # ขอบจางๆ
+                        Color(0.45, 0.10, 0.10, 0.40)
+                        Line(circle=(cx, cy, r), width=dp(1.0))

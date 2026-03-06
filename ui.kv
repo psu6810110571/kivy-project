@@ -1,4 +1,5 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import LivesWidget widgets.game_ui.LivesWidget
 
 ScreenManager:
     transition: app.fade_transition()
@@ -382,7 +383,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.05
 
-    # -- ปุ่มย้อนกลับมุมซ้ายบน --
     Button:
         text: '< กลับ'
         font_name: 'Sarabun'
@@ -501,7 +501,6 @@ ScreenManager:
         Widget:
             size_hint_y: 0.2
 
-    # -- ปุ่มย้อนกลับมุมซ้ายบน --
     Button:
         text: '< กลับ'
         font_name: 'Sarabun'
@@ -621,7 +620,6 @@ ScreenManager:
 
         Widget:
 
-    # -- ปุ่มย้อนกลับมุมซ้ายบน --
     Button:
         text: '< กลับ'
         font_name: 'Sarabun'
@@ -724,7 +722,6 @@ ScreenManager:
 
         Widget:
 
-    # -- ปุ่มย้อนกลับมุมซ้ายบน --
     Button:
         text: '< กลับ'
         font_name: 'Sarabun'
@@ -839,7 +836,6 @@ ScreenManager:
 
         Widget:
 
-    # -- ปุ่มย้อนกลับมุมซ้ายบน --
     Button:
         text: '< กลับ'
         font_name: 'Sarabun'
@@ -896,7 +892,6 @@ ScreenManager:
                     pos: self.pos
                     size: self.size
 
-            # ── [ใหม่] ปุ่ม X ถูกจับมาเรียงในแถบให้เนียนๆ ──
             Button:
                 text: 'X'
                 font_name: 'Sarabun'
@@ -907,7 +902,7 @@ ScreenManager:
                 background_color: 0, 0, 0, 0
                 color: 1, 0.3, 0.3, 1
                 on_press: app.btn_press_anim(self)
-                on_release: app.go_home()  # [FIX] หยุด engine ก่อนกลับ menu
+                on_release: app.go_home()
                 canvas.before:
                     Color:
                         rgba: 0.25, 0.05, 0.05, 1
@@ -949,13 +944,9 @@ ScreenManager:
                         size: self.size
                         radius: [dp(6)]
 
-            Label:
+            # ── แก้บัคตรงนี้: เปลี่ยนจาก Label เป็น LivesWidget วาดวงกลม ──
+            LivesWidget:
                 id: lbl_lives
-                text: 'O O O'
-                font_name: 'Sarabun'
-                font_size: sp(17)
-                color: 1, 0.28, 0.28, 1
-                halign: 'center'
                 size_hint_x: 0.18
                 canvas.before:
                     Color:
@@ -1058,12 +1049,12 @@ ScreenManager:
                 halign: 'center'
                 size_hint_y: 0.55
 
-        # ── Wire Answer Buttons (ปรับเป็น 2x2 สวยๆ) ───────────────────────
+        # ── Wire Answer Buttons ───────────────────────────────────────────
         GridLayout:
             id: wire_btn_container
             size_hint_y: None
             height: self.minimum_height
-            cols: 2   # เปลี่ยนเป็น 2 คอลัมน์
+            cols: 2
             spacing: dp(8)
             padding: dp(10), dp(8)
             row_default_height: dp(42)
@@ -1088,146 +1079,154 @@ ScreenManager:
             pos: -dp(80), self.height*0.22
             size: dp(350), dp(350)
 
-    BoxLayout:
-        orientation: 'vertical'
-        padding: dp(32), dp(40)
-        spacing: dp(20)
-
-        Label:
-            id: lbl_result_title
-            text: 'ภารกิจสำเร็จ!'
-            font_name: 'Sarabun'
-            font_size: sp(34)
-            bold: True
-            color: 1, 0.85, 0.10, 1
-            halign: 'center'
-            size_hint_y: None
-            height: dp(62)
-
-        Label:
-            id: lbl_result_agent
-            text: 'AGENT: ???'
-            font_name: 'Sarabun'
-            font_size: sp(16)
-            color: 0.70, 0.70, 1, 1
-            halign: 'center'
-            size_hint_y: None
-            height: dp(30)
-
-        Label:
-            id: lbl_result_score
-            text: '0 pts'
-            font_name: 'Sarabun'
-            font_size: sp(52)
-            bold: True
-            color: 1, 0.55, 0.10, 1
-            halign: 'center'
-            size_hint_y: None
-            height: dp(90) 
-
-        Label:
-            id: lbl_result_stats
-            text: ''
-            font_name: 'Sarabun'
-            font_size: sp(15)
-            color: 0.75, 0.75, 0.95, 1
-            halign: 'center'
-            size_hint_y: None
-            height: dp(32)
-
-        Label:
-            id: lbl_result_msg
-            text: ''
-            font_name: 'Sarabun'
-            font_size: sp(18)
-            color: 0.80, 0.80, 1, 1
-            halign: 'center'
-            size_hint_y: None
-            height: dp(36)
-
-        Label:
-            id: lbl_rank
-            text: ''
-            font_name: 'Sarabun'
-            font_size: sp(14)
-            color: 1, 0.80, 0.20, 1
-            halign: 'center'
-            size_hint_y: None
-            height: dp(28)
-
-        Label:
-            id: lbl_new_ach
-            text: ''
-            font_name: 'Sarabun'
-            font_size: sp(14)
-            color: 1, 0.90, 0.30, 1
-            halign: 'center'
-            size_hint_y: None
-            height: dp(28)
-
-        Widget:
-            size_hint_y: 0.05
-
-        Button:
-            text: '[b]  เล่นอีกครั้ง  [/b]'
-            markup: True
-            font_name: 'Sarabun'
-            font_size: sp(20)
-            size_hint: 0.72, None
-            height: dp(56)
-            pos_hint: {'center_x': 0.5}
-            background_color: 0, 0, 0, 0
-            color: 1, 1, 1, 1
-            on_press: app.btn_press_anim(self)
-            on_release: app.play_again()
-            canvas.before:
-                Color:
-                    rgba: 0.88, 0.17, 0.05, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [dp(12)]
+    ScrollView:
+        do_scroll_x: False
+        do_scroll_y: True
 
         BoxLayout:
-            size_hint: None, None
-            size: dp(240), dp(42)
-            pos_hint: {'center_x': 0.5}
-            spacing: dp(10)
+            orientation: 'vertical'
+            padding: dp(32), dp(24)
+            spacing: dp(12)
+            size_hint_y: None
+            height: self.minimum_height
 
-            Button:
-                text: 'คะแนน'
+            Label:
+                id: lbl_result_title
+                text: 'ภารกิจสำเร็จ!'
+                font_name: 'Sarabun'
+                font_size: sp(30)
+                bold: True
+                color: 1, 0.85, 0.10, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(52)
+
+            Label:
+                id: lbl_result_agent
+                text: 'AGENT: ???'
+                font_name: 'Sarabun'
+                font_size: sp(15)
+                color: 0.70, 0.70, 1, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(26)
+
+            Label:
+                id: lbl_result_score
+                text: '0 pts'
+                font_name: 'Sarabun'
+                font_size: sp(48)
+                bold: True
+                color: 1, 0.55, 0.10, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(78)
+
+            Label:
+                id: lbl_result_stats
+                text: ''
                 font_name: 'Sarabun'
                 font_size: sp(14)
+                color: 0.75, 0.75, 0.95, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(26)
+
+            Label:
+                id: lbl_result_msg
+                text: ''
+                font_name: 'Sarabun'
+                font_size: sp(16)
+                color: 0.80, 0.80, 1, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(28)
+
+            Label:
+                id: lbl_rank
+                text: ''
+                font_name: 'Sarabun'
+                font_size: sp(13)
+                color: 1, 0.80, 0.20, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(24)
+
+            Label:
+                id: lbl_new_ach
+                text: ''
+                font_name: 'Sarabun'
+                font_size: sp(13)
+                color: 1, 0.90, 0.30, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(24)
+
+            Widget:
+                size_hint_y: None
+                height: dp(16)
+
+            Button:
+                text: '[b]  เล่นอีกครั้ง  [/b]'
+                markup: True
+                font_name: 'Sarabun'
+                font_size: sp(20)
+                size_hint: 0.72, None
+                height: dp(56)
+                pos_hint: {'center_x': 0.5}
                 background_color: 0, 0, 0, 0
-                color: 0.85, 0.70, 1, 1
+                color: 1, 1, 1, 1
                 on_press: app.btn_press_anim(self)
-                on_release: app.show_leaderboard()
+                on_release: app.play_again()
                 canvas.before:
                     Color:
-                        rgba: 0.25, 0.08, 0.50, 0.85
+                        rgba: 0.88, 0.17, 0.05, 1
                     RoundedRectangle:
                         pos: self.pos
                         size: self.size
-                        radius: [dp(10)]
+                        radius: [dp(12)]
 
-            Button:
-                text: 'หน้าหลัก'
-                font_name: 'Sarabun'
-                font_size: sp(14)
-                background_color: 0, 0, 0, 0
-                color: 0.55, 0.55, 0.78, 1
-                on_press: app.btn_press_anim(self)
-                on_release: app.go_home()
-                canvas.before:
-                    Color:
-                        rgba: 0.10, 0.10, 0.22, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [dp(10)]
+            BoxLayout:
+                size_hint: None, None
+                size: dp(240), dp(42)
+                pos_hint: {'center_x': 0.5}
+                spacing: dp(10)
 
-        Widget:
-            size_hint_y: 0.03
+                Button:
+                    text: 'คะแนน'
+                    font_name: 'Sarabun'
+                    font_size: sp(14)
+                    background_color: 0, 0, 0, 0
+                    color: 0.85, 0.70, 1, 1
+                    on_press: app.btn_press_anim(self)
+                    on_release: app.show_leaderboard()
+                    canvas.before:
+                        Color:
+                            rgba: 0.25, 0.08, 0.50, 0.85
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [dp(10)]
+
+                Button:
+                    text: 'หน้าหลัก'
+                    font_name: 'Sarabun'
+                    font_size: sp(14)
+                    background_color: 0, 0, 0, 0
+                    color: 0.55, 0.55, 0.78, 1
+                    on_press: app.btn_press_anim(self)
+                    on_release: app.go_home()
+                    canvas.before:
+                        Color:
+                            rgba: 0.10, 0.10, 0.22, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [dp(10)]
+
+            Widget:
+                size_hint_y: None
+                height: dp(16)
 
 # ════════════ LeaderboardScreen ════════════
 <LeaderboardScreen>:
@@ -1279,7 +1278,7 @@ ScreenManager:
                 padding: dp(3), dp(3)
 
         Button:
-            text: '← กลับ'
+            text: '< กลับ'
             font_name: 'Sarabun'
             font_size: sp(17)
             size_hint: 0.46, None
@@ -1347,7 +1346,7 @@ ScreenManager:
                 padding: dp(3), dp(3)
 
         Button:
-            text: '← กลับ'
+            text: '< กลับ'
             font_name: 'Sarabun'
             font_size: sp(17)
             size_hint: 0.46, None
