@@ -84,6 +84,12 @@
     "level": "daily"
   },
   {
+    "name": "Unknown Agent",
+    "score": 280,
+    "category": "it",
+    "level": "daily"
+  },
+  {
     "name": "1",
     "score": 210,
     "category": "general",
@@ -110,12 +116,6 @@
   {
     "name": "Unknown Agent",
     "score": 136,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "ฟห",
-    "score": 130,
     "category": "general",
     "level": "easy"
   }
