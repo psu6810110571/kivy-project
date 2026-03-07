@@ -12,10 +12,22 @@
     "level": "easy"
   },
   {
+    "name": "maxZA",
+    "score": 1890,
+    "category": "it",
+    "level": "medium"
+  },
+  {
     "name": "chin",
     "score": 1822,
     "category": "general",
     "level": "easy"
+  },
+  {
+    "name": "maxZA",
+    "score": 1275,
+    "category": "logic",
+    "level": "medium"
   },
   {
     "name": "sf",
@@ -42,10 +54,28 @@
     "level": "sudden"
   },
   {
+    "name": "maxZA",
+    "score": 825,
+    "category": "general",
+    "level": "medium"
+  },
+  {
+    "name": "maxZA",
+    "score": 772,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "หฟฟหฟ",
     "score": 705,
     "category": "general",
     "level": "medium"
+  },
+  {
+    "name": "maxZA",
+    "score": 693,
+    "category": "it",
+    "level": "hard"
   },
   {
     "name": "Unknown Agent",
@@ -88,35 +118,5 @@
     "score": 645,
     "category": "general",
     "level": "medium"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 645,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "chin",
-    "score": 615,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "maxZA",
-    "score": 562,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "fsd",
-    "score": 481,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 474,
-    "category": "logic",
-    "level": "easy"
   }
 ]
