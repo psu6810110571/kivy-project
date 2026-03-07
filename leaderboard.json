@@ -6,6 +6,12 @@
     "level": "easy"
   },
   {
+    "name": "sf",
+    "score": 1132,
+    "category": "general",
+    "level": "sudden"
+  },
+  {
     "name": "sas",
     "score": 960,
     "category": "general",
@@ -30,8 +36,20 @@
     "level": "easy"
   },
   {
+    "name": "fsd",
+    "score": 481,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "Unknown Agent",
     "score": 467,
+    "category": "general",
+    "level": "easy"
+  },
+  {
+    "name": "sf",
+    "score": 464,
     "category": "general",
     "level": "easy"
   },
@@ -98,24 +116,6 @@
   {
     "name": "หฟห",
     "score": 150,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "sa",
-    "score": 150,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 136,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "ฟห",
-    "score": 130,
     "category": "general",
     "level": "easy"
   }
