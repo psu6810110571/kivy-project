@@ -125,6 +125,24 @@ class GameEngine:
             self.timer_event.cancel()
             self.timer_event = None
 
+        # ── 🕵️‍♂️ ระบบ Easter Egg (Cheat Code) ─────────────────────────
+        try:
+            from kivy.app import App
+            app = App.get_running_app()
+            # ดึงชื่อผู้เล่นมาแปลงเป็นตัวพิมพ์เล็กทั้งหมดเพื่อเช็กง่ายๆ
+            p_name = getattr(app, 'player_name', '').strip().lower()
+            
+            # ถ้ารหัสลับตรงกับที่ตั้งไว้ ให้บัฟพลังทันที!
+            if p_name in ['chin', 'max', 'gus']:
+                print(f"[SECRET] Cheat Activated by '{p_name}'! 99 Lives & x2 Score!")
+                self.lives = 99
+                self.p1_lives = 99
+                self.p2_lives = 99
+                self.score_multiplier *= 2
+        except Exception as e:
+            print(f"[SECRET] Error checking cheat code: {e}")
+        # ──────────────────────────────────────────────────────────────
+
         self.is_playing = True
         self._play(self.Duringquiz_sound)
         print("Game Started!")

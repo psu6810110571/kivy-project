@@ -6,6 +6,12 @@
     "level": "easy"
   },
   {
+    "name": "chin",
+    "score": 1822,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "sf",
     "score": 1132,
     "category": "general",
@@ -34,6 +40,12 @@
     "score": 660,
     "category": "general",
     "level": "medium"
+  },
+  {
+    "name": "chin",
+    "score": 615,
+    "category": "general",
+    "level": "easy"
   },
   {
     "name": "maxZA",
@@ -102,21 +114,9 @@
     "level": "easy"
   },
   {
-    "name": "Unknown Agent",
-    "score": 286,
+    "name": "chin",
+    "score": 300,
     "category": "general",
     "level": "easy"
-  },
-  {
-    "name": "sa",
-    "score": 280,
-    "category": "it",
-    "level": "daily"
-  },
-  {
-    "name": "1",
-    "score": 210,
-    "category": "general",
-    "level": "medium"
   }
 ]
