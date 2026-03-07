@@ -31,11 +31,11 @@ QUESTIONS = {
             "question": "ดาวเคราะห์ที่อยู่ใกล้ดวงอาทิตย์มากที่สุดคือดาวใด?",
             "choices":  ["ดาวพุธ", "ดาวศุกร์", "ดาวอังคาร", "ดาวโลก"],
             "answer_index": 0,
-            "hint": "ดาวที่มีชื่อเป็นพระเจ้าของเทพโรมัน"
+            "hint": "ดาวที่มีชื่อเป็นเทพโรมัน"
         },
         {
             "question": "น้ำมีสูตรเคมีว่าอย่างไร?",
-            "choices":  ["H₂O", "CO₂", "O₂", "NaCl", "H₂SO₄", "HCl"],
+            "choices":  ["H2O", "CO2", "O2", "NaCl", "H2SO4", "HCl"],
             "answer_index": 0,
             "hint": "ไฮโดรเจน 2 อะตอม + ออกซิเจน 1 อะตอม"
         },
@@ -123,7 +123,7 @@ QUESTIONS = {
         },
         {
             "question": "หัวใจมนุษย์ปกติเต้นกี่ครั้งต่อนาที?",
-            "choices":  ["60–100 ครั้ง", "30–50 ครั้ง", "120–150 ครั้ง", "20–40 ครั้ง"],
+            "choices":  ["60-100 ครั้ง", "30-50 ครั้ง", "120-150 ครั้ง", "20-40 ครั้ง"],
             "answer_index": 0,
             "hint": "ประมาณหนึ่งครั้งต่อวินาที"
         },
@@ -135,7 +135,7 @@ QUESTIONS = {
         },
         {
             "question": "BMI ที่ถือว่าอยู่ในเกณฑ์ปกติคือ?",
-            "choices":  ["18.5–24.9", "10–17", "25–29.9", "30 ขึ้นไป", "15–18", "25–30"],
+            "choices":  ["18.5-24.9", "10-17", "25-29.9", "30 ขึ้นไป", "15-18", "25-30"],
             "answer_index": 0,
             "hint": "ไม่ผอมเกิน ไม่อ้วนเกิน"
         },
@@ -153,7 +153,7 @@ QUESTIONS = {
         },
         {
             "question": "ควรนอนหลับกี่ชั่วโมงต่อคืนสำหรับผู้ใหญ่?",
-            "choices":  ["7–9 ชั่วโมง", "4–5 ชั่วโมง", "10–12 ชั่วโมง", "3–4 ชั่วโมง", "12–14 ชั่วโมง", "2–3 ชั่วโมง"],
+            "choices":  ["7-9 ชั่วโมง", "4-5 ชั่วโมง", "10-12 ชั่วโมง", "3-4 ชั่วโมง", "12-14 ชั่วโมง", "2-3 ชั่วโมง"],
             "answer_index": 0,
             "hint": "ประมาณหนึ่งในสามของวัน"
         },
@@ -262,7 +262,7 @@ QUESTIONS = {
             "question": "IP Address เวอร์ชัน 4 มีกี่บิต?",
             "choices":  ["32 บิต", "16 บิต", "64 บิต", "128 บิต", "8 บิต", "256 บิต"],
             "answer_index": 0,
-            "hint": "4 ออคเตต × 8 บิต"
+            "hint": "4 ออคเตต x 8 บิต"
         },
         {
             "question": "ฐานข้อมูลแบบ SQL ใช้ภาษาใดในการจัดการข้อมูล?",
@@ -294,7 +294,7 @@ QUESTIONS = {
             "question": "ไฟล์ .py เป็นไฟล์ของภาษาโปรแกรมใด?",
             "choices":  ["Python", "PHP", "Perl", "Pascal", "PowerShell", "Prolog"],
             "answer_index": 0,
-            "hint": "ภาษาที่ใช้งาบนี้!"
+            "hint": "ภาษาที่ใช้งานอยู่นี้!"
         },
         {
             "question": "Cloud Computing คืออะไร?",
@@ -308,20 +308,31 @@ QUESTIONS = {
 
 
 # ─── API หลัก ─────────────────────────────────────────────────────────────────
-def get_questions(category: str, level: str = 'easy') -> list:
+def get_questions(category: str, level: str = 'easy', mode: str = 'single') -> list:
     """
     ดึงคำถามตามหมวดและความยาก
-    คืนค่าเป็น list ของ dict พร้อม shuffle แล้ว
+    - 2player: คืน 12 ข้อเสมอ (loop shuffle ถ้าคำถามใน pool มีน้อยกว่า 12)
+    - single/daily: 5 ข้อ, medium: 7 ข้อ, hard: 10 ข้อ, sudden: ทั้งหมด
     """
     pool = QUESTIONS.get(category, QUESTIONS['general']).copy()
-    random.shuffle(pool)
 
-    count_map = {
-        'easy':   5,
-        'medium': 7,
-        'hard':   10,
-        'sudden': len(pool),
-        'daily':  5,
-    }
-    n = count_map.get(level, 5)
-    return pool[:n]
+    if mode == '2player':
+        n = 12
+    else:
+        count_map = {
+            'easy':   5,
+            'medium': 7,
+            'hard':   10,
+            'sudden': len(pool),
+            'daily':  5,
+        }
+        n = count_map.get(level, 5)
+
+    # ถ้าคำถามใน pool มีน้อยกว่าที่ต้องการ — loop shuffle จนพอ
+    result = []
+    while len(result) < n:
+        batch = pool.copy()
+        random.shuffle(batch)
+        result.extend(batch)
+
+    return result[:n]

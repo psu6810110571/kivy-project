@@ -6,6 +6,12 @@
     "level": "easy"
   },
   {
+    "name": "ฟหฟหฟ",
+    "score": 1425,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "sas",
     "score": 960,
     "category": "general",
@@ -16,6 +22,18 @@
     "score": 960,
     "category": "health",
     "level": "medium"
+  },
+  {
+    "name": "หฟฟหฟ",
+    "score": 705,
+    "category": "general",
+    "level": "medium"
+  },
+  {
+    "name": "Unknown Agent",
+    "score": 683,
+    "category": "general",
+    "level": "easy"
   },
   {
     "name": "หหฟ",
@@ -30,14 +48,56 @@
     "level": "medium"
   },
   {
+    "name": "Unknown Agent",
+    "score": 645,
+    "category": "general",
+    "level": "medium"
+  },
+  {
+    "name": "Unknown Agent",
+    "score": 645,
+    "category": "general",
+    "level": "medium"
+  },
+  {
+    "name": "ะ้ะ",
+    "score": 600,
+    "category": "it",
+    "level": "daily"
+  },
+  {
     "name": "maxZA",
     "score": 562,
     "category": "general",
     "level": "easy"
   },
   {
+    "name": "ไๆำๆไๆไ",
+    "score": 525,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "Unknown Agent",
     "score": 467,
+    "category": "general",
+    "level": "easy"
+  },
+  {
+    "name": "Unknown Agent",
+    "score": 465,
+    "category": "general",
+    "level": "medium"
+  },
+  {
+    "name": "ะ้ะ",
+    "score": 465,
+    "category": "general",
+    "level": "easy"
+  },
+  {
+    "name": "หฟฟหฟ",
+    "score": 465,
     "category": "general",
     "level": "easy"
   },
@@ -48,75 +108,15 @@
     "level": "medium"
   },
   {
+    "name": "ฟหฟหฟ",
+    "score": 444,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "ปผหป",
     "score": 420,
     "category": "general",
     "level": "medium"
-  },
-  {
-    "name": "1",
-    "score": 420,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "sasa",
-    "score": 398,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "qwqwq",
-    "score": 390,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 315,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "ฟห",
-    "score": 308,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 286,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "sa",
-    "score": 280,
-    "category": "it",
-    "level": "daily"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 280,
-    "category": "it",
-    "level": "daily"
-  },
-  {
-    "name": "1",
-    "score": 210,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "2",
-    "score": 180,
-    "category": "health",
-    "level": "medium"
-  },
-  {
-    "name": "หฟห",
-    "score": 150,
-    "category": "general",
-    "level": "easy"
   }
 ]

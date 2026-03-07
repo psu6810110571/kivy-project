@@ -30,8 +30,8 @@ class GameEngine:
         self.all_questions    = []
         self.current_question = None
 
-        self.lives         = 3   # ใช้สำหรับ single / sudden
-        self.p1_lives      = 3   # ชีวิต P1 สำหรับ 2player
+        self.lives         = 3   # ใช้สำหรับ single / daily
+        self.p1_lives      = 3   # sync กับ lives ใน single/daily, ชีวิต P1 ใน 2player
         self.p2_lives      = 3   # ชีวิต P2 สำหรับ 2player
         self.combo         = 0
         self.max_combo     = 0
@@ -47,6 +47,9 @@ class GameEngine:
 
         self.hint_used    = False
         self.hint_message = ''
+
+        # FIX: flag ว่าเกมจบจาก sudden death หรือเปล่า
+        self._sudden_dead = False
 
         self._reload_sounds()
 
@@ -85,37 +88,49 @@ class GameEngine:
         self._stop(self.warning_sound)
         self._play(self.explosion_sound)
 
-    # ── ชีวิตของผู้เล่นปัจจุบัน (helper) ────────────────────────────────────
+    # ── ชีวิตของผู้เล่นปัจจุบัน ──────────────────────────────────────────────
 
     def get_current_lives(self):
-        """คืนชีวิตของผู้เล่นที่กำลังเล่นอยู่"""
         if self.game_mode == '2player':
             return self.p1_lives if self.current_player == 1 else self.p2_lives
         return self.lives
 
     def lose_life(self):
-        """หักชีวิตผู้เล่นปัจจุบัน และคืนค่าชีวิตที่เหลือ"""
+        """
+        หักชีวิตผู้เล่นปัจจุบัน
+        - 2player      : หักเฉพาะ p1_lives หรือ p2_lives
+        - single/daily : หัก lives และ sync p1_lives
+        - sudden       : ไม่มีระบบชีวิต — set flag _sudden_dead แทน
+        """
         if self.game_mode == '2player':
             if self.current_player == 1:
-                self.p1_lives -= 1
+                self.p1_lives = max(0, self.p1_lives - 1)
                 remaining = self.p1_lives
             else:
-                self.p2_lives -= 1
+                self.p2_lives = max(0, self.p2_lives - 1)
                 remaining = self.p2_lives
+        elif self.game_mode == 'sudden':
+            # sudden death — ไม่มีชีวิต แค่ mark ว่าตายแล้ว
+            self._sudden_dead = True
+            remaining = 0
         else:
-            self.lives -= 1
+            # single / daily
+            self.lives    = max(0, self.lives - 1)
+            self.p1_lives = self.lives
             remaining = self.lives
+
         print(f"[LIFE] P{self.current_player} lives: {remaining}")
         return remaining
 
     def both_players_dead(self):
-        """คืน True ถ้าทั้ง 2 คนหมดชีวิต"""
+        """คืน True ถ้าเกมควรจบแล้ว"""
+        if self.game_mode == 'sudden':
+            return self._sudden_dead   # FIX: sudden ใช้ flag แทน lives
         if self.game_mode == '2player':
             return self.p1_lives <= 0 and self.p2_lives <= 0
         return self.lives <= 0
 
     def current_player_dead(self):
-        """คืน True ถ้าผู้เล่นปัจจุบันหมดชีวิต"""
         return self.get_current_lives() <= 0
 
     # ── เริ่มเกม ──────────────────────────────────────────────────────────────
@@ -158,7 +173,8 @@ class GameEngine:
                 else:
                     self.p2_score += total_points
             else:
-                self.score += total_points
+                self.score    += total_points
+                self.p1_score  = self.score
             print(f"Correct! +{total_points} pts | Combo: x{self.combo}")
             return True
         else:
@@ -218,6 +234,9 @@ class GameEngine:
     # ── สรุปผล ────────────────────────────────────────────────────────────────
 
     def get_summary(self):
+        if self.game_mode != '2player':
+            self.p1_score = self.score
+
         summary_data = {
             "mode":          self.game_mode,
             "level":         self.level_key,
@@ -229,7 +248,7 @@ class GameEngine:
             "max_combo":     self.max_combo,
             "correct_count": self.correct_count,
             "lives_left":    self.lives,
-            "status":        "Finished" if not self.both_players_dead() else "Game Over",
+            "status":        "Game Over" if self.both_players_dead() else "Finished",
         }
         print(f"Game Summary: {summary_data}")
         return summary_data
@@ -261,6 +280,7 @@ class GameEngine:
         self.current_question = None
         self.hint_used      = False
         self.is_playing     = False
+        self._sudden_dead   = False   # FIX: reset flag ด้วย
         self._reload_sounds()
         print("Game Reset! Ready for new round.")
 
