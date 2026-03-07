@@ -262,7 +262,7 @@ ScreenManager:
             size_hint_y: 0.015
 
         Label:
-            text: 'BOMB QUIZ  v4.0'
+            text: 'BOMB QUIZ  v2.0'
             font_name: 'Sarabun'
             font_size: sp(11)
             color: 0.24, 0.24, 0.40, 1
@@ -341,7 +341,7 @@ ScreenManager:
             color: 0.8, 0.95, 0.8, 1
             halign: 'center'
             valign: 'middle'
-            text_size: self.width - dp(20), None
+            text_size: self.width, None
             size_hint_y: 0.4
 
         Widget:
@@ -1063,7 +1063,7 @@ ScreenManager:
                 color: 1, 1, 1, 1
                 halign: 'center'
                 valign: 'middle'
-                text_size: self.size
+                text_size: self.width, None
 
         # ── Bomb Widget ───────────────────────────────────────────────────
         ClockBombWidget:

@@ -5,22 +5,22 @@ import os
 #  leaderboard_mgr.py  —  จัดการ Leaderboard และ Achievements
 # ══════════════════════════════════════════════════════════════════════════════
 
-BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
-LB_FILE         = os.path.join(BASE_DIR, '..', 'leaderboard.json')
-ACH_FILE        = os.path.join(BASE_DIR, '..', 'achievements.json')
-MAX_ENTRIES     = 20
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+LB_FILE     = os.path.join(BASE_DIR, '..', 'leaderboard.json')
+ACH_FILE    = os.path.join(BASE_DIR, '..', 'achievements.json')
+MAX_ENTRIES = 20
 
-# ─── นิยาม Achievements ────────────────────────────────────────────────────────
+# ─── นิยาม Achievements (ไม่ใช้ emoji — ใช้ตัวอักษรแทน) ──────────────────────
 ACHIEVEMENTS = [
-    {"id": "first_blood",  "icon": "🩸", "name": "First Blood",  "desc": "เล่นครั้งแรก"},
-    {"id": "on_fire",      "icon": "🔥", "name": "On Fire",      "desc": "Combo ×5 ขึ้นไป"},
-    {"id": "perfect",      "icon": "⭐", "name": "Perfect",      "desc": "ตอบถูกทุกข้อใน 1 เกม"},
-    {"id": "speedster",    "icon": "⚡", "name": "Speedster",    "desc": "ตอบถูกภายใน 2 วินาที"},
-    {"id": "survivor",     "icon": "💀", "name": "Survivor",     "desc": "เล่น Sudden Death ผ่าน 5 ข้อ"},
-    {"id": "daily_agent",  "icon": "📅", "name": "Daily Agent",  "desc": "ทำ Daily Challenge สำเร็จ"},
-    {"id": "hard_cleared", "icon": "🔴", "name": "Hard Cleared", "desc": "ผ่าน Hard โดยไม่เสียชีวิต"},
-    {"id": "boss_slayer",  "icon": "👹", "name": "Boss Slayer",  "desc": "ผ่าน Boss Round สำเร็จ"},
-    {"id": "tag_team",     "icon": "👥", "name": "Tag Team",     "desc": "ชนะโหมด 2 ผู้เล่น"},
+    {"id": "first_blood",  "icon": "[FB]",  "name": "First Blood",  "desc": "เล่นครั้งแรก"},
+    {"id": "on_fire",      "icon": "[HOT]", "name": "On Fire",      "desc": "Combo x5 ขึ้นไป"},
+    {"id": "perfect",      "icon": "[*]",   "name": "Perfect",      "desc": "ตอบถูกทุกข้อใน 1 เกม"},
+    {"id": "speedster",    "icon": "[>>]",  "name": "Speedster",    "desc": "ตอบถูกภายใน 2 วินาที"},
+    {"id": "survivor",     "icon": "[SK]",  "name": "Survivor",     "desc": "เล่น Sudden Death ผ่าน 5 ข้อ"},
+    {"id": "daily_agent",  "icon": "[D]",   "name": "Daily Agent",  "desc": "ทำ Daily Challenge สำเร็จ"},
+    {"id": "hard_cleared", "icon": "[H]",   "name": "Hard Cleared", "desc": "ผ่าน Hard โดยไม่เสียชีวิต"},
+    {"id": "boss_slayer",  "icon": "[BS]",  "name": "Boss Slayer",  "desc": "ผ่าน Boss Round สำเร็จ"},
+    {"id": "tag_team",     "icon": "[2P]",  "name": "Tag Team",     "desc": "ชนะโหมด 2 ผู้เล่น"},
 ]
 
 
@@ -61,7 +61,7 @@ def save_score(name: str, score: int, category: str = 'general', level: str = 'e
     data.sort(key=lambda x: x['score'], reverse=True)
     data = data[:MAX_ENTRIES]
     _save_lb(data)
-    print(f"[LB] saved: {name} → {score} pts ({category}/{level})")
+    print(f"[LB] saved: {name} -> {score} pts ({category}/{level})")
 
 
 def load_scores() -> list:
@@ -79,10 +79,7 @@ def get_rank(score: int) -> int:
 
 
 def populate_leaderboard(grid_widget):
-    """
-    เติมข้อมูลลงใน GridLayout ของ LeaderboardScreen
-    grid_widget = self.ids.lb_grid
-    """
+    """เติมข้อมูลลงใน GridLayout ของ LeaderboardScreen"""
     from kivy.uix.label import Label
     from kivy.uix.boxlayout import BoxLayout
     from kivy.graphics import Color, RoundedRectangle
@@ -101,7 +98,8 @@ def populate_leaderboard(grid_widget):
         grid_widget.add_widget(lbl)
         return
 
-    medals = {1: '🥇', 2: '🥈', 3: '🥉'}
+    # ใช้ตัวอักษรแทน emoji เหรียญ
+    medals = {1: '#1', 2: '#2', 3: '#3'}
 
     for i, entry in enumerate(data[:20], start=1):
         rank_text  = medals.get(i, str(i) + '.')
@@ -115,7 +113,6 @@ def populate_leaderboard(grid_widget):
             padding=dp(10), spacing=dp(6)
         )
 
-        # พื้นหลังแต่ละแถว
         if i == 1:
             bg_color = (0.35, 0.27, 0.02, 0.85)
         elif i == 2:
@@ -137,10 +134,10 @@ def populate_leaderboard(grid_widget):
                       size_hint_x=sh)
             return l
 
-        row.add_widget(_lbl(rank_text,  14, (1, 0.85, 0.1, 1),  0.12))
-        row.add_widget(_lbl(name_text,  15, (1, 1, 1, 1),       0.40, bold=True))
-        row.add_widget(_lbl(score_text, 16, (1, 0.75, 0.1, 1),  0.28, bold=True))
-        row.add_widget(_lbl(mode_text,  11, (0.55, 0.55, 0.75, 1), 0.20))
+        row.add_widget(_lbl(rank_text,  14, (1, 0.85, 0.1, 1),     0.12, bold=(i <= 3)))
+        row.add_widget(_lbl(name_text,  15, (1, 1, 1, 1),           0.40, bold=True))
+        row.add_widget(_lbl(score_text, 16, (1, 0.75, 0.1, 1),      0.28, bold=True))
+        row.add_widget(_lbl(mode_text,  11, (0.55, 0.55, 0.75, 1),  0.20))
 
         grid_widget.add_widget(row)
 
@@ -179,10 +176,7 @@ def unlock_achievement(ach_id: str) -> bool:
 
 
 def check_and_unlock(summary: dict) -> list:
-    """
-    ตรวจสอบเงื่อนไข achievement จาก summary ที่ได้หลังจบเกม
-    คืนค่าเป็น list ของ achievement ที่ปลดล็อกใหม่
-    """
+    """ตรวจสอบเงื่อนไข achievement จาก summary หลังจบเกม"""
     newly = []
 
     def try_unlock(aid):
@@ -191,33 +185,25 @@ def check_and_unlock(summary: dict) -> list:
             if ach:
                 newly.append(ach)
 
-    # First Blood — เล่นครั้งแรก
     try_unlock('first_blood')
 
-    # On Fire — Combo ≥ 5
     if summary.get('max_combo', 0) >= 5:
         try_unlock('on_fire')
 
-    # Perfect — ไม่มีผิดเลย (lives ยังครบ 3)
-    # ตรวจจาก correct_count vs total (ต้องส่งมาใน summary)
     if summary.get('lives_left', 0) >= 3 and summary.get('correct_count', 0) > 0:
         try_unlock('perfect')
 
-    # Survivor — Sudden Death ผ่าน 5 ข้อ
     if summary.get('mode') == 'sudden' and summary.get('correct_count', 0) >= 5:
         try_unlock('survivor')
 
-    # Daily Agent — ทำ Daily Challenge สำเร็จ
     if summary.get('mode') == 'daily':
         try_unlock('daily_agent')
 
-    # Hard Cleared — ผ่าน Hard โดยไม่เสียชีวิต
     if (summary.get('level') == 'hard' and
             summary.get('lives_left', 0) >= 3 and
             summary.get('correct_count', 0) >= 10):
         try_unlock('hard_cleared')
 
-    # Tag Team — ชนะโหมด 2 ผู้เล่น
     if summary.get('mode') == '2player':
         try_unlock('tag_team')
 
@@ -225,10 +211,7 @@ def check_and_unlock(summary: dict) -> list:
 
 
 def populate_achievements(grid_widget):
-    """
-    เติมข้อมูล Achievements ลงใน GridLayout
-    grid_widget = self.ids.ach_grid
-    """
+    """เติมข้อมูล Achievements ลงใน GridLayout"""
     from kivy.uix.label import Label
     from kivy.uix.boxlayout import BoxLayout
     from kivy.graphics import Color, RoundedRectangle
@@ -253,14 +236,16 @@ def populate_achievements(grid_widget):
         row.bind(pos=lambda w, v: setattr(w._bg, 'pos', v),
                  size=lambda w, v: setattr(w._bg, 'size', v))
 
-        # ไอคอนล็อค/ปลด
-        lock_icon = '✅' if is_unlocked else '🔒'
+        # ใช้ [OK] / [--] แทน emoji ล็อค/ปลด
+        lock_text  = '[OK]' if is_unlocked else '[--]'
+        lock_color = (0.3, 1, 0.4, 1) if is_unlocked else (0.4, 0.4, 0.5, 1)
         lock_lbl = Label(
-            text=lock_icon, font_name='Sarabun',
-            font_size=sp(20), size_hint_x=0.12
+            text=lock_text, font_name='Sarabun',
+            font_size=sp(13), bold=is_unlocked,
+            color=lock_color, size_hint_x=0.12
         )
 
-        # ชื่อ Achievement
+        # ชื่อ Achievement — ใช้ icon ที่เป็น ASCII แล้ว
         name_color = (1, 1, 1, 1) if is_unlocked else (0.5, 0.5, 0.6, 1)
         name_lbl = Label(
             text=f'{ach["icon"]} {ach["name"]}',

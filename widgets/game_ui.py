@@ -163,7 +163,10 @@ class ClockBombWidget(Widget):
             return
         cx = self.center_x + self.shake_x
         cy = self.y + h * 0.62
-        r  = min(w * 0.32, h * 0.40, dp(90))
+        
+        # 🚀 ปลดล็อกลิมิตขนาดระเบิด: ขยายตามสัดส่วนจอ (สูงสุด dp(200))
+        r  = min(w * 0.32, h * 0.40, dp(200)) 
+        
         with self.canvas:
             if self.exploding:
                 self._draw_explosion(cx, cy, r)
@@ -271,11 +274,20 @@ class ClockBombWidget(Widget):
         n   = int(self.num_wires)
         if n == 0:
             return
-        spread  = min(bw*0.85, dp(20)*n)
-        start_x = cx - spread/2 + spread/(2*n)
-        step    = spread/n if n > 1 else 0
+            
+        # ─── คำนวณระยะห่างสายไฟใหม่ (แก้บัคซ้อนกัน) ───
+        if n == 1:
+            step, spread = 0, 0
+        else:
+            # ใช้พื้นที่ 85% ของตัวระเบิด แต่บังคับความห่างขั้นต่ำ 32dp ป้องกันการทับซ้อน
+            target_step = (bw * 0.85) / (n - 1)
+            step = max(dp(32), min(target_step, dp(45)))
+            spread = step * (n - 1)
+            
+        start_x = cx - spread / 2
         wlen    = dp(72)
         order = list(self.wire_order) if len(self.wire_order) == n else list(range(n))
+        
         for display_pos in range(n):
             real_i = order[display_pos]
             wx    = start_x + display_pos * step
@@ -283,6 +295,7 @@ class ClockBombWidget(Widget):
             wb    = wt - wlen
             wc    = WIRE_COLORS[real_i % len(WIRE_COLORS)]
             state = self.wire_states[real_i] if real_i < len(self.wire_states) else -1
+            
             if state == 0:
                 mid_y = wt - wlen*0.5
                 Color(0.1, 1.0, 0.35, 1)
@@ -304,7 +317,8 @@ class ClockBombWidget(Widget):
             else:
                 Color(*wc, 1)
                 Line(points=[wx, wt, wx, wb], width=dp(4.5))
-                br = dp(14)
+                # ปรับขนาดหลอดไฟให้เล็กลง (br = 11.5) ป้องกันขอบซ้อนทับกัน
+                br = dp(11.5)
                 Color(*wc, 0.25)
                 Ellipse(pos=(wx-br*1.5, wb-br*1.5), size=(br*3, br*3))
                 Color(*wc, 0.85)
@@ -349,23 +363,43 @@ class ClockBombWidget(Widget):
         n = int(self.num_wires)
         if n == 0:
             return -1
-        r   = min(self.width*0.32, self.height*0.40, dp(90))
+            
+        # 🚀 ปลดล็อกลิมิต Hitbox ให้ขนาดตรงกับภาพระเบิดด้านบน
+        r   = min(self.width * 0.32, self.height * 0.40, dp(200)) 
+        
         bw, bh = r*2.2, r*1.6
         cx  = self.center_x + self.shake_x
         cy  = self.y + self.height*0.62
         by_ = cy - bh/2
-        spread  = min(bw*0.85, dp(20)*n)
-        start_x = cx - spread/2 + spread/(2*n)
-        step    = spread/n if n > 1 else 0
+        
+        # ─── ใช้สูตรคำนวณระยะห่างเดียวกับตอนวาดเป๊ะๆ ───
+        if n == 1:
+            step, spread = 0, 0
+        else:
+            target_step = (bw * 0.85) / (n - 1)
+            step = max(dp(32), min(target_step, dp(45)))
+            spread = step * (n - 1)
+            
+        start_x = cx - spread / 2
         wlen    = dp(72)
         order   = list(self.wire_order) if len(self.wire_order) == n else list(range(n))
+        
+        # ค้นหาสายไฟที่ใกล้ปลายนิ้วที่สุด
+        closest_i = -1
+        min_dist = float('inf')
+        
         for display_pos in range(n):
             real_i = order[display_pos]
             wx = start_x + display_pos * step
             wb = by_ - wlen
-            if abs(touch_x-wx) < dp(22) and abs(touch_y-wb) < dp(22):
-                return real_i
-        return -1
+            
+            # วัดระยะห่างจากปลายนิ้วถึงจุดศูนย์กลางของหลอดไฟ
+            dist = math.hypot(touch_x - wx, touch_y - wb)
+            if dist < dp(28) and dist < min_dist:
+                min_dist = dist
+                closest_i = real_i
+                
+        return closest_i
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -398,7 +432,9 @@ class WireAnswerButton(Button):
         self.background_color  = (0,0,0,0)
         self.background_normal = ''
         self.font_name  = 'Sarabun'
-        self.font_size  = sp(12)
+        self.font_size  = sp(14)
+        self.markup     = False
+        self.shorten    = False
         self.color      = (1,1,1,1)
         self.halign     = 'center'
         self.valign     = 'middle'

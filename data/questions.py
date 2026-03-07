@@ -1,14 +1,7 @@
 import random
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  questions.py  —  คลังคำถามทั้ง 3 หมวด
-#  รูปแบบแต่ละข้อ:
-#    {
-#      "question":    "ข้อความคำถาม",
-#      "choices":     ["ตัวเลือก 1", "ตัวเลือก 2", "ตัวเลือก 3", "ตัวเลือก 4", ...],
-#      "answer_index": 0,          # index ของตัวเลือกที่ถูกต้อง (ก่อน shuffle)
-#      "hint":        "คำใบ้..."  # optional
-#    }
+#  questions.py  —  คลังคำถามทั้ง 3 หมวด (เพิ่มช้อยส์ให้ครบ 6 เพื่อโหมด Hard)
 # ══════════════════════════════════════════════════════════════════════════════
 
 QUESTIONS = {
@@ -17,21 +10,21 @@ QUESTIONS = {
     "general": [
         {
             "question": "เมืองหลวงของประเทศไทยคือเมืองใด?",
-            "choices":  ["กรุงเทพมหานคร", "เชียงใหม่", "พัทยา", "ภูเก็ต"],
+            "choices":  ["กรุงเทพมหานคร", "เชียงใหม่", "พัทยา", "ภูเก็ต", "ขอนแก่น", "นครราชสีมา"],
             "answer_index": 0,
             "hint": "เมืองที่มีพระบรมมหาราชวัง"
         },
         {
             "question": "แสงเดินทางในสุญญากาศเร็วประมาณกี่ km/s?",
-            "choices":  ["300,000", "150,000", "500,000", "100,000", "200,000", "250,000"],
+            "choices":  ["300,000", "150,000", "500,000", "200,000", "1,000,000", "50,000"],
             "answer_index": 0,
             "hint": "ตัวเลขสามแสน"
         },
         {
             "question": "ดาวเคราะห์ที่อยู่ใกล้ดวงอาทิตย์มากที่สุดคือดาวใด?",
-            "choices":  ["ดาวพุธ", "ดาวศุกร์", "ดาวอังคาร", "ดาวโลก"],
+            "choices":  ["ดาวพุธ", "ดาวศุกร์", "ดาวอังคาร", "ดาวโลก", "ดาวพฤหัส", "ดาวเสาร์"],
             "answer_index": 0,
-            "hint": "ดาวที่มีชื่อเป็นพระเจ้าของเทพโรมัน"
+            "hint": "ดาวที่มีชื่อเป็นเทพโรมัน"
         },
         {
             "question": "น้ำมีสูตรเคมีว่าอย่างไร?",
@@ -41,67 +34,67 @@ QUESTIONS = {
         },
         {
             "question": "ประเทศที่มีประชากรมากที่สุดในโลกคือ?",
-            "choices":  ["อินเดีย", "จีน", "สหรัฐอเมริกา", "อินโดนีเซีย"],
+            "choices":  ["อินเดีย", "จีน", "สหรัฐอเมริกา", "อินโดนีเซีย", "ปากีสถาน", "บราซิล"],
             "answer_index": 0,
             "hint": "ประเทศในเอเชียใต้"
         },
         {
             "question": "ภูเขาที่สูงที่สุดในโลกคือ?",
-            "choices":  ["เอเวอเรสต์", "K2", "คังเชนจุงกา", "โลตเซ"],
+            "choices":  ["เอเวอเรสต์", "K2", "คังเชนจุงกา", "โลตเซ", "คิลิมันจาโร", "ฟูจิ"],
             "answer_index": 0,
             "hint": "อยู่ในเทือกเขาหิมาลัย"
         },
         {
             "question": "สัตว์ใดเป็นสัตว์บกที่วิ่งเร็วที่สุดในโลก?",
-            "choices":  ["เสือชีต้า", "สิงโต", "ม้า", "กวาง", "หมาป่า", "เสือดาว"],
+            "choices":  ["เสือชีต้า", "สิงโต", "ม้า", "เสือดาว", "กวางดาว", "เสือโคร่ง"],
             "answer_index": 0,
             "hint": "วิ่งได้เร็วกว่า 100 กม./ชม."
         },
         {
             "question": "มหาสมุทรที่ใหญ่ที่สุดในโลกคือ?",
-            "choices":  ["มหาสมุทรแปซิฟิก", "มหาสมุทรแอตแลนติก", "มหาสมุทรอินเดีย", "มหาสมุทรอาร์กติก"],
+            "choices":  ["มหาสมุทรแปซิฟิก", "มหาสมุทรแอตแลนติก", "มหาสมุทรอินเดีย", "มหาสมุทรอาร์กติก", "มหาสมุทรใต้", "ทะเลเมดิเตอร์เรเนียน"],
             "answer_index": 0,
             "hint": "ครอบคลุมกว่าครึ่งหนึ่งของพื้นผิวโลก"
         },
         {
             "question": "วันประกาศอิสรภาพของสหรัฐอเมริกาตรงกับวันที่เท่าไหร่?",
-            "choices":  ["4 กรกฎาคม", "1 มกราคม", "14 กรกฎาคม", "25 ธันวาคม"],
+            "choices":  ["4 กรกฎาคม", "1 มกราคม", "14 กรกฎาคม", "25 ธันวาคม", "31 ตุลาคม", "11 พฤศจิกายน"],
             "answer_index": 0,
             "hint": "เดือนกรกฎาคม"
         },
         {
             "question": "ธาตุที่มีน้ำหนักเบาที่สุดคือ?",
-            "choices":  ["ไฮโดรเจน", "ฮีเลียม", "ลิเทียม", "ออกซิเจน", "คาร์บอน", "ไนโตรเจน"],
+            "choices":  ["ไฮโดรเจน", "ฮีเลียม", "ลิเทียม", "คาร์บอน", "ออกซิเจน", "ไนโตรเจน"],
             "answer_index": 0,
             "hint": "เลขอะตอม 1"
         },
         {
             "question": "ใครเป็นผู้แต่งบทเพลง Symphony No. 9?",
-            "choices":  ["เบโธเฟน", "โมสาร์ท", "บาค", "ช็อปแปง"],
+            "choices":  ["เบโธเฟน", "โมสาร์ท", "บาค", "ช็อปแปง", "ไชคอฟสกี", "วิวัลดี"],
             "answer_index": 0,
             "hint": "นักแต่งเพลงชาวเยอรมันที่หูหนวก"
         },
         {
             "question": "ประเทศไทยมีจังหวัดทั้งหมดกี่จังหวัด?",
-            "choices":  ["77", "75", "80", "70", "85", "90"],
+            "choices":  ["77", "75", "80", "70", "76", "78"],
             "answer_index": 0,
             "hint": "เจ็ดสิบกว่า"
         },
         {
             "question": "แม่น้ำที่ยาวที่สุดในโลกคือ?",
-            "choices":  ["แม่น้ำไนล์", "แม่น้ำอเมซอน", "แม่น้ำแยงซี", "แม่น้ำมิสซิสซิปปี"],
+            "choices":  ["แม่น้ำไนล์", "แม่น้ำอเมซอน", "แม่น้ำแยงซี", "แม่น้ำมิสซิสซิปปี", "แม่น้ำโขง", "แม่น้ำคงคา"],
             "answer_index": 0,
             "hint": "อยู่ในทวีปแอฟริกา"
         },
         {
             "question": "เซลล์ใดในร่างกายมนุษย์ที่ไม่มีนิวเคลียส?",
-            "choices":  ["เม็ดเลือดแดง", "เม็ดเลือดขาว", "เซลล์กล้ามเนื้อ", "เซลล์ประสาท"],
+            "choices":  ["เม็ดเลือดแดง", "เม็ดเลือดขาว", "เซลล์กล้ามเนื้อ", "เซลล์ประสาท", "เกล็ดเลือด", "พลาสมา"],
             "answer_index": 0,
             "hint": "เซลล์ที่ลำเลียงออกซิเจน"
         },
         {
             "question": "ทวีปที่ใหญ่ที่สุดในโลกคือ?",
-            "choices":  ["เอเชีย", "แอฟริกา", "อเมริกาเหนือ", "ยุโรป"],
+            "choices":  ["เอเชีย", "แอฟริกา", "อเมริกาเหนือ", "ยุโรป", "อเมริกาใต้", "ออสเตรเลีย"],
             "answer_index": 0,
             "hint": "ครอบคลุมกว่า 44 ล้านตารางกิโลเมตร"
         },
@@ -111,7 +104,7 @@ QUESTIONS = {
     "health": [
         {
             "question": "อวัยวะใดที่ทำหน้าที่กรองของเสียออกจากเลือด?",
-            "choices":  ["ไต", "ตับ", "ปอด", "ม้าม"],
+            "choices":  ["ไต", "ตับ", "ปอด", "ม้าม", "ถุงน้ำดี", "กระเพาะปัสสาวะ"],
             "answer_index": 0,
             "hint": "มีสองชิ้น อยู่ด้านหลัง"
         },
@@ -123,61 +116,61 @@ QUESTIONS = {
         },
         {
             "question": "หัวใจมนุษย์ปกติเต้นกี่ครั้งต่อนาที?",
-            "choices":  ["60–100 ครั้ง", "30–50 ครั้ง", "120–150 ครั้ง", "20–40 ครั้ง"],
+            "choices":  ["60-100 ครั้ง", "30-50 ครั้ง", "120-150 ครั้ง", "20-40 ครั้ง", "150-180 ครั้ง", "10-20 ครั้ง"],
             "answer_index": 0,
             "hint": "ประมาณหนึ่งครั้งต่อวินาที"
         },
         {
             "question": "น้ำตาลในเลือดสูงเกินปกติเป็นอาการของโรคใด?",
-            "choices":  ["เบาหวาน", "ความดันโลหิตสูง", "โรคหัวใจ", "โรคไต"],
+            "choices":  ["เบาหวาน", "ความดันโลหิตสูง", "โรคหัวใจ", "โรคไต", "โรคเกาต์", "โรคอ้วน"],
             "answer_index": 0,
             "hint": "โรคที่เกี่ยวกับอินซูลิน"
         },
         {
             "question": "BMI ที่ถือว่าอยู่ในเกณฑ์ปกติคือ?",
-            "choices":  ["18.5–24.9", "10–17", "25–29.9", "30 ขึ้นไป", "15–18", "25–30"],
+            "choices":  ["18.5-24.9", "10-17", "25-29.9", "30 ขึ้นไป", "15-18", "35 ขึ้นไป"],
             "answer_index": 0,
             "hint": "ไม่ผอมเกิน ไม่อ้วนเกิน"
         },
         {
             "question": "อาหารประเภทใดที่มีโปรตีนสูงที่สุด?",
-            "choices":  ["อกไก่", "ข้าวขาว", "แอปเปิ้ล", "น้ำมันมะกอก"],
+            "choices":  ["อกไก่", "ข้าวขาว", "แอปเปิ้ล", "น้ำมันมะกอก", "ขนมปัง", "แครอท"],
             "answer_index": 0,
             "hint": "เนื้อสัตว์ไม่มีไขมัน"
         },
         {
             "question": "ปอดมนุษย์มีกี่กลีบ (รวมทั้งสองข้าง)?",
-            "choices":  ["5 กลีบ", "2 กลีบ", "4 กลีบ", "6 กลีบ"],
+            "choices":  ["5 กลีบ", "2 กลีบ", "4 กลีบ", "6 กลีบ", "3 กลีบ", "1 กลีบ"],
             "answer_index": 0,
             "hint": "ซ้าย 2, ขวา 3"
         },
         {
             "question": "ควรนอนหลับกี่ชั่วโมงต่อคืนสำหรับผู้ใหญ่?",
-            "choices":  ["7–9 ชั่วโมง", "4–5 ชั่วโมง", "10–12 ชั่วโมง", "3–4 ชั่วโมง", "12–14 ชั่วโมง", "2–3 ชั่วโมง"],
+            "choices":  ["7-9 ชั่วโมง", "4-5 ชั่วโมง", "10-12 ชั่วโมง", "3-4 ชั่วโมง", "1-2 ชั่วโมง", "12-14 ชั่วโมง"],
             "answer_index": 0,
             "hint": "ประมาณหนึ่งในสามของวัน"
         },
         {
             "question": "กระดูกชิ้นใดเล็กที่สุดในร่างกายมนุษย์?",
-            "choices":  ["กระดูกโกลน (Stapes)", "กระดูกซี่โครง", "กระดูกนิ้วมือ", "กระดูกสันหลัง"],
+            "choices":  ["กระดูกโกลน (Stapes)", "กระดูกซี่โครง", "กระดูกนิ้วมือ", "กระดูกสันหลัง", "กระดูกข้อศอก", "กระดูกเชิงกราน"],
             "answer_index": 0,
             "hint": "อยู่ในหู"
         },
         {
             "question": "ร่างกายมนุษย์มีกระดูกทั้งหมดกี่ชิ้น?",
-            "choices":  ["206 ชิ้น", "150 ชิ้น", "250 ชิ้น", "300 ชิ้น"],
+            "choices":  ["206 ชิ้น", "150 ชิ้น", "250 ชิ้น", "300 ชิ้น", "100 ชิ้น", "350 ชิ้น"],
             "answer_index": 0,
             "hint": "สองร้อยกว่าชิ้น"
         },
         {
             "question": "ผักผลไม้ชนิดใดมีวิตามิน C สูงที่สุด?",
-            "choices":  ["ฝรั่ง", "ส้ม", "มะนาว", "กีวี", "มะเขือเทศ", "แครอท"],
+            "choices":  ["ฝรั่ง", "ส้ม", "มะนาว", "กีวี", "แตงโม", "กล้วย"],
             "answer_index": 0,
             "hint": "ผลไม้ไทยที่มีเมล็ดมาก"
         },
         {
             "question": "โรคสะเก็ดเงินเกี่ยวข้องกับระบบใดของร่างกาย?",
-            "choices":  ["ผิวหนัง", "ระบบย่อยอาหาร", "ระบบประสาท", "ระบบหัวใจ"],
+            "choices":  ["ผิวหนัง", "ระบบย่อยอาหาร", "ระบบประสาท", "ระบบหัวใจ", "ระบบหายใจ", "ระบบขับถ่าย"],
             "answer_index": 0,
             "hint": "อวัยวะที่ใหญ่ที่สุดของร่างกาย"
         },
@@ -189,13 +182,13 @@ QUESTIONS = {
         },
         {
             "question": "ฟันของมนุษย์วัยผู้ใหญ่มีทั้งหมดกี่ซี่ (ฟันแท้)?",
-            "choices":  ["32 ซี่", "28 ซี่", "24 ซี่", "36 ซี่"],
+            "choices":  ["32 ซี่", "28 ซี่", "24 ซี่", "36 ซี่", "20 ซี่", "40 ซี่"],
             "answer_index": 0,
             "hint": "รวมฟันคุด 4 ซี่"
         },
         {
             "question": "ออกกำลังกายแบบ Aerobic มีประโยชน์ต่ออวัยวะใดมากที่สุด?",
-            "choices":  ["หัวใจและปอด", "กระดูก", "ผิวหนัง", "ตับ"],
+            "choices":  ["หัวใจและปอด", "กระดูก", "ผิวหนัง", "ตับ", "ไต", "ลำไส้"],
             "answer_index": 0,
             "hint": "ระบบหัวใจและหลอดเลือด"
         },
@@ -206,7 +199,8 @@ QUESTIONS = {
         {
             "question": "CPU ย่อมาจากอะไร?",
             "choices":  ["Central Processing Unit", "Computer Processing Unit",
-                         "Core Processing Unit",    "Central Program Unit"],
+                         "Core Processing Unit",    "Central Program Unit",
+                         "Central Power Unit",      "Computer Program Unit"],
             "answer_index": 0,
             "hint": "หน่วยประมวลผลกลาง"
         },
@@ -214,47 +208,47 @@ QUESTIONS = {
             "question": "HTML ย่อมาจากอะไร?",
             "choices":  ["HyperText Markup Language", "High Tech Modern Language",
                          "HyperText Modern Link",     "Home Tool Markup Language",
-                         "HyperText Media Language",  "Hyper Transfer Markup Language"],
+                         "HyperText Machine Language","HyperLink Text Markup Language"],
             "answer_index": 0,
             "hint": "ภาษาที่ใช้สร้างหน้าเว็บ"
         },
         {
             "question": "ในระบบเลขฐานสอง เลข 8 แทนด้วยอะไร?",
-            "choices":  ["1000", "0110", "1100", "0111", "1010", "1110"],
+            "choices":  ["1000", "0110", "1100", "1010", "1001", "0111"],
             "answer_index": 0,
             "hint": "2 ยกกำลัง 3"
         },
         {
             "question": "Git คือเครื่องมือสำหรับอะไร?",
-            "choices":  ["Version Control", "Web Server", "Database", "Text Editor"],
+            "choices":  ["Version Control", "Web Server", "Database", "Text Editor", "Operating System", "Compiler"],
             "answer_index": 0,
             "hint": "ใช้ติดตามการเปลี่ยนแปลงของโค้ด"
         },
         {
             "question": "Python เป็นภาษาโปรแกรมประเภทใด?",
-            "choices":  ["Interpreted", "Compiled only", "Assembly", "Machine code",
-                         "Binary", "Hardware"],
+            "choices":  ["Interpreted", "Compiled only", "Assembly", "Machine code", "Markup Language", "Query Language"],
             "answer_index": 0,
             "hint": "ทำงานผ่าน Interpreter"
         },
         {
             "question": "HTTP ย่อมาจากอะไร?",
             "choices":  ["HyperText Transfer Protocol", "High Transfer Text Protocol",
-                         "HyperText Transport Process",  "Home Transfer Text Protocol"],
+                         "HyperText Transport Process",  "Home Transfer Text Protocol",
+                         "HyperLink Transfer Protocol",  "HyperText Transmission Protocol"],
             "answer_index": 0,
             "hint": "โปรโตคอลสำหรับส่งข้อมูลบนเว็บ"
         },
         {
             "question": "RAM ย่อมาจากอะไร?",
             "choices":  ["Random Access Memory", "Read Access Memory",
-                         "Rapid Access Memory",  "Run Access Memory",
-                         "Real Access Memory",   "Remote Access Memory"],
+                         "Rapid Access Memory",  "Remote Access Memory",
+                         "Run Access Memory",    "Random Action Memory"],
             "answer_index": 0,
             "hint": "หน่วยความจำหลักของคอมพิวเตอร์"
         },
         {
             "question": "ภาษาใดใช้สร้าง Style ของหน้าเว็บ?",
-            "choices":  ["CSS", "HTML", "JavaScript", "Python"],
+            "choices":  ["CSS", "HTML", "JavaScript", "Python", "SQL", "C++"],
             "answer_index": 0,
             "hint": "Cascading Style Sheets"
         },
@@ -262,31 +256,33 @@ QUESTIONS = {
             "question": "IP Address เวอร์ชัน 4 มีกี่บิต?",
             "choices":  ["32 บิต", "16 บิต", "64 บิต", "128 บิต", "8 บิต", "256 บิต"],
             "answer_index": 0,
-            "hint": "4 ออคเตต × 8 บิต"
+            "hint": "4 ออคเตต x 8 บิต"
         },
         {
             "question": "ฐานข้อมูลแบบ SQL ใช้ภาษาใดในการจัดการข้อมูล?",
             "choices":  ["Structured Query Language", "Simple Query Language",
-                         "Standard Quick Language",   "System Query List"],
+                         "Standard Quick Language",   "System Query List",
+                         "Structured Question Language","Server Query Language"],
             "answer_index": 0,
             "hint": "ย่อมาจากชื่อเต็มตรงๆ"
         },
         {
             "question": "อุปกรณ์ใดใช้เชื่อมต่อเครือข่ายหลายวง (subnet) เข้าด้วยกัน?",
-            "choices":  ["Router", "Switch", "Hub", "Modem", "Bridge", "Repeater"],
+            "choices":  ["Router", "Switch", "Hub", "Modem", "Repeater", "Bridge"],
             "answer_index": 0,
             "hint": "ทำหน้าที่เลือกเส้นทาง"
         },
         {
             "question": "OOP ย่อมาจากอะไร?",
             "choices":  ["Object-Oriented Programming", "Open Oriented Programming",
-                         "Object Output Processing",    "Open Object Protocol"],
+                         "Object Output Processing",    "Open Object Protocol",
+                         "Object Overload Processing",  "Operating Object Program"],
             "answer_index": 0,
             "hint": "การเขียนโปรแกรมเชิงวัตถุ"
         },
         {
             "question": "ในการเขียนโค้ด 'loop' หมายถึงอะไร?",
-            "choices":  ["การวนซ้ำ", "การหยุดทำงาน", "การเรียกฟังก์ชัน", "การประกาศตัวแปร"],
+            "choices":  ["การวนซ้ำ", "การหยุดทำงาน", "การเรียกฟังก์ชัน", "การประกาศตัวแปร", "การตรวจสอบเงื่อนไข", "การคืนค่าผลลัพธ์"],
             "answer_index": 0,
             "hint": "ทำซ้ำๆ จนครบเงื่อนไข"
         },
@@ -294,12 +290,13 @@ QUESTIONS = {
             "question": "ไฟล์ .py เป็นไฟล์ของภาษาโปรแกรมใด?",
             "choices":  ["Python", "PHP", "Perl", "Pascal", "PowerShell", "Prolog"],
             "answer_index": 0,
-            "hint": "ภาษาที่ใช้งาบนี้!"
+            "hint": "ภาษาที่ใช้งานอยู่นี้!"
         },
         {
             "question": "Cloud Computing คืออะไร?",
             "choices":  ["บริการประมวลผลผ่านอินเทอร์เน็ต", "การประมวลผลในเครื่องของตัวเอง",
-                         "ซอฟต์แวร์ฟรี",                   "ระบบเครือข่ายท้องถิ่น"],
+                         "ซอฟต์แวร์ฟรี",                  "ระบบเครือข่ายท้องถิ่น",
+                         "ไวรัสคอมพิวเตอร์ชนิดหนึ่ง",     "หน่วยความจำแบบพกพา"],
             "answer_index": 0,
             "hint": "ใช้บริการผ่านเครือข่าย"
         },
@@ -400,20 +397,60 @@ QUESTIONS = {
 
 
 # ─── API หลัก ─────────────────────────────────────────────────────────────────
-def get_questions(category: str, level: str = 'easy') -> list:
+def get_questions(category: str, level: str = 'easy', mode: str = 'single') -> list:
     """
-    ดึงคำถามตามหมวดและความยาก
-    คืนค่าเป็น list ของ dict พร้อม shuffle แล้ว
+    ดึงคำถามตามหมวดและความยาก พร้อม shuffle choices และอัปเดต answer_index
+    - 2player: คืน 12 ข้อเสมอ
+    - single/daily: 5 ข้อ, medium: 7 ข้อ, hard: 10 ข้อ, sudden: ทั้งหมด
     """
     pool = QUESTIONS.get(category, QUESTIONS['general']).copy()
-    random.shuffle(pool)
 
-    count_map = {
-        'easy':   5,
-        'medium': 7,
-        'hard':   10,
-        'sudden': len(pool),
-        'daily':  5,
-    }
-    n = count_map.get(level, 5)
-    return pool[:n]
+    if mode == '2player':
+        n = 12
+    else:
+        count_map = {
+            'easy':   5,
+            'medium': 7,
+            'hard':   10,
+            'sudden': len(pool),
+            'daily':  5,
+        }
+        n = count_map.get(level, 5)
+
+    # ถ้าคำถามใน pool มีน้อยกว่าที่ต้องการ — loop shuffle จนพอ
+    result = []
+    while len(result) < n:
+        batch = pool.copy()
+        random.shuffle(batch)
+        result.extend(batch)
+
+    selected = result[:n]
+
+    # ── shuffle choices และอัปเดต answer_index ให้ถูกต้อง ──
+    final = []
+    for q in selected:
+        q = dict(q)  # copy เพื่อไม่แก้ต้นฉบับ
+        choices = list(q['choices'])
+        correct = choices[q['answer_index']]  # เก็บคำตอบที่ถูกไว้ก่อน
+        
+        # ตัดจำนวนตัวเลือกให้พอดีกับความยากของสายไฟ
+        target_choices = 4
+        if level == 'medium':
+            target_choices = 5
+        elif level in ['hard', 'sudden']:
+            target_choices = 6
+
+        # สุ่มเอาตัวเลือกผิดมาให้ครบตามที่ต้องการ
+        others = [c for c in choices if c != correct]
+        random.shuffle(others)
+        unique_choices = [correct] + others[:target_choices - 1]
+
+        # shuffle ตำแหน่ง
+        random.shuffle(unique_choices)
+        new_index = unique_choices.index(correct)
+
+        q['choices'] = unique_choices
+        q['answer_index'] = new_index
+        final.append(q)
+
+    return final
