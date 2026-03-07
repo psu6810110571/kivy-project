@@ -975,11 +975,12 @@ ScreenManager:
             # ── [เพิ่มใหม่] ปุ่มขอคำใบ้ ──
             Button:
                 id: btn_hint
-                text: '💡'
+                text: 'คำใบ้'      # <--- 1. แก้ไขข้อความตรงนี้
                 font_name: 'Sarabun'
                 font_size: sp(14)
+                bold: True       # <--- 2. (เพิ่มใหม่) ทำตัวหนาให้เห็นชัดๆ
                 color: 1, 0.9, 0.2, 1
-                size_hint_x: 0.10
+                size_hint_x: 0.12  # <--- 3. ปรับขยายความกว้างปุ่มนิดนึงให้พอดีกับคำว่า "คำใบ้"
                 background_color: 0, 0, 0, 0
                 on_press: app.btn_press_anim(self)
                 on_release: app.show_hint()

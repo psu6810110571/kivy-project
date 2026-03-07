@@ -30,6 +30,12 @@
     "level": "medium"
   },
   {
+    "name": "a",
+    "score": 660,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "maxZA",
     "score": 562,
     "category": "general",
@@ -108,14 +114,8 @@
     "level": "medium"
   },
   {
-    "name": "2",
-    "score": 180,
-    "category": "health",
-    "level": "medium"
-  },
-  {
-    "name": "หฟห",
-    "score": 150,
+    "name": "a",
+    "score": 188,
     "category": "general",
     "level": "easy"
   }
