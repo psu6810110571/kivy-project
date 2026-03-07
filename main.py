@@ -243,7 +243,7 @@ class QuizApp(App):
             def reset_label(dt):
                 if lbl.text.startswith("💡"):
                     lbl.text = '> แตะปลายสายที่ตรงกับคำตอบ! <'
-                    lbl.color = (0.65, 0.85, 1, 0.9)  # กลับเป็นสีฟ้าอ่อนแบบเดิม
+                    lbl.color = (0.65, 0.85, 1, 0.9)  # กลับเป็นสีฟ้าแบบเดิม
             
             Clock.schedule_once(reset_label, 4.0)
 
