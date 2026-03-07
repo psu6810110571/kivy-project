@@ -252,3 +252,4 @@ class QuizApp(App):
 
 if __name__ == '__main__':
     QuizApp().run()
+    # QuizApp().run()
