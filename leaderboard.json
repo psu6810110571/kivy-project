@@ -12,6 +12,12 @@
     "level": "medium"
   },
   {
+    "name": "Player 2",
+    "score": 960,
+    "category": "health",
+    "level": "medium"
+  },
+  {
     "name": "หหฟ",
     "score": 676,
     "category": "general",
@@ -60,6 +66,12 @@
     "level": "easy"
   },
   {
+    "name": "qwqwq",
+    "score": 390,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "Unknown Agent",
     "score": 315,
     "category": "general",
@@ -104,18 +116,6 @@
   {
     "name": "หฟห",
     "score": 150,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "sa",
-    "score": 150,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 136,
     "category": "general",
     "level": "easy"
   }
