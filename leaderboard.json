@@ -18,6 +18,12 @@
     "level": "medium"
   },
   {
+    "name": "Unknown Agent",
+    "score": 998,
+    "category": "general",
+    "level": "hard"
+  },
+  {
     "name": "sas",
     "score": 960,
     "category": "general",
@@ -28,6 +34,12 @@
     "score": 960,
     "category": "health",
     "level": "medium"
+  },
+  {
+    "name": "Unknown Agent",
+    "score": 839,
+    "category": "health",
+    "level": "sudden"
   },
   {
     "name": "หฟฟหฟ",
@@ -54,10 +66,22 @@
     "level": "medium"
   },
   {
+    "name": "ฟหฟห",
+    "score": 675,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "ำไฟไหๆฟ",
     "score": 657,
     "category": "general",
     "level": "hard"
+  },
+  {
+    "name": "Unknown Agent",
+    "score": 645,
+    "category": "general",
+    "level": "medium"
   },
   {
     "name": "Unknown Agent",
@@ -84,38 +108,14 @@
     "level": "easy"
   },
   {
+    "name": "Unknown Agent",
+    "score": 555,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "ไๆำๆไๆไ",
     "score": 525,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 467,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 465,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "ะ้ะ",
-    "score": 465,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "หฟฟหฟ",
-    "score": 465,
-    "category": "general",
-    "level": "easy"
-  },
-  {
-    "name": "Unknown Agent",
-    "score": 450,
     "category": "general",
     "level": "medium"
   }
