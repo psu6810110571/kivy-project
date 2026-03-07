@@ -1,4 +1,4 @@
-# 💣 BOMB QUIZ: Time-Attack Quiz Game (v4.0)
+# 💣 BOMB QUIZ: Time-Attack Quiz Game (v5.0)
 
 แอปพลิเคชันเกมตอบคำถามจับเวลาระทึกขวัญ พัฒนาด้วยภาษา **Python** และ **Kivy Framework**  
 เป็นส่วนหนึ่งของโปรเจกต์รายวิชาการพัฒนาแอปพลิเคชัน (Mobile Application Development)
@@ -26,15 +26,17 @@
 
 ### 📚 หมวดหมู่และความยาก (Categories & Difficulty)
 - **3 หมวดหมู่คำถาม:** ความรู้ทั่วไป, สุขภาพ, และ วิชาการ/IT
-- **3 ระดับความยาก:**
+- **5 ระดับและโหมด:**
 
-| ระดับ | เวลาต่อข้อ | จำนวนสายไฟ | ตัวคูณคะแนน |
-|-------|-----------|------------|------------|
-| 🟢 Easy | 15 วินาที | 4 สายไฟ | x1.0 |
-| 🟡 Medium | 10 วินาที | 5 สายไฟ | x1.5 |
-| 🔴 Hard | 7 วินาที | 6 สายไฟ | x2.5 |
+| ระดับ / โหมด | เวลาต่อข้อ | จำนวนสายไฟ | ตัวคูณคะแนน | หมายเหตุ |
+|---|---|---|---|---|
+| 🟢 Easy | 15 วินาที | 4 สายไฟ | x1.0 | เหมาะสำหรับผู้เริ่มต้น |
+| 🟡 Medium | 10 วินาที | 5 สายไฟ | x1.5 | ความยากปานกลาง |
+| 🔴 Hard | 7 วินาที | 6 สายไฟ | x2.5 | สายไฟสับเปลี่ยนทุก 2 วินาที |
+| ☠️ Sudden Death | 8 วินาที | 5 สายไฟ | x3.0 | ตอบผิดครั้งเดียว = จบเกม |
+| 📅 Daily Challenge | 10 วินาที | 4 สายไฟ | x2.0 | ภารกิจประจำวัน |
 
-- **หลากหลายโหมด:** โหมดเดี่ยว, โหมด 2 ผู้เล่น (ผลัดกันเล่น), และ Sudden Death (ตอบผิดครั้งเดียวจบ)
+- **โหมด 2 ผู้เล่น (2-Player Mode):** ผลัดกันเล่นบนเครื่องเดียว แต่ละคนมีชีวิต ❤️ เป็นของตัวเอง 3 ดวง
 
 ### 📊 ระบบบันทึกผลและรางวัล (Systems)
 - **Leaderboard:** ระบบจัดอันดับผู้เล่นที่ทำคะแนนสูงสุด บันทึกข้อมูลผ่านไฟล์ JSON
@@ -46,14 +48,26 @@
 
 ```text
 PROJECT-QUIZ/
-├── assets/             # ไฟล์เสียง (.wav) และฟอนต์ (Sarabun)
-├── data/               # ระบบจัดการข้อมูล (leaderboard_mgr.py, questions.py)
-├── logic/              # กลไกหลักของเกม (game_engine.py)
-├── screens/            # ไฟล์ควบคุมหน้าจอ (category_screen.py, game_screen.py, menu_screen.py)
-├── widgets/            # วิดเจ็ตพิเศษ (bomb.py, game_ui.py)
-├── main.py             # ไฟล์หลักสำหรับเริ่มโปรแกรม
-├── ui.kv               # ไฟล์กำหนดหน้าตา UI ทั้งหมด
-└── leaderboard.json    # ไฟล์เก็บข้อมูลคะแนนผู้เล่น
+├── assets/
+│   ├── sounds/             # ไฟล์เสียง (Duringquiz.wav, explosion.wav, warning.wav, menu_bgm.mp3)
+│   ├── Sarabun-Bold.ttf    # ฟอนต์ภาษาไทย
+│   └── Sarabun-Regular.ttf
+├── data/
+│   ├── leaderboard_mgr.py  # ระบบจัดการ Leaderboard และ Achievement
+│   └── questions.py        # คลังคำถามทั้งหมด
+├── logic/
+│   └── game_engine.py      # กลไกหลักของเกม (คะแนน, ชีวิต, เวลา)
+├── screens/
+│   ├── category_screen.py  # หน้าเลือกหมวดหมู่
+│   ├── game_screen.py      # หน้าจอเกมหลัก
+│   └── menu_screen.py      # หน้าเมนูหลัก
+├── widgets/
+│   ├── bomb.py             # วิดเจ็ตระเบิด
+│   └── game_ui.py          # วิดเจ็ต UI ในเกม (ClockBomb, LivesWidget, ฯลฯ)
+├── main.py                 # ไฟล์หลักสำหรับเริ่มโปรแกรม
+├── ui.kv                   # ไฟล์กำหนดหน้าตา UI ทั้งหมด
+├── achievements.json       # ไฟล์เก็บข้อมูล Achievement
+└── leaderboard.json        # ไฟล์เก็บข้อมูลคะแนนผู้เล่น
 ```
 
 ---
@@ -62,7 +76,7 @@ PROJECT-QUIZ/
 
 โปรเจกต์นี้พัฒนาตามข้อกำหนด (Requirements) ของการสร้าง Kivy Application อย่างครบถ้วน:
 
-- **Widgets (>30 Widgets):** ใช้งาน Widgets หลากหลาย เช่น `ScreenManager`, `BoxLayout`, `GridLayout`, `ClockBombWidget`, `VignetteWidget`, `ProgressBar`, `Label`, และ `Button`
+- **Widgets (>30 Widgets):** ใช้งาน Widgets หลากหลาย เช่น `ScreenManager`, `BoxLayout`, `GridLayout`, `ClockBombWidget`, `VignetteWidget`, `LivesWidget`, `ComboDisplay`, `ProgressBar`, `Label`, และ `Button`
 
 - **Callbacks (>10 Callbacks):** ระบบ Event-driven เช่น การตรวจคำตอบ, ระบบนับเวลาถอยหลังด้วย `Clock`, การเปลี่ยนหน้าจอพร้อม Transition และแอนิเมชันปุ่มกด
 
@@ -72,8 +86,15 @@ PROJECT-QUIZ/
 
 ---
 
-## 🆕 เวอร์ชันล่าสุด (What's New in v4.0)
+## 🆕 เวอร์ชันล่าสุด (What's New in v5.0)
 
+- ✅ แก้ไขระบบ 2 ผู้เล่น — สลับตาเล่นถูกต้องทุกกรณี (ตอบถูก / ตอบผิด / หมดเวลา)
+- ✅ แยกชีวิต ❤️ ของ P1 และ P2 เป็นอิสระจากกัน (คนละ 3 ดวง)
+- ✅ แก้บัคแสดงชีวิตผิดคนหลังตอบผิดในโหมด 2 ผู้เล่น
+- ✅ หน้าผลลัพธ์แสดงชีวิตที่เหลือของแต่ละผู้เล่น
+- ✅ เพิ่มเพลงพื้นหลังเมนูหลัก (menu_bgm.mp3)
+
+### v4.0
 - ✅ แก้ไขบัคตัวอักษรสี่เหลี่ยม (Emoji Rendering Fix)
 - ✅ ปรับปรุงปุ่มตัวเลือกคำตอบให้มีความสมดุลสวยงาม (2x2 Layout)
 - ✅ เพิ่มระบบการคลิกที่สายไฟบนรูปภาพระเบิดโดยตรง
