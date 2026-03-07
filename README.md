@@ -1,4 +1,4 @@
-# 💣 BOMB QUIZ: Time-Attack Quiz Game (v5.0)
+# 💣 BOMB QUIZ: Time-Attack Quiz Game (v4.0)
 
 แอปพลิเคชันเกมตอบคำถามจับเวลาระทึกขวัญ พัฒนาด้วยภาษา **Python** และ **Kivy Framework**  
 เป็นส่วนหนึ่งของโปรเจกต์รายวิชาการพัฒนาแอปพลิเคชัน (Mobile Application Development)
