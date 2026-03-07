@@ -203,15 +203,15 @@ class QuizApp(App):
     def show_achievements(self):
         self.root.current = 'achievements'
 
-    # ── [อัปเดต] ฟังก์ชันแสดงคำใบ้แบบหักคะแนน ───────────────────────────────
+    # ── [อัปเดต] ฟังก์ชันแสดงคำใบ้แบบหักคะแนน 20% ───────────────────────────────
     def show_hint(self):
         try:
             # เข้าถึงหน้า GameScreen และตัว Engine เกม
             gs = self.root.get_screen('game')
             engine = gs.engine
             
-            # ดึงคำใบ้และหักคะแนนผ่าน engine 
-            hint_text = engine.use_hint()
+            # รับค่า 2 ตัวที่ engine ส่งมา (ข้อความคำใบ้, และแต้มที่ถูกหักไป)
+            hint_text, penalty = engine.use_hint()
             
             # อัปเดตคะแนนที่แสดงผลบนหน้าจอทันทีหลังจากถูกหัก
             if engine.game_mode == '2player':
@@ -222,12 +222,13 @@ class QuizApp(App):
             
             # ดึง Label ด้านล่างมาแสดงคำใบ้
             lbl = gs.ids.feedback_label
-            lbl.text = f"💡 คำใบ้: {hint_text}"
             
-            # ถ้าเป็นข้อความแจ้งเตือนว่าใช้ไปแล้ว ให้เปลี่ยนสีเป็นสีส้ม/แดงนิดๆ
+            # เช็กว่าถ้าเป็นข้อความเตือนให้แสดงอีกแบบ ถ้าเป็นคำใบ้ปกติให้โชว์แต้มที่หัก
             if hint_text == "ใช้คำใบ้ไปแล้วในข้อนี้!" or hint_text == "ไม่สามารถใช้ตัวช่วยได้!":
-                lbl.color = (1, 0.6, 0.2, 1)
+                lbl.text = f"💡 {hint_text}"
+                lbl.color = (1, 0.6, 0.2, 1) # สีส้มอมแดง
             else:
+                lbl.text = f"💡 คำใบ้: {hint_text} (-{penalty} แต้ม)"
                 lbl.color = (1, 0.9, 0.2, 1)  # เปลี่ยนสีข้อความเป็นสีเหลืองทอง
             
             # กระพริบข้อความ 1 ครั้งเพื่อดึงดูดสายตา

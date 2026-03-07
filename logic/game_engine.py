@@ -235,25 +235,28 @@ class GameEngine:
         print(f"Game Summary: {summary_data}")
         return summary_data
 
-    # ── ระบบคำใบ้ (อัปเดต) ────────────────────────────────────────────────────
+    # ── ระบบคำใบ้ (อัปเดตหักคะแนน 20%) ──────────────────────────────────────────
     
     def use_hint(self):
         if self.hint_used or not self.current_question:
-            return "ใช้คำใบ้ไปแล้วในข้อนี้!"
+            return ("ใช้คำใบ้ไปแล้วในข้อนี้!", 0)
         self.hint_used    = True
         
-        penalty = 10  # หัก 10 คะแนนเมื่อใช้คำใบ้
+        penalty = 0
         if self.game_mode == '2player':
             if self.current_player == 1:
+                penalty = int(self.p1_score * 0.20)
                 self.p1_score = max(0, self.p1_score - penalty)
             else:
+                penalty = int(self.p2_score * 0.20)
                 self.p2_score = max(0, self.p2_score - penalty)
         else:
+            penalty = int(self.score * 0.20)
             self.score = max(0, self.score - penalty)
             
         self.hint_message = self.current_question.get('hint', 'ไม่มีคำใบ้สำหรับข้อนี้')
         print(f"Hint Activated: {self.hint_message} (-{penalty} pts)")
-        return self.hint_message
+        return (self.hint_message, penalty)
 
     # ── รีเซ็ต ────────────────────────────────────────────────────────────────
 

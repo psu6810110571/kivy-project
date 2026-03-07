@@ -60,6 +60,12 @@
     "level": "easy"
   },
   {
+    "name": "g",
+    "score": 451,
+    "category": "general",
+    "level": "easy"
+  },
+  {
     "name": "Unknown Agent",
     "score": 450,
     "category": "general",
@@ -112,11 +118,5 @@
     "score": 210,
     "category": "general",
     "level": "medium"
-  },
-  {
-    "name": "a",
-    "score": 188,
-    "category": "general",
-    "level": "easy"
   }
 ]
