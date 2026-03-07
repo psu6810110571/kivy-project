@@ -918,7 +918,7 @@ ScreenManager:
                 font_size: sp(12)
                 color: 0.8, 0.8, 1, 1
                 halign: 'center'
-                size_hint_x: 0.22
+                size_hint_x: 0.20
                 canvas.before:
                     Color:
                         rgba: 0.10, 0.10, 0.24, 1
@@ -935,7 +935,7 @@ ScreenManager:
                 bold: True
                 color: 1, 0.80, 0.1, 1
                 halign: 'center'
-                size_hint_x: 0.20
+                size_hint_x: 0.18
                 canvas.before:
                     Color:
                         rgba: 0.15, 0.10, 0.02, 1
@@ -944,10 +944,9 @@ ScreenManager:
                         size: self.size
                         radius: [dp(6)]
 
-            # ── แก้บัคตรงนี้: เปลี่ยนจาก Label เป็น LivesWidget วาดวงกลม ──
             LivesWidget:
                 id: lbl_lives
-                size_hint_x: 0.18
+                size_hint_x: 0.16
                 canvas.before:
                     Color:
                         rgba: 0.18, 0.04, 0.04, 1
@@ -964,10 +963,29 @@ ScreenManager:
                 bold: True
                 color: 1, 0.45, 0.1, 1
                 halign: 'center'
-                size_hint_x: 0.14
+                size_hint_x: 0.12
                 canvas.before:
                     Color:
                         rgba: 0.18, 0.08, 0.02, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(6)]
+
+            # ── [เพิ่มใหม่] ปุ่มขอคำใบ้ ──
+            Button:
+                id: btn_hint
+                text: '💡'
+                font_name: 'Sarabun'
+                font_size: sp(14)
+                color: 1, 0.9, 0.2, 1
+                size_hint_x: 0.10
+                background_color: 0, 0, 0, 0
+                on_press: app.btn_press_anim(self)
+                on_release: app.show_hint()
+                canvas.before:
+                    Color:
+                        rgba: 0.2, 0.15, 0.02, 1
                     RoundedRectangle:
                         pos: self.pos
                         size: self.size
@@ -980,7 +998,7 @@ ScreenManager:
                 font_size: sp(12)
                 color: 0.65, 0.65, 0.85, 1
                 halign: 'center'
-                size_hint_x: 0.16
+                size_hint_x: 0.14
                 canvas.before:
                     Color:
                         rgba: 0.10, 0.10, 0.20, 1

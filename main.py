@@ -1,6 +1,7 @@
 import os
 # บังคับใช้ SDL2 audio ก่อน import kivy ทุกอย่าง — แก้เสียงไม่ดังบน Windows
 os.environ['KIVY_AUDIO'] = 'sdl2'
+from kivy.clock import Clock
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -201,6 +202,41 @@ class QuizApp(App):
 
     def show_achievements(self):
         self.root.current = 'achievements'
+
+    # ── [เพิ่มใหม่] ฟังก์ชันแสดงคำใบ้ ───────────────────────────────
+    def show_hint(self):
+        try:
+            # เข้าถึงหน้า GameScreen และตัว Engine เกม
+            gs = self.root.get_screen('game')
+            engine = gs.engine
+            
+            hint_text = "ไม่มีคำใบ้สำหรับข้อนี้"
+            
+            # พยายามดึงคำใบ้จากตัวแปรคำถามปัจจุบันใน engine
+            if hasattr(engine, 'current_question') and engine.current_question:
+                hint_text = engine.current_question.get('hint', hint_text)
+            elif hasattr(engine, 'questions') and hasattr(engine, 'current_q_idx'):
+                hint_text = engine.questions[engine.current_q_idx].get('hint', hint_text)
+            
+            # ดึง Label ด้านล่างมาแสดงคำใบ้
+            lbl = gs.ids.feedback_label
+            lbl.text = f"💡 คำใบ้: {hint_text}"
+            lbl.color = (1, 0.9, 0.2, 1)  # เปลี่ยนสีข้อความเป็นสีเหลืองทอง
+            
+            # กระพริบข้อความ 1 ครั้งเพื่อดึงดูดสายตา
+            a = Animation(opacity=0.3, duration=0.15) + Animation(opacity=1, duration=0.15)
+            a.start(lbl)
+            
+            # ตั้งเวลาให้ข้อความกลับไปเป็นค่าเริ่มต้นใน 4 วินาที
+            def reset_label(dt):
+                if lbl.text.startswith("💡"):
+                    lbl.text = '> แตะปลายสายที่ตรงกับคำตอบ! <'
+                    lbl.color = (0.65, 0.85, 1, 0.9)  # กลับเป็นสีฟ้าอ่อนแบบเดิม
+            
+            Clock.schedule_once(reset_label, 4.0)
+
+        except Exception as e:
+            print(f"[HINT] เกิดข้อผิดพลาดตอนแสดงคำใบ้: {e}")
 
 if __name__ == '__main__':
     QuizApp().run()
