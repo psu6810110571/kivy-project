@@ -341,7 +341,7 @@ ScreenManager:
             color: 0.8, 0.95, 0.8, 1
             halign: 'center'
             valign: 'middle'
-            text_size: self.width - dp(20), None
+            text_size: self.width, None
             size_hint_y: 0.4
 
         Widget:
@@ -944,7 +944,6 @@ ScreenManager:
                         size: self.size
                         radius: [dp(6)]
 
-            # ── แก้บัคตรงนี้: เปลี่ยนจาก Label เป็น LivesWidget วาดวงกลม ──
             LivesWidget:
                 id: lbl_lives
                 size_hint_x: 0.18
@@ -1022,7 +1021,7 @@ ScreenManager:
                 color: 1, 1, 1, 1
                 halign: 'center'
                 valign: 'middle'
-                text_size: self.size
+                text_size: self.width, None
 
         # ── Bomb Widget ───────────────────────────────────────────────────
         ClockBombWidget:

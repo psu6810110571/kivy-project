@@ -398,7 +398,9 @@ class WireAnswerButton(Button):
         self.background_color  = (0,0,0,0)
         self.background_normal = ''
         self.font_name  = 'Sarabun'
-        self.font_size  = sp(12)
+        self.font_size  = sp(14)
+        self.markup     = False
+        self.shorten    = False
         self.color      = (1,1,1,1)
         self.halign     = 'center'
         self.valign     = 'middle'

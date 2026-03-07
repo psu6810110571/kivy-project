@@ -1,4 +1,5 @@
 import os
+import unicodedata
 # บังคับใช้ SDL2 audio ก่อน import kivy ทุกอย่าง — แก้เสียงไม่ดังบน Windows
 os.environ['KIVY_AUDIO'] = 'sdl2'
 
@@ -9,6 +10,19 @@ from kivy.properties import StringProperty, NumericProperty, ListProperty
 from kivy.core.text import LabelBase
 from kivy.core.audio import SoundLoader
 from kivy.animation import Animation
+
+# ── Fix Thai Unicode: NFC normalization ────────────────────────────────────────
+# Kivy SDL2 backend ต้องการ NFC normalized string จึงจะ render สระ/วรรณยุกต์ถูกต้อง
+from kivy.core.text import Label as CoreLabel
+_orig_render = CoreLabel.render
+
+def _patched_render(self, *args, **kwargs):
+    if self.text:
+        self.text = unicodedata.normalize('NFC', self.text)
+    return _orig_render(self, *args, **kwargs)
+
+CoreLabel.render = _patched_render
+
 # ── นำเข้า Widgets และ Screens ─────────────────────────────────────────────────
 from widgets.bomb import BombWidget
 from widgets.game_ui import VignetteWidget, ComboDisplay, ClockBombWidget, WireAnswerButton
@@ -70,7 +84,6 @@ class AchievementScreen(Screen):
 class QuizApp(App):
     player_name = StringProperty('Unknown Agent')
 
-    # [สำคัญ] เพิ่มตัวแปรเหล่านี้เพื่อให้ ui.kv ดึงไปใช้วาดแถบเวลาได้โดยไม่ Error
     timer_ratio = NumericProperty(1.0)
     timer_color = ListProperty([0.15, 1.0, 0.28])
 
@@ -78,28 +91,24 @@ class QuizApp(App):
         return FadeTransition(duration=0.3)
 
     def build(self):
-        # บังคับโหลดไฟล์ ui.kv ตรงๆ แค่รอบเดียวจบ ป้องกันบัคซ้อนกันและบัคจอดำ!
         return Builder.load_file('ui.kv')
 
     def on_start(self):
-        # ── โหลดและเล่นเพลง menu ตอนแอปเริ่ม ──────────────────────────────
         bgm_path = os.path.join(BASE_DIR, 'assets', 'sounds', 'menu_bgm.mp3')
         self.menu_bgm = SoundLoader.load(bgm_path)
         if self.menu_bgm:
-            self.menu_bgm.loop   = True   # วนซ้ำตลอด
-            self.menu_bgm.volume = 0.5    # ระดับเสียง 0.0 - 1.0
+            self.menu_bgm.loop   = True
+            self.menu_bgm.volume = 0.5
             self.menu_bgm.play()
             print("[BGM] เล่นเพลง menu แล้ว")
         else:
             print(f"[BGM] โหลดเพลงไม่ได้ ตรวจสอบ path: {bgm_path}")
 
     def stop_menu_bgm(self):
-        """หยุดเพลง menu — เรียกตอนเข้าเกม"""
         if getattr(self, 'menu_bgm', None):
             self.menu_bgm.stop()
 
     def play_menu_bgm(self):
-        """เปิดเพลง menu ใหม่ — เรียกตอนกลับ menu"""
         if getattr(self, 'menu_bgm', None):
             if self.menu_bgm.state != 'play':
                 self.menu_bgm.play()
@@ -109,13 +118,11 @@ class QuizApp(App):
              Animation(opacity=1.0, duration=0.08))
         a.start(btn)
 
-    # เผื่อในไฟล์ .kv มีบางปุ่มใช้ on_press: app.btn_anim(self)
     def btn_anim(self, btn):
         self.btn_press_anim(btn)
 
     def go_to_category(self, name):
         self.player_name = name.strip() or 'Unknown Agent'
-        # อัปเดตชื่อ Agent ใน BriefingScreen
         try:
             briefing = self.root.get_screen('briefing')
             briefing.ids.lbl_agent_name.text = f'AGENT: {self.player_name}'
@@ -162,12 +169,10 @@ class QuizApp(App):
         if not getattr(self, '_game_mode', None):
             self._game_mode = 'single'
         self._level = level
-        # หยุดเพลง menu ตอนเข้าเกม
         self.stop_menu_bgm()
         self.root.current = 'game'
 
     def _stop_game_engine(self):
-        """[FIX] หยุด engine + timer อย่างปลอดภัย ป้องกัน timer leak"""
         try:
             gs = self.root.get_screen('game')
             if gs.engine.is_playing:
@@ -187,7 +192,6 @@ class QuizApp(App):
         self.root.current = 'category'
 
     def go_home(self):
-        # หยุด engine แล้วเปิดเพลง menu ใหม่ตอนกลับหน้าหลัก
         self._stop_game_engine()
         self.play_menu_bgm()
         self.root.current = 'menu'
