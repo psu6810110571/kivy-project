@@ -197,6 +197,7 @@ class GameEngine:
     def get_next_question(self):
         if len(self.all_questions) > 0:
             self.current_question = self.all_questions.pop(0)
+            self.hint_used = False  # [เพิ่ม] รีเซ็ตคำใบ้เมื่อเปลี่ยนข้อ
             return self.current_question
         else:
             print("No more questions!")
@@ -234,13 +235,24 @@ class GameEngine:
         print(f"Game Summary: {summary_data}")
         return summary_data
 
+    # ── ระบบคำใบ้ (อัปเดต) ────────────────────────────────────────────────────
+    
     def use_hint(self):
         if self.hint_used or not self.current_question:
-            return "ไม่สามารถใช้ตัวช่วยได้!"
+            return "ใช้คำใบ้ไปแล้วในข้อนี้!"
         self.hint_used    = True
-        self.score        = max(0, self.score - 1)
+        
+        penalty = 10  # หัก 10 คะแนนเมื่อใช้คำใบ้
+        if self.game_mode == '2player':
+            if self.current_player == 1:
+                self.p1_score = max(0, self.p1_score - penalty)
+            else:
+                self.p2_score = max(0, self.p2_score - penalty)
+        else:
+            self.score = max(0, self.score - penalty)
+            
         self.hint_message = self.current_question.get('hint', 'ไม่มีคำใบ้สำหรับข้อนี้')
-        print(f"Hint Activated: {self.hint_message}")
+        print(f"Hint Activated: {self.hint_message} (-{penalty} pts)")
         return self.hint_message
 
     # ── รีเซ็ต ────────────────────────────────────────────────────────────────

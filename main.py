@@ -203,25 +203,32 @@ class QuizApp(App):
     def show_achievements(self):
         self.root.current = 'achievements'
 
-    # ── [เพิ่มใหม่] ฟังก์ชันแสดงคำใบ้ ───────────────────────────────
+    # ── [อัปเดต] ฟังก์ชันแสดงคำใบ้แบบหักคะแนน ───────────────────────────────
     def show_hint(self):
         try:
             # เข้าถึงหน้า GameScreen และตัว Engine เกม
             gs = self.root.get_screen('game')
             engine = gs.engine
             
-            hint_text = "ไม่มีคำใบ้สำหรับข้อนี้"
+            # ดึงคำใบ้และหักคะแนนผ่าน engine 
+            hint_text = engine.use_hint()
             
-            # พยายามดึงคำใบ้จากตัวแปรคำถามปัจจุบันใน engine
-            if hasattr(engine, 'current_question') and engine.current_question:
-                hint_text = engine.current_question.get('hint', hint_text)
-            elif hasattr(engine, 'questions') and hasattr(engine, 'current_q_idx'):
-                hint_text = engine.questions[engine.current_q_idx].get('hint', hint_text)
+            # อัปเดตคะแนนที่แสดงผลบนหน้าจอทันทีหลังจากถูกหัก
+            if engine.game_mode == '2player':
+                current_score = engine.p1_score if engine.current_player == 1 else engine.p2_score
+            else:
+                current_score = engine.score
+            gs.ids.lbl_score.text = f"{current_score} pts"
             
             # ดึง Label ด้านล่างมาแสดงคำใบ้
             lbl = gs.ids.feedback_label
             lbl.text = f"💡 คำใบ้: {hint_text}"
-            lbl.color = (1, 0.9, 0.2, 1)  # เปลี่ยนสีข้อความเป็นสีเหลืองทอง
+            
+            # ถ้าเป็นข้อความแจ้งเตือนว่าใช้ไปแล้ว ให้เปลี่ยนสีเป็นสีส้ม/แดงนิดๆ
+            if hint_text == "ใช้คำใบ้ไปแล้วในข้อนี้!" or hint_text == "ไม่สามารถใช้ตัวช่วยได้!":
+                lbl.color = (1, 0.6, 0.2, 1)
+            else:
+                lbl.color = (1, 0.9, 0.2, 1)  # เปลี่ยนสีข้อความเป็นสีเหลืองทอง
             
             # กระพริบข้อความ 1 ครั้งเพื่อดึงดูดสายตา
             a = Animation(opacity=0.3, duration=0.15) + Animation(opacity=1, duration=0.15)
