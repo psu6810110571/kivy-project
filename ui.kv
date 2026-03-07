@@ -425,20 +425,20 @@ ScreenManager:
     BoxLayout:
         orientation: 'vertical'
         padding: dp(40), dp(50)
-        spacing: dp(15)  # ลด spacing ลงเล็กน้อยเพื่อให้ใส่ได้ 4 ปุ่มพอดี
+        spacing: dp(15)
 
         Label:
             text: '[b]เลือกหมวดหมู่ภารกิจ[/b]'
             markup: True
             font_name: 'Sarabun'
-            font_size: sp(30)  # ลดขนาดฟอนต์หัวข้อลงเล็กน้อย
+            font_size: sp(30)
             color: 1, 0.8, 0.2, 1
             size_hint_y: 0.2
 
         Button:
             text: 'ความรู้ทั่วไป'
             font_name: 'Sarabun'
-            font_size: sp(20)  # ลดขนาดฟอนต์ปุ่มลงเล็กน้อย
+            font_size: sp(20)
             size_hint_y: 0.2
             background_color: 0, 0, 0, 0
             on_press: app.btn_press_anim(self)
@@ -498,7 +498,6 @@ ScreenManager:
                     rounded_rectangle: (self.x, self.y, self.width, self.height, dp(15))
                     width: dp(1.2)
 
-        # ── [เพิ่มใหม่] ปุ่มหมวดปริศนาเชาวน์ปัญญา ──
         Button:
             text: 'ปริศนาเชาวน์ปัญญา'
             font_name: 'Sarabun'
@@ -506,10 +505,10 @@ ScreenManager:
             size_hint_y: 0.2
             background_color: 0, 0, 0, 0
             on_press: app.btn_press_anim(self)
-            on_release: app.select_category('logic')  # ส่งคำว่า 'logic' ไปให้ระบบ
+            on_release: app.select_category('logic')
             canvas.before:
                 Color:
-                    rgba: 0.8, 0.3, 0.1, 0.8  # สีส้มอมแดง ให้ดูแตกต่าง
+                    rgba: 0.8, 0.3, 0.1, 0.8
                 RoundedRectangle:
                     pos: self.pos
                     size: self.size
@@ -521,7 +520,7 @@ ScreenManager:
                     width: dp(1.2)
 
         Widget:
-            size_hint_y: 0.1  # ลดพื้นที่ว่างด้านล่างลงเพื่อให้พอดี
+            size_hint_y: 0.1
 
     Button:
         text: '< กลับ'
@@ -994,7 +993,6 @@ ScreenManager:
                         size: self.size
                         radius: [dp(6)]
 
-            # ── [เพิ่มใหม่] ปุ่มขอคำใบ้ ──
             Button:
                 id: btn_hint
                 text: 'คำใบ้'
