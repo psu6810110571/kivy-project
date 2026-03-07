@@ -12,6 +12,12 @@
     "level": "easy"
   },
   {
+    "name": "ไกหฟห",
+    "score": 1665,
+    "category": "general",
+    "level": "medium"
+  },
+  {
     "name": "ฟหฟหฟ",
     "score": 1425,
     "category": "general",
@@ -110,12 +116,6 @@
   {
     "name": "Unknown Agent",
     "score": 555,
-    "category": "general",
-    "level": "medium"
-  },
-  {
-    "name": "ไๆำๆไๆไ",
-    "score": 525,
     "category": "general",
     "level": "medium"
   }

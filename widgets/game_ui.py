@@ -163,7 +163,10 @@ class ClockBombWidget(Widget):
             return
         cx = self.center_x + self.shake_x
         cy = self.y + h * 0.62
-        r  = min(w * 0.32, h * 0.40, dp(90))
+        
+        # 🚀 ปลดล็อกลิมิตขนาดระเบิด: ขยายตามสัดส่วนจอ (สูงสุด dp(200))
+        r  = min(w * 0.32, h * 0.40, dp(200)) 
+        
         with self.canvas:
             if self.exploding:
                 self._draw_explosion(cx, cy, r)
@@ -360,7 +363,10 @@ class ClockBombWidget(Widget):
         n = int(self.num_wires)
         if n == 0:
             return -1
-        r   = min(self.width*0.32, self.height*0.40, dp(90))
+            
+        # 🚀 ปลดล็อกลิมิต Hitbox ให้ขนาดตรงกับภาพระเบิดด้านบน
+        r   = min(self.width * 0.32, self.height * 0.40, dp(200)) 
+        
         bw, bh = r*2.2, r*1.6
         cx  = self.center_x + self.shake_x
         cy  = self.y + self.height*0.62
@@ -378,7 +384,7 @@ class ClockBombWidget(Widget):
         wlen    = dp(72)
         order   = list(self.wire_order) if len(self.wire_order) == n else list(range(n))
         
-        # ค้นหาสายไฟที่ใกล้ปลายนิ้วที่สุด (ป้องกันกดจุดทับซ้อนแล้วไปโดนเส้นอื่น)
+        # ค้นหาสายไฟที่ใกล้ปลายนิ้วที่สุด
         closest_i = -1
         min_dist = float('inf')
         
