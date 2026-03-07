@@ -237,6 +237,14 @@ class GameEngine:
         if self.game_mode != '2player':
             self.p1_score = self.score
 
+        # FIX: ดึงค่า lives_left ให้ตรงกับโหมดที่เล่นจริงๆ
+        if self.game_mode == 'sudden':
+            actual_lives = 0 if self._sudden_dead else 1
+        elif self.game_mode == '2player':
+            actual_lives = max(self.p1_lives, self.p2_lives)
+        else:
+            actual_lives = self.lives
+
         summary_data = {
             "mode":          self.game_mode,
             "level":         self.level_key,
@@ -247,7 +255,7 @@ class GameEngine:
             "p2_lives":      self.p2_lives,
             "max_combo":     self.max_combo,
             "correct_count": self.correct_count,
-            "lives_left":    self.lives,
+            "lives_left":    actual_lives,
             "status":        "Game Over" if self.both_players_dead() else "Finished",
         }
         print(f"Game Summary: {summary_data}")
