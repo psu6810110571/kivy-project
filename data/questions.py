@@ -436,9 +436,9 @@ def get_questions(category: str, level: str = 'easy', mode: str = 'single') -> l
         
         # ตัดจำนวนตัวเลือกให้พอดีกับความยากของสายไฟ
         target_choices = 4
-        if level == 'medium':
+        if level in ['medium', 'sudden']:
             target_choices = 5
-        elif level in ['hard', 'sudden']:
+        elif level == 'hard':
             target_choices = 6
 
         # สุ่มเอาตัวเลือกผิดมาให้ครบตามที่ต้องการ
