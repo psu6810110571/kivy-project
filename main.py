@@ -147,11 +147,13 @@ class QuizApp(App):
             if not getattr(self, '_category', None):
                 self._category = 'general'
             self._level = 'sudden'
+            self.stop_menu_bgm()
             self.root.current = 'game'
         elif mode == 'daily':
             if not getattr(self, '_category', None):
                 self._category = 'general'
             self._level = 'daily'
+            self.stop_menu_bgm()
             self.root.current = 'game'
 
     def start_2player(self, p2name):
@@ -161,6 +163,7 @@ class QuizApp(App):
             self._category = 'general'
         self._game_mode = '2player'
         self._level = 'medium'
+        self.stop_menu_bgm()
         self.root.current = 'game'
 
     def start_game(self, level):
