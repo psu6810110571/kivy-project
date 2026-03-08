@@ -110,6 +110,8 @@ class GameScreen(Screen):
 
     # ─── โหลดคำถาม ───────────────────────────────────────────────────────────
     def _load_question(self):
+        self.is_waiting = False
+
         if 'feedback_label' in self.ids:
             app  = App.get_running_app()
             mode = getattr(app, '_game_mode', 'single')
@@ -152,6 +154,7 @@ class GameScreen(Screen):
             bomb.reset(self.correct_wire, n)
 
         self.engine.time_left = self.max_time
+        self.engine.restart_bgm()
 
         if 'timer_bar' in self.ids:
             self.ids.timer_bar.max   = self.max_time
@@ -180,8 +183,10 @@ class GameScreen(Screen):
             bomb.wire_states = states
 
         if is_correct:
+            self.is_waiting = True
             speed_bonus, pts_gained = self._register_correct()
-            
+            self.engine.play_correct()
+
             if bomb:
                 bomb.start_defuse()
             combo = self.engine.combo
