@@ -215,7 +215,8 @@ class QuizApp(App):
             engine = gs.engine
             
             # รับค่า 2 ตัวที่ engine ส่งมา (ข้อความคำใบ้, และแต้มที่ถูกหักไป)
-            hint_text, penalty = engine.use_hint(), engine.play_hint()
+            hint_text, penalty = engine.use_hint() 
+            engine.play_hint()
             
             # อัปเดตคะแนนที่แสดงผลบนหน้าจอทันทีหลังจากถูกหัก
             if engine.game_mode == '2player':
@@ -238,14 +239,6 @@ class QuizApp(App):
             # กระพริบข้อความ 1 ครั้งเพื่อดึงดูดสายตา
             a = Animation(opacity=0.3, duration=0.15) + Animation(opacity=1, duration=0.15)
             a.start(lbl)
-            
-            # ตั้งเวลาให้ข้อความกลับไปเป็นค่าเริ่มต้นใน 4 วินาที
-            def reset_label(dt):
-                if lbl.text.startswith("💡"):
-                    lbl.text = '> แตะปลายสายที่ตรงกับคำตอบ! <'
-                    lbl.color = (0.65, 0.85, 1, 0.9)  # กลับเป็นสีฟ้าแบบเดิม
-            
-            Clock.schedule_once(reset_label, self.left_time)
 
         except Exception as e:
             print(f"[HINT] เกิดข้อผิดพลาดตอนแสดงคำใบ้: {e}")
