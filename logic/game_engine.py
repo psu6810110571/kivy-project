@@ -231,7 +231,28 @@ class GameEngine:
     def get_next_question(self):
         if len(self.all_questions) > 0:
             self.current_question = self.all_questions.pop(0)
-            self.hint_used = False  # [เพิ่ม] รีเซ็ตคำใบ้เมื่อเปลี่ยนข้อ
+            self.hint_used = False  # รีเซ็ตคำใบ้เมื่อเปลี่ยนข้อ
+
+            # --- 🎲 ระบบสุ่มตัวเลือก (Shuffle Choices) ---
+            original_answer_idx = self.current_question.get('answer_index', 0)
+            original_choices = self.current_question.get('choices', [])
+            
+            if original_choices:
+                # 1. จำข้อความที่เป็นคำตอบที่ถูกต้องเอาไว้ก่อน
+                correct_text = original_choices[original_answer_idx]
+                
+                # 2. ทำสำเนาตัวเลือก แล้วสับเปลี่ยนตำแหน่ง
+                shuffled_choices = original_choices.copy()
+                random.shuffle(shuffled_choices)
+                
+                # 3. หาว่าคำตอบที่ถูก ย้ายไปอยู่ Index ใหม่ที่เท่าไหร่
+                new_answer_idx = shuffled_choices.index(correct_text)
+                
+                # 4. อัปเดตกลับเข้าไปใน current_question
+                self.current_question['choices'] = shuffled_choices
+                self.current_question['answer_index'] = new_answer_idx
+            # -----------------------------------------------
+
             return self.current_question
         else:
             print("No more questions!")
