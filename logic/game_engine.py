@@ -50,6 +50,9 @@ class GameEngine:
 
         # FIX: flag ว่าเกมจบจาก sudden death หรือเปล่า
         self._sudden_dead = False
+        
+        # [เพิ่มใหม่] ตัวแปรเก็บแต้มโบนัส Perfect Clear
+        self.perfect_bonus = 0
 
         self._reload_sounds()
 
@@ -210,6 +213,24 @@ class GameEngine:
         if self.both_players_dead() or self.game_mode == 'sudden':
             self.game_over()
 
+    # ── [เพิ่มใหม่] โบนัส Perfect Clear ─────────────────────────────────────────
+    def _apply_perfect_clear_bonus(self):
+        bonus_points = 1000
+        # ถ้าเป็นโหมด 2player ใครหัวใจไม่ลดเลย เอาโบนัสไปเลย!
+        if self.game_mode == '2player':
+            if self.p1_lives == 3:
+                self.p1_score += bonus_points
+                self.perfect_bonus = bonus_points
+            if self.p2_lives == 3:
+                self.p2_score += bonus_points
+                self.perfect_bonus = bonus_points
+        # โหมดทั่วไป (ยกเว้น Sudden Death ที่ไม่มีวันจบ)
+        elif self.game_mode != 'sudden':
+            if self.lives == 3:
+                self.score += bonus_points
+                self.p1_score = self.score
+                self.perfect_bonus = bonus_points
+
     # ── จบเกม ─────────────────────────────────────────────────────────────────
 
     def game_over(self):
@@ -256,6 +277,8 @@ class GameEngine:
             return self.current_question
         else:
             print("No more questions!")
+            # [เพิ่มใหม่] แจกโบนัสก่อนจบเกมถ้าตอบครบแล้วไม่ตายเลย
+            self._apply_perfect_clear_bonus()
             self.game_over()
             return None
 
@@ -297,6 +320,7 @@ class GameEngine:
             "correct_count": self.correct_count,
             "lives_left":    actual_lives,
             "status":        "Game Over" if self.both_players_dead() else "Finished",
+            "perfect_bonus": self.perfect_bonus # [เพิ่มใหม่] ส่งค่าโบนัสให้หน้าจอ
         }
         print(f"Game Summary: {summary_data}")
         return summary_data
@@ -343,6 +367,7 @@ class GameEngine:
         self.hint_used      = False
         self.is_playing     = False
         self._sudden_dead   = False   # FIX: reset flag ด้วย
+        self.perfect_bonus  = 0       # [เพิ่มใหม่] รีเซ็ตโบนัส
         self._reload_sounds()
         print("Game Reset! Ready for new round.")
 
