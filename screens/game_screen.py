@@ -181,13 +181,18 @@ class GameScreen(Screen):
             bomb.wire_states = states
 
         if is_correct:
-            self._register_correct()
+            # รับค่าโบนัสและคะแนนรวมจาก Engine 
+            speed_bonus, pts_gained = self._register_correct()
+            
             if bomb:
                 bomb.start_defuse()
             combo = self.engine.combo
             if 'feedback_label' in self.ids:
-                extra = f'  ** COMBO x{combo}! **' if combo >= 2 else ''
-                self.ids.feedback_label.text = f'[ OK ] ถูกต้อง!{extra}'
+                # จัดรูปแบบข้อความโชว์ Speed Bonus 
+                speed_txt = f' [ไวจัด! +{speed_bonus}]' if speed_bonus > 0 else ''
+                combo_txt = f' ** COMBO x{combo}! **' if combo >= 2 else ''
+                self.ids.feedback_label.text = f'[ OK ] ถูกต้อง! (+{pts_gained}){speed_txt}{combo_txt}'
+                
             if 'combo_display' in self.ids:
                 self.ids.combo_display.combo = combo
                 self.ids.combo_display.flash()
@@ -278,10 +283,20 @@ class GameScreen(Screen):
         e.combo         += 1
         e.max_combo      = max(e.max_combo, e.combo)
         e.correct_count += 1
+        
+        # 1. คะแนนพื้นฐาน
+        base_points = 100
+        
+        # 2. โบนัสความไว (Speed Bonus) ยิ่งตอบเร็วยิ่งได้เยอะ (สูงสุด 150 แต้ม)
         t_ratio = e.time_left / self.max_time if self.max_time > 0 else 0
-        base    = int((t_ratio * 100 + 50) * e.score_multiplier)
-        bonus   = max(0, e.combo - 1) * 15
-        pts     = base + bonus
+        speed_bonus = int(t_ratio * 150)
+        
+        # 3. โบนัสคอมโบ
+        combo_bonus = max(0, e.combo - 1) * 20
+        
+        # รวมคะแนนทั้งหมดและคูณด้วยตัวคูณประจำด่าน
+        pts = int((base_points + speed_bonus + combo_bonus) * e.score_multiplier)
+        
         if e.game_mode == '2player':
             if e.current_player == 1:
                 e.p1_score += pts
@@ -289,7 +304,11 @@ class GameScreen(Screen):
                 e.p2_score += pts
         else:
             e.score += pts
-        print(f"Correct! +{pts} pts | Combo x{e.combo}")
+            
+        print(f"Correct! +{pts} pts | Speed Bonus: {speed_bonus} | Combo x{e.combo}")
+        
+        # คืนค่าโบนัสความไวและคะแนนรวมที่ได้ เพื่อเอาไปโชว์บนหน้าจอ
+        return speed_bonus, pts
 
     def _register_wrong(self):
         e = self.engine
