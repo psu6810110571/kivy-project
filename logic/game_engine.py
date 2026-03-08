@@ -175,7 +175,7 @@ class GameEngine:
                 self._stop(self.Duringquiz_sound)
                 self._play(self.warning_sound)
 
-    # ── ตรวจคำตอบ (ใช้ใน test_engine.py) ────────────────────────────────────
+    # ── ตรวจคำตอบ (เพิ่มสูตรโบนัสความไว) ────────────────────────────────────
 
     def check_answer(self, user_answer_index, correct_answer_index):
         if not self.current_question:
@@ -185,9 +185,22 @@ class GameEngine:
             self.combo         += 1
             self.max_combo      = max(self.max_combo, self.combo)
             self.correct_count += 1
+            
+            # 1. คะแนนพื้นฐาน
             base_points  = 100
+            
+            # 2. โบนัสความไว (Speed Bonus) คิดจากเปอร์เซ็นต์เวลาที่เหลือ
+            level_times = {'easy': 15, 'medium': 10, 'hard': 7, 'sudden': 8, 'daily': 10}
+            max_t = level_times.get(self.level_key, 10)
+            t_ratio = self.time_left / max_t if max_t > 0 else 0
+            speed_bonus = int(t_ratio * 150) # ตอบเร็วยิ่งได้โบนัสเยอะ สูงสุด 150 แต้ม
+            
+            # 3. โบนัสคอมโบ
             combo_bonus  = max(0, self.combo - 1) * 15
-            total_points = int((base_points + combo_bonus) * self.score_multiplier)
+            
+            # รวมคะแนนแล้วคูณ
+            total_points = int((base_points + speed_bonus + combo_bonus) * self.score_multiplier)
+            
             if self.game_mode == '2player':
                 if self.current_player == 1:
                     self.p1_score += total_points
@@ -196,7 +209,8 @@ class GameEngine:
             else:
                 self.score    += total_points
                 self.p1_score  = self.score
-            print(f"Correct! +{total_points} pts | Combo: x{self.combo}")
+                
+            print(f"Correct! +{total_points} pts | Speed Bonus: {speed_bonus} | Combo: x{self.combo}")
             return True
         else:
             self.combo = 0
