@@ -939,7 +939,7 @@ ScreenManager:
                 font_size: sp(12)
                 color: 0.8, 0.8, 1, 1
                 halign: 'center'
-                size_hint_x: 0.17 # ปรับลดเพื่อให้มีที่ว่าง
+                size_hint_x: 0.17 
                 canvas.before:
                     Color:
                         rgba: 0.10, 0.10, 0.24, 1
@@ -956,7 +956,7 @@ ScreenManager:
                 bold: True
                 color: 1, 0.80, 0.1, 1
                 halign: 'center'
-                size_hint_x: 0.15 # ปรับลดเพื่อให้มีที่ว่าง
+                size_hint_x: 0.15 
                 canvas.before:
                     Color:
                         rgba: 0.15, 0.10, 0.02, 1
@@ -967,7 +967,7 @@ ScreenManager:
 
             LivesWidget:
                 id: lbl_lives
-                size_hint_x: 0.13 # ปรับลดเพื่อให้มีที่ว่าง
+                size_hint_x: 0.13 
                 canvas.before:
                     Color:
                         rgba: 0.18, 0.04, 0.04, 1
@@ -984,7 +984,7 @@ ScreenManager:
                 bold: True
                 color: 1, 0.45, 0.1, 1
                 halign: 'center'
-                size_hint_x: 0.10 # ปรับลดเพื่อให้มีที่ว่าง
+                size_hint_x: 0.10 
                 canvas.before:
                     Color:
                         rgba: 0.18, 0.08, 0.02, 1
@@ -1000,7 +1000,7 @@ ScreenManager:
                 font_size: sp(14)
                 bold: True
                 color: 1, 0.9, 0.2, 1
-                size_hint_x: 0.11 # ปรับลดเพื่อให้มีที่ว่าง
+                size_hint_x: 0.11 
                 background_color: 0, 0, 0, 0
                 on_press: app.btn_press_anim(self)
                 on_release: app.show_hint()
@@ -1012,7 +1012,6 @@ ScreenManager:
                         size: self.size
                         radius: [dp(6)]
 
-            # ── [เพิ่มใหม่] ปุ่มข้ามคำถาม (Skip) ──
             Button:
                 id: btn_skip
                 text: 'ข้าม'      
@@ -1039,7 +1038,7 @@ ScreenManager:
                 font_size: sp(12)
                 color: 0.65, 0.65, 0.85, 1
                 halign: 'center'
-                size_hint_x: 0.10 # ปรับลดเพื่อให้มีที่ว่าง
+                size_hint_x: 0.10 
                 canvas.before:
                     Color:
                         rgba: 0.10, 0.10, 0.20, 1
@@ -1200,6 +1199,18 @@ ScreenManager:
                 halign: 'center'
                 size_hint_y: None
                 height: dp(28)
+
+            # ── [เพิ่มใหม่] ป้ายแสดงโบนัส Perfect Clear ──
+            Label:
+                id: lbl_perfect_bonus
+                text: ''
+                font_name: 'Sarabun'
+                font_size: sp(16)
+                bold: True
+                color: 1, 0.9, 0.2, 1
+                halign: 'center'
+                size_hint_y: None
+                height: dp(26)
 
             Label:
                 id: lbl_rank
