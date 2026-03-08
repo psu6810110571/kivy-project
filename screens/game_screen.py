@@ -566,7 +566,7 @@ class GameScreen(Screen):
             self.engine.lose_life()
             
             if 'feedback_label' in self.ids:
-                self.ids.feedback_label.text = '⏭️ ข้ามคำถาม! (เสีย 1 ชีวิต / Combo ไม่ขาด)'
+                self.ids.feedback_label.text = 'ข้ามคำถาม! (เสีย 1 ชีวิต / Combo ไม่ขาด)'
             
             self._update_hud()
             
