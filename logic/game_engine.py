@@ -62,6 +62,7 @@ class GameEngine:
         self.Duringquiz_sound = _load_sound('assets/sounds/Duringquiz.wav')
         self.warning_sound    = _load_sound('assets/sounds/warning.wav')
         self.explosion_sound  = _load_sound('assets/sounds/explosion.wav')
+        self.correct_sound    = _load_sound('assets/sounds/correct.mp3')
 
         if self.Duringquiz_sound:
             self.Duringquiz_sound.loop   = True
@@ -70,6 +71,8 @@ class GameEngine:
             self.warning_sound.volume = 1.0
         if self.explosion_sound:
             self.explosion_sound.volume = 1.0
+        if self.correct_sound:
+            self.correct_sound.volume = 1.0
 
     def _play(self, snd):
         try:
@@ -90,6 +93,17 @@ class GameEngine:
         self._stop(self.Duringquiz_sound)
         self._stop(self.warning_sound)
         self._play(self.explosion_sound)
+
+    def play_correct(self):
+        self._play(self.correct_sound)
+
+    def restart_bgm(self):
+        """เปิด BGM กลับหลังโหลดข้อใหม่ — หยุด warning ก่อนแล้วเล่น BGM"""
+        self._stop(self.warning_sound)
+        self._stop(self.explosion_sound)
+        if self.Duringquiz_sound and self.is_playing:
+            self.Duringquiz_sound.volume = 1.0
+            self.Duringquiz_sound.play()
 
     # ── ชีวิตของผู้เล่นปัจจุบัน ──────────────────────────────────────────────
 
