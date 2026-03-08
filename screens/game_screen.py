@@ -529,6 +529,14 @@ class GameScreen(Screen):
             }
             result.ids.lbl_result_msg.text = msgs.get(lvl, 'ดีมาก!')
 
+        # ── [เพิ่มใหม่] ดึงข้อมูลโบนัสมาแสดง ──
+        perfect_bonus = summary.get('perfect_bonus', 0)
+        if perfect_bonus > 0 and 'lbl_perfect_bonus' in result.ids:
+            result.ids.lbl_perfect_bonus.text = f'🌟 PERFECT CLEAR! (+{perfect_bonus} แต้ม) 🌟'
+        elif 'lbl_perfect_bonus' in result.ids:
+            result.ids.lbl_perfect_bonus.text = ''
+        # ──────────────────────────────
+
         try:
             from data.leaderboard_mgr import get_rank
             rank = get_rank(summary.get('score', 0))
@@ -542,7 +550,7 @@ class GameScreen(Screen):
         else:
             result.ids.lbl_new_ach.text = ''
 
-    # ─── [เพิ่มใหม่] ระบบข้ามคำถาม (Skip Question) ───────────────────────────
+    # ─── ระบบข้ามคำถาม (Skip Question) ───────────────────────────
     def skip_question(self):
         if not self.engine.is_playing or self.is_waiting:
             return
