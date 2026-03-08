@@ -559,7 +559,7 @@ class GameScreen(Screen):
 
         perfect_bonus = summary.get('perfect_bonus', 0)
         if perfect_bonus > 0 and 'lbl_perfect_bonus' in result.ids:
-            result.ids.lbl_perfect_bonus.text = f'*** PERFECT CLEAR! (+{perfect_bonus} แต้ม) ***'
+            result.ids.lbl_perfect_bonus.text = f'PERFECT CLEAR! (+{perfect_bonus} แต้ม) !!'
         elif 'lbl_perfect_bonus' in result.ids:
             result.ids.lbl_perfect_bonus.text = ''
 
