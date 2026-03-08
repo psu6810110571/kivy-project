@@ -80,7 +80,7 @@ PROJECT-QUIZ/
 
 ---
 
-## 🆕 อัปเดตล่าสุด (v3.0 - Gameplay Mechanics Update)
+## 🆕 อัปเดตล่าสุด (v2.0 - Gameplay Mechanics Update)
 
 - ✅ เพิ่มระบบคำใบ้ (Hint) พร้อมแอนิเมชันแจ้งเตือน
 - ✅ เพิ่มหมวดคำถามใหม่ "ปริศนาเชาวน์ปัญญา" (Logic)
