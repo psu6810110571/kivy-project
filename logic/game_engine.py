@@ -218,15 +218,15 @@ class GameEngine:
         bonus_points = 1000
         # ถ้าเป็นโหมด 2player ใครหัวใจไม่ลดเลย เอาโบนัสไปเลย!
         if self.game_mode == '2player':
-            if self.p1_lives == 3:
+            if self.p1_lives in [3, 99]:
                 self.p1_score += bonus_points
                 self.perfect_bonus = bonus_points
-            if self.p2_lives == 3:
+            if self.p2_lives in [3, 99]:
                 self.p2_score += bonus_points
                 self.perfect_bonus = bonus_points
         # โหมดทั่วไป (ยกเว้น Sudden Death ที่ไม่มีวันจบ)
         elif self.game_mode != 'sudden':
-            if self.lives == 3:
+            if self.lives in [3, 99]:
                 self.score += bonus_points
                 self.p1_score = self.score
                 self.perfect_bonus = bonus_points
