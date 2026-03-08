@@ -53,7 +53,6 @@ class GameScreen(Screen):
 
         try:
             from data.questions import get_questions
-            # ── FIX: ส่ง mode ไปด้วยเพื่อให้ get_questions คืน 12 ข้อใน 2player ──
             questions = get_questions(cat, level, mode)
             self.engine.set_questions(questions)
         except Exception as e:
@@ -181,14 +180,12 @@ class GameScreen(Screen):
             bomb.wire_states = states
 
         if is_correct:
-            # รับค่าโบนัสและคะแนนรวมจาก Engine 
             speed_bonus, pts_gained = self._register_correct()
             
             if bomb:
                 bomb.start_defuse()
             combo = self.engine.combo
             if 'feedback_label' in self.ids:
-                # จัดรูปแบบข้อความโชว์ Speed Bonus 
                 speed_txt = f' [ไวจัด! +{speed_bonus}]' if speed_bonus > 0 else ''
                 combo_txt = f' ** COMBO x{combo}! **' if combo >= 2 else ''
                 self.ids.feedback_label.text = f'[ OK ] ถูกต้อง! (+{pts_gained}){speed_txt}{combo_txt}'
@@ -204,28 +201,37 @@ class GameScreen(Screen):
             Clock.schedule_once(lambda dt: self._load_question(), 0.7)
 
         else:
-            self._register_wrong()
+            # ── [เพิ่มใหม่] โอกาส 10% รอดตายปาฏิหาริย์ ──
+            is_lucky = (random.random() < 0.10)
+            self._register_wrong(is_lucky)
 
-            if bomb:
-                bomb.start_explode()
-                self._shake(bomb)
-            self.engine.play_explosion()
-
-            if 'vignette' in self.ids:
-                self.ids.vignette.pulse_red()
-
-            if self.engine.is_playing:
+            if is_lucky:
+                if 'feedback_label' in self.ids:
+                    self.ids.feedback_label.text = '[ LUCKY ] ปาฏิหาริย์! ระเบิดขัดข้อง ไม่เสียชีวิต!'
                 self.is_waiting = True
-                if self.engine.game_mode == '2player':
-                    self._try_switch_player_after_wrong()
-                else:
-                    if 'feedback_label' in self.ids:
-                        self.ids.feedback_label.text = '[ X ] ผิด! หัวใจหายไป 1 ดวง'
                 self._update_hud()
-                Clock.schedule_once(lambda dt: self._after_wrong(), 1.2)
+                Clock.schedule_once(lambda dt: self._after_wrong(), 1.5)
             else:
-                self._update_hud()
-                Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
+                if bomb:
+                    bomb.start_explode()
+                    self._shake(bomb)
+                self.engine.play_explosion()
+
+                if 'vignette' in self.ids:
+                    self.ids.vignette.pulse_red()
+
+                if self.engine.is_playing:
+                    self.is_waiting = True
+                    if self.engine.game_mode == '2player':
+                        self._try_switch_player_after_wrong()
+                    else:
+                        if 'feedback_label' in self.ids:
+                            self.ids.feedback_label.text = '[ X ] ผิด! หัวใจหายไป 1 ดวง'
+                    self._update_hud()
+                    Clock.schedule_once(lambda dt: self._after_wrong(), 1.2)
+                else:
+                    self._update_hud()
+                    Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
 
     # ─── สลับผู้เล่นหลังตอบถูก ───────────────────────────────────────────────
     def _try_switch_player(self):
@@ -284,17 +290,10 @@ class GameScreen(Screen):
         e.max_combo      = max(e.max_combo, e.combo)
         e.correct_count += 1
         
-        # 1. คะแนนพื้นฐาน
         base_points = 100
-        
-        # 2. โบนัสความไว (Speed Bonus) ยิ่งตอบเร็วยิ่งได้เยอะ (สูงสุด 150 แต้ม)
         t_ratio = e.time_left / self.max_time if self.max_time > 0 else 0
         speed_bonus = int(t_ratio * 150)
-        
-        # 3. โบนัสคอมโบ
         combo_bonus = max(0, e.combo - 1) * 20
-        
-        # รวมคะแนนทั้งหมดและคูณด้วยตัวคูณประจำด่าน
         pts = int((base_points + speed_bonus + combo_bonus) * e.score_multiplier)
         
         if e.game_mode == '2player':
@@ -306,16 +305,16 @@ class GameScreen(Screen):
             e.score += pts
             
         print(f"Correct! +{pts} pts | Speed Bonus: {speed_bonus} | Combo x{e.combo}")
-        
-        # คืนค่าโบนัสความไวและคะแนนรวมที่ได้ เพื่อเอาไปโชว์บนหน้าจอ
         return speed_bonus, pts
 
-    def _register_wrong(self):
+    def _register_wrong(self, is_lucky=False):
         e = self.engine
         e.combo = 0
-        e.lose_life()
-        if e.both_players_dead() or e.game_mode == 'sudden':
-            e.is_playing = False
+        # ── [เพิ่มใหม่] ถ้ารอดตายปาฏิหาริย์ จะไม่เสียหัวใจ ──
+        if not is_lucky:
+            e.lose_life()
+            if e.both_players_dead() or e.game_mode == 'sudden':
+                e.is_playing = False
 
     # ─── shake animation ─────────────────────────────────────────────────────
     def _shake(self, widget):
@@ -375,30 +374,40 @@ class GameScreen(Screen):
         self.is_waiting = True
         e = self.engine
         e.combo = 0
-        e.lose_life()
-
-        if 'vignette' in self.ids:
-            self.ids.vignette.pulse_red()
-        bomb = self.ids.get('bomb_widget')
-        if bomb:
-            bomb.start_explode()
-            self._shake(bomb)
-        self.engine.play_explosion()
-
-        if e.both_players_dead() or e.game_mode == 'sudden':
-            e.game_over()
+        
+        # ── [เพิ่มใหม่] โอกาส 10% รอดตายตอนหมดเวลา ──
+        is_lucky = (random.random() < 0.10)
+        
+        if is_lucky:
             if 'feedback_label' in self.ids:
-                self.ids.feedback_label.text = '[ ! ] หมดเวลา! จบเกม!'
-            self._update_hud()
-            Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
-        else:
-            if e.game_mode == '2player':
-                self._try_switch_player_after_wrong()
-            else:
-                if 'feedback_label' in self.ids:
-                    self.ids.feedback_label.text = '[ ! ] หมดเวลา! หัวใจหายไป 1 ดวง'
+                self.ids.feedback_label.text = '[ LUCKY ] หมดเวลา! แต่ระเบิดขัดข้อง รอดตัวไป!'
             self._update_hud()
             Clock.schedule_once(lambda dt: self._after_wrong(), 1.5)
+        else:
+            e.lose_life()
+
+            if 'vignette' in self.ids:
+                self.ids.vignette.pulse_red()
+            bomb = self.ids.get('bomb_widget')
+            if bomb:
+                bomb.start_explode()
+                self._shake(bomb)
+            self.engine.play_explosion()
+
+            if e.both_players_dead() or e.game_mode == 'sudden':
+                e.game_over()
+                if 'feedback_label' in self.ids:
+                    self.ids.feedback_label.text = '[ ! ] หมดเวลา! จบเกม!'
+                self._update_hud()
+                Clock.schedule_once(lambda dt: self._finish_game(), 1.5)
+            else:
+                if e.game_mode == '2player':
+                    self._try_switch_player_after_wrong()
+                else:
+                    if 'feedback_label' in self.ids:
+                        self.ids.feedback_label.text = '[ ! ] หมดเวลา! หัวใจหายไป 1 ดวง'
+                self._update_hud()
+                Clock.schedule_once(lambda dt: self._after_wrong(), 1.5)
 
     # ─── HUD ─────────────────────────────────────────────────────────────────
     def _update_hud(self):
@@ -548,13 +557,11 @@ class GameScreen(Screen):
             }
             result.ids.lbl_result_msg.text = msgs.get(lvl, 'ดีมาก!')
 
-        # ── [เพิ่มใหม่] ดึงข้อมูลโบนัสมาแสดง ──
         perfect_bonus = summary.get('perfect_bonus', 0)
         if perfect_bonus > 0 and 'lbl_perfect_bonus' in result.ids:
             result.ids.lbl_perfect_bonus.text = f'🌟 PERFECT CLEAR! (+{perfect_bonus} แต้ม) 🌟'
         elif 'lbl_perfect_bonus' in result.ids:
             result.ids.lbl_perfect_bonus.text = ''
-        # ──────────────────────────────
 
         try:
             from data.leaderboard_mgr import get_rank
@@ -585,7 +592,7 @@ class GameScreen(Screen):
             self.engine.lose_life()
             
             if 'feedback_label' in self.ids:
-                self.ids.feedback_label.text = 'ข้ามคำถาม! (เสีย 1 ชีวิต / Combo ไม่ขาด)'
+                self.ids.feedback_label.text = '>> ข้ามคำถาม! (เสีย 1 ชีวิต / Combo ไม่ขาด)'
             
             self._update_hud()
             
