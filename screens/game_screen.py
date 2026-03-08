@@ -541,3 +541,36 @@ class GameScreen(Screen):
             result.ids.lbl_new_ach.text = f'ปลดล็อก: {ach_text}'
         else:
             result.ids.lbl_new_ach.text = ''
+
+    # ─── [เพิ่มใหม่] ระบบข้ามคำถาม (Skip Question) ───────────────────────────
+    def skip_question(self):
+        if not self.engine.is_playing or self.is_waiting:
+            return
+
+        current_lives = self.engine.get_current_lives()
+        
+        if self.engine.game_mode == 'sudden':
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = '[ ! ] โหมด Sudden Death ข้ามไม่ได้!'
+            return
+
+        if current_lives > 1:
+            self.engine.lose_life()
+            
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = '⏭️ ข้ามคำถาม! (เสีย 1 ชีวิต / Combo ไม่ขาด)'
+            
+            self._update_hud()
+            
+            self.is_waiting = True
+            Clock.schedule_once(lambda dt: self._force_next_question(), 0.8)
+        else:
+            if 'feedback_label' in self.ids:
+                self.ids.feedback_label.text = '[ ! ] ข้ามไม่ได้! ต้องมีหัวใจมากกว่า 1 ดวง'
+                
+    def _force_next_question(self):
+        self.is_waiting = False
+        if self.engine.is_playing:
+            self._load_question()
+        else:
+            self._finish_game()
