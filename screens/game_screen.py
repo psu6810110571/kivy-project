@@ -595,6 +595,7 @@ class GameScreen(Screen):
 
         if current_lives > 1:
             self.engine.lose_life()
+            self.engine.play_skip()
             
             if 'feedback_label' in self.ids:
                 self.ids.feedback_label.text = '>> ข้ามคำถาม! (เสีย 1 ชีวิต / Combo ไม่ขาด)'

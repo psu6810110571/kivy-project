@@ -64,6 +64,7 @@ class GameEngine:
         self.explosion_sound  = _load_sound('assets/sounds/explosion.wav')
         self.correct_sound    = _load_sound('assets/sounds/correct.mp3')
         self.hint_sound       = _load_sound('assets/sounds/hint.mp3')
+        self.skip_sound       = _load_sound('assets/sounds/skip.mp3')
 
         if self.Duringquiz_sound:
             self.Duringquiz_sound.loop   = True
@@ -76,6 +77,8 @@ class GameEngine:
             self.correct_sound.volume = 1.0
         if self.hint_sound:
             self.hint_sound.volume = 1.0
+        if self.skip_sound:
+            self.skip_sound.volume = 1.0
 
     def _play(self, snd):
         try:
@@ -102,6 +105,9 @@ class GameEngine:
 
     def play_hint(self):
         self._play(self.hint_sound)
+
+    def play_skip(self):
+        self._play(self.skip_sound)
 
     def restart_bgm(self):
         """เปิด BGM กลับหลังโหลดข้อใหม่ — หยุด warning ก่อนแล้วเล่น BGM"""
